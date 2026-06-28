@@ -10,6 +10,9 @@ render_mode cull_back;
 
 uniform vec3 water_color : source_color;
 
+// float precission fix for voxel coords reconstruction
+const float EPSILON = 0.001;
+
 uniform sampler3D variation_noise;
 
 uniform float voxels_per_meter = 16.0;
@@ -53,8 +56,10 @@ void fragment()
 {
 	vec3 color = water_color;
 	
-	vec3 voxel = floor(world_position * voxels_per_meter);
-	vec3 local = fract(world_position * voxels_per_meter);
+	vec3 reconstructed = world_position * voxels_per_meter + EPSILON;
+	
+	vec3 voxel = floor(reconstructed);
+	vec3 local = fract(reconstructed);
 	
 	// movement
 	vec3 flow = vec3(TIME * 0.03, 0.0, TIME * 0.025) * variation_speed;

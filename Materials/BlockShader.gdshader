@@ -9,6 +9,9 @@ shader_type spatial;
 
 render_mode cull_back, depth_draw_opaque;
 
+// float precission fix for voxel coords reconstruction
+const float EPSILON = 0.001;
+
 uniform sampler2D atlas_texture;
 
 uniform float voxels_per_meter = 16.0;
@@ -44,7 +47,7 @@ void fragment()
 {
 	vec3 color = texture(atlas_texture, UV).rgb;
 	
-	vec3 voxel = floor(world_position * voxels_per_meter);
+	vec3 voxel = floor(world_position * voxels_per_meter + EPSILON);
 	
 	float rand = random(voxel);
 	
