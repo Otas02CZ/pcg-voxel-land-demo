@@ -266,10 +266,10 @@ public partial class Root : Node3D
 
 		// calculate thread counts on this system
 		GD.Print($"Available threads: {System.Environment.ProcessorCount}");
-		modelServiceThreads = Math.Max(1, System.Environment.ProcessorCount / 2);
-		worldServiceThreads = Math.Max(1, System.Environment.ProcessorCount / 6);
+		modelServiceThreads = Math.Max(1, (int)(System.Environment.ProcessorCount / 1.5f));
+		worldServiceThreads = Math.Max(1, System.Environment.ProcessorCount / 3);
 		voxelServiceThreads = Math.Max(1, System.Environment.ProcessorCount / 3);
-		geometryServiceThreads = Math.Max(1, (int)(System.Environment.ProcessorCount / 1.3f));
+		geometryServiceThreads = Math.Max(1, (int)(System.Environment.ProcessorCount / 1.25f));
 		GD.Print($"Threads assigned - World Generator: {worldServiceThreads}, Voxel Generator: {voxelServiceThreads}, Geometry Service: {geometryServiceThreads}, Model Generator: {modelServiceThreads}");
 		
 		// switch to title menu, ui control starts
