@@ -1,0 +1,1633 @@
+[gd_scene format=3 uid="uid://cbksmqfphnij5"]
+
+[ext_resource type="Script" uid="uid://df8mnhg88m20e" path="res://Scripts/Root.cs" id="1_oss8w"]
+[ext_resource type="PackedScene" uid="uid://dggtw4akyvyud" path="res://Scenes/Player.tscn" id="2_pl8e4"]
+[ext_resource type="Script" uid="uid://x5d1ldo8tqyh" path="res://Scripts/Menu.cs" id="3_is6ib"]
+[ext_resource type="Texture2D" uid="uid://cluo582413klw" path="res://background.jpg" id="4_b3i5h"]
+[ext_resource type="PackedScene" uid="uid://c64opv1sh4wjr" path="res://Scenes/Settings.tscn" id="5_tkdr5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_8pvmw"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_vnucn"]
+sky_material = SubResource("ProceduralSkyMaterial_8pvmw")
+
+[sub_resource type="Environment" id="Environment_c3mwy"]
+background_mode = 2
+sky = SubResource("Sky_vnucn")
+ambient_light_source = 3
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 2.1
+ssao_intensity = 3.35
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_cascades = 8
+fog_enabled = true
+fog_mode = 1
+fog_density = 1.0
+fog_depth_begin = 30.0
+fog_depth_end = 400.0
+volumetric_fog_density = 0.0183
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r3lo5"]
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+border_width_left = 20
+border_width_top = 10
+border_width_right = 20
+border_width_bottom = 10
+border_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtxxq"]
+bg_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8fnbn"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+border_width_left = 15
+border_width_top = 5
+border_width_right = 15
+border_width_bottom = 5
+border_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a6f85"]
+bg_color = Color(0.18717614, 0.18717614, 0.18717614, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0.1882353, 0.1882353, 0.1882353, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu36u"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+border_width_top = 20
+border_width_bottom = 20
+border_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r3lo5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qtxxq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lwnbm"]
+bg_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+border_width_left = 20
+border_width_top = 20
+border_width_right = 20
+border_width_bottom = 20
+border_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Root" type="Node3D" unique_id=1693359488]
+script = ExtResource("1_oss8w")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1818679692]
+environment = SubResource("Environment_c3mwy")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=674079569]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+light_color = Color(1, 1, 0.7058824, 1)
+shadow_enabled = true
+
+[node name="World" type="Node3D" parent="." unique_id=625296807]
+
+[node name="FPSLabel" type="Label" parent="." unique_id=829365049]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Player" parent="." unique_id=1657385896 instance=ExtResource("2_pl8e4")]
+
+[node name="Menu" type="Control" parent="." unique_id=1269756983]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_is6ib")
+
+[node name="Background" type="TextureRect" parent="Menu" unique_id=720078885]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_b3i5h")
+expand_mode = 3
+
+[node name="Menu" type="CenterContainer" parent="Menu" unique_id=1498111423]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Crosshair" type="Node2D" parent="Menu/Menu" unique_id=1727444366]
+visible = false
+
+[node name="Vertical" type="Line2D" parent="Menu/Menu/Crosshair" unique_id=170240089]
+z_index = 5
+points = PackedVector2Array(0, -10, 0, 10)
+width = 2.5
+
+[node name="Horizontal" type="Line2D" parent="Menu/Menu/Crosshair" unique_id=1063811447]
+points = PackedVector2Array(-10, 0, 10, 0)
+width = 2.5
+
+[node name="CenteredMessage" type="Label" parent="Menu/Menu" unique_id=971998617]
+visible = false
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_r3lo5")
+
+[node name="Settings" parent="Menu/Menu" unique_id=1681448782 instance=ExtResource("5_tkdr5")]
+visible = false
+z_index = 10
+layout_mode = 2
+
+[node name="TitleMenu" type="PanelContainer" parent="Menu/Menu" unique_id=1396497489]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/TitleMenu" unique_id=332783869]
+layout_mode = 2
+theme_override_constants/separation = 36
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Menu/Menu/TitleMenu/VBoxContainer" unique_id=766649688]
+layout_mode = 2
+
+[node name="Title1" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer2" unique_id=1177105248]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 46
+text = "Procedural Landscape"
+
+[node name="Title2" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer2" unique_id=305017976]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 46
+text = "Voxel Demo"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/TitleMenu/VBoxContainer" unique_id=1747423074]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="WorldsButton" type="Button" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer" unique_id=1210766442]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Worlds"
+
+[node name="SettingsButton" type="Button" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer" unique_id=760258864]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Settings"
+
+[node name="ExitButton" type="Button" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer" unique_id=1808603928]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Exit"
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Menu/Menu/TitleMenu/VBoxContainer" unique_id=701300265]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer3" unique_id=898578387]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Bachelor's thesis"
+
+[node name="Label" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer3" unique_id=1820161380]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "Otakar Kočí"
+
+[node name="LinkButton" type="LinkButton" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer3" unique_id=443332871]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+text = "xkocio00@stud.fit.vutbr.cz "
+underline = 1
+uri = "mailto:xkocio00@stud.fit.vutbr.cz "
+
+[node name="WorldsSelection" type="PanelContainer" parent="Menu/Menu" unique_id=247384740]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/WorldsSelection" unique_id=2074518261]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title2" type="Label" parent="Menu/Menu/WorldsSelection/VBoxContainer" unique_id=767661291]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "Worlds"
+
+[node name="PanelContainer" type="PanelContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer" unique_id=1516233904]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_a6f85")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer" unique_id=1594074032]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="WorldsSelectionCreateNewWorldButton" type="Button" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1217181890]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_fu36u")
+text = "Create New World"
+
+[node name="HSeparator" type="HSeparator" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer" unique_id=814686867]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer" unique_id=768680857]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+
+[node name="Worlds" type="VBoxContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer" unique_id=647301654]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="WorldsBackButton" type="Button" parent="Menu/Menu/WorldsSelection/VBoxContainer" unique_id=1219002187]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Back"
+
+[node name="NewWorld" type="PanelContainer" parent="Menu/Menu" unique_id=1278450289]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/NewWorld" unique_id=1242714351]
+layout_mode = 2
+theme_override_constants/separation = 36
+
+[node name="Title2" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer" unique_id=764026028]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "Create New World"
+
+[node name="PanelContainer" type="PanelContainer" parent="Menu/Menu/NewWorld/VBoxContainer" unique_id=1077356826]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_a6f85")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer" unique_id=389547076]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="WorldNameSetting" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer" unique_id=200967604]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WorldNameLabel" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldNameSetting" unique_id=1650358873]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "World Name"
+
+[node name="WorldNameEdit" type="LineEdit" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldNameSetting" unique_id=1434351684]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 14
+text = "Default"
+max_length = 20
+
+[node name="WorldProfile" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer" unique_id=351468024]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldProfile" unique_id=1857672247]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldProfile/HBoxContainer" unique_id=2044671487]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Settings Profile"
+
+[node name="WorldProfileSelect" type="OptionButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldProfile/HBoxContainer" unique_id=1900047732]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_reselect = true
+
+[node name="HSeparator" type="HSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1369666007]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1169757004]
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 2
+theme_override_constants/scrollbar_h_separation = 8
+
+[node name="WorldSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer" unique_id=174592720]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SeedSetting" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=806001561]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SeedLabel" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/SeedSetting" unique_id=1936616484]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Seed"
+
+[node name="SeedSpinBox" type="SpinBox" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/SeedSetting" unique_id=1980260791]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = -2147483600.0
+max_value = 2147483647.0
+rounded = true
+alignment = 2
+
+[node name="ChunkCountY" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=1841723851]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ChunkCountYLabel" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/ChunkCountY" unique_id=687068504]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Terrain Height"
+
+[node name="ChunkCountYSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/ChunkCountY" unique_id=902118864]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="HSeparator" type="HSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=444305643]
+layout_mode = 2
+
+[node name="OverallSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=560605208]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1146580393]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Overall Settings"
+
+[node name="TerrainConfig" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=2121279601]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/TerrainConfig" unique_id=1432191529]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Terrain Type"
+
+[node name="TerrainConfigSelect" type="OptionButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/TerrainConfig" unique_id=460457192]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=388933534]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 11
+text = "The area settings below (age, height, water) are proportion configs in each settings group.
+For example area age with values of 1,0,0,0,0,0,0,0 will result in world with only very young areas - only grass and plants, no trees and bushes."
+autowrap_mode = 2
+
+[node name="AreaAgeSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1093463620]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings" unique_id=1320073454]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Area Age Distribution"
+
+[node name="AreaAgeThresholds" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings" unique_id=29901163]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VeryYoung" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=1642473260]
+layout_mode = 2
+tooltip_text = "Areas with grass and plants only."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryYoung" unique_id=1915842806]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryYoung/HBoxContainer" unique_id=1219803473]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryYoung/HBoxContainer" unique_id=1845601213]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Very Young Age"
+
+[node name="VeryYoungSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryYoung" unique_id=520290892]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="Young" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=1050290277]
+layout_mode = 2
+tooltip_text = "Areas with grass and plants. More plants than in the Very Young area."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Young" unique_id=496093428]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Young/HBoxContainer" unique_id=1671011096]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Young/HBoxContainer" unique_id=1273619023]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Young Age"
+
+[node name="YoungSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Young" unique_id=1269365883]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="YoungMedium" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=1424244719]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and a few bushes and small trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/YoungMedium" unique_id=1898551406]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/YoungMedium/HBoxContainer" unique_id=918738644]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/YoungMedium/HBoxContainer" unique_id=804805997]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Young - Medium Age"
+
+[node name="YoungMediumSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/YoungMedium" unique_id=589911172]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Medium" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=1316252266]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and a bit more bushes and small/medium trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Medium" unique_id=1247232522]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Medium/HBoxContainer" unique_id=436852651]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Medium/HBoxContainer" unique_id=1436537344]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Medium Age"
+
+[node name="MediumSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Medium" unique_id=553229666]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="MediumOld" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=1159033418]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and some bushes and trees of all sizes."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/MediumOld" unique_id=2090825828]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/MediumOld/HBoxContainer" unique_id=160762061]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/MediumOld/HBoxContainer" unique_id=1668052707]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Medium - Old Age"
+
+[node name="MediumOldSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/MediumOld" unique_id=591407469]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Old" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=395424315]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and many bushes and trees of all sizes."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Old" unique_id=932852419]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Old/HBoxContainer" unique_id=2022821869]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Old/HBoxContainer" unique_id=916738758]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Old Age"
+
+[node name="OldSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Old" unique_id=816786287]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="VeryOld" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=805627747]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and bushes and trees of all sizes. Mostly consists of large trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryOld" unique_id=1375920464]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryOld/HBoxContainer" unique_id=639344427]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryOld/HBoxContainer" unique_id=284600479]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Very Old Age"
+
+[node name="VeryOldSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/VeryOld" unique_id=2074514365]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Ancient" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds" unique_id=451757801]
+layout_mode = 2
+tooltip_text = "Areas with grass, plants and bushes and trees. Very small amount of grass and plants. Trees are almost exclusively large."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Ancient" unique_id=1208126137]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Ancient/HBoxContainer" unique_id=1252168913]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Ancient/HBoxContainer" unique_id=1610498192]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Ancient Age"
+
+[node name="AncientSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaAgeSettings/AreaAgeThresholds/Ancient" unique_id=1864927664]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="AreaHeightSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1411611126]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings" unique_id=1880435172]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Area Terrain Height Mark"
+
+[node name="AreaHeightThresholds" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings" unique_id=1697449854]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Lowland" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds" unique_id=527959089]
+layout_mode = 2
+tooltip_text = "Areas with only deciduous trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Lowland" unique_id=1945848454]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Lowland/HBoxContainer" unique_id=1305089233]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Lowland/HBoxContainer" unique_id=2083125623]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Lowland"
+
+[node name="LowlandSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Lowland" unique_id=279913670]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="Hills" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds" unique_id=312826563]
+layout_mode = 2
+tooltip_text = "Areas with mix of deciduous and conifery trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Hills" unique_id=909428501]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Hills/HBoxContainer" unique_id=1985004137]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Hills/HBoxContainer" unique_id=1647124561]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Hills"
+
+[node name="HillsSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Hills" unique_id=1612062568]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Mountains" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds" unique_id=1883173002]
+layout_mode = 2
+tooltip_text = "Areas with only conifery trees."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Mountains" unique_id=26673813]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Mountains/HBoxContainer" unique_id=305037738]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Mountains/HBoxContainer" unique_id=1196682416]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Mountains"
+
+[node name="MountainsSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaHeightSettings/AreaHeightThresholds/Mountains" unique_id=1928584500]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="AreaWaterAvailabilitySettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1848418977]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings" unique_id=105779564]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Area Water Availability Mark"
+
+[node name="AreaWaterAvailabilityThresholds" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings" unique_id=1877448426]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Arid" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds" unique_id=641660716]
+layout_mode = 2
+tooltip_text = "Areas with arid-like style proportionaly on water availability."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Arid" unique_id=1632512759]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Arid/HBoxContainer" unique_id=1715293828]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Arid/HBoxContainer" unique_id=174564217]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Arid"
+
+[node name="WaterAridSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Arid" unique_id=467254059]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Low" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds" unique_id=711126796]
+layout_mode = 2
+tooltip_text = "Areas with dry and rough style proportionaly on water availability."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Low" unique_id=1399496643]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Low/HBoxContainer" unique_id=211096163]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Low/HBoxContainer" unique_id=996417104]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Low"
+
+[node name="WaterLowSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Low" unique_id=327384221]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Medium" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds" unique_id=375688064]
+layout_mode = 2
+tooltip_text = "Areas with sufficient water availability style proportionaly on water availability."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Medium" unique_id=1047612521]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Medium/HBoxContainer" unique_id=899813227]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Medium/HBoxContainer" unique_id=1731245991]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Medium"
+
+[node name="WaterMediumSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/Medium" unique_id=1572128763]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="High" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds" unique_id=689021141]
+layout_mode = 2
+tooltip_text = "Areas with water abundance style proportionaly on water availability."
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/High" unique_id=1657555589]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/High/HBoxContainer" unique_id=1649217743]
+layout_mode = 2
+theme_override_constants/separation = 20
+theme_override_styles/separator = SubResource("StyleBoxEmpty_r3lo5")
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/High/HBoxContainer" unique_id=747877772]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "High"
+
+[node name="WaterHighSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/AreaWaterAvailabilitySettings/AreaWaterAvailabilityThresholds/High" unique_id=979636386]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="VegetationDensity" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1339882901]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/VegetationDensity" unique_id=1161090264]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Vegetation Density"
+
+[node name="VegetationDensitySelect" type="OptionButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/VegetationDensity" unique_id=616461194]
+layout_mode = 2
+size_flags_horizontal = 3
+item_count = 1
+popup/item_0/id = 0
+
+[node name="WaterLilyChance" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1229089512]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/WaterLilyChance" unique_id=229623864]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Water Lily Chance"
+
+[node name="WaterLilySlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/WaterLilyChance" unique_id=280212346]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="WaterReedsChance" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1109595233]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/WaterReedsChance" unique_id=1327922009]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Reeds Chance"
+
+[node name="WaterReedsChanceSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/WaterReedsChance" unique_id=1934542712]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="SnowChance" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings" unique_id=1844894003]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/SnowChance" unique_id=110054767]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Snow Chance"
+
+[node name="SnowChanceSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/OverallSettings/SnowChance" unique_id=1861995391]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="HSeparator2" type="HSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=1149453103]
+layout_mode = 2
+
+[node name="CavesSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=1217018151]
+layout_mode = 2
+
+[node name="CavesToggle" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1113437446]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesToggle" unique_id=251199850]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Cave System"
+
+[node name="CavesToggleButton" type="CheckButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesToggle" unique_id=787543286]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CavesStartHeightOffset" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1714095243]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesStartHeightOffset" unique_id=302859357]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Caves Start Height Offset"
+
+[node name="CavesStartOffsetSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesStartHeightOffset" unique_id=1014669855]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="CavesMaxWaterLevel" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1010173838]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesMaxWaterLevel" unique_id=2142429533]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Caves Max Water Level"
+
+[node name="CavesMaxWaterLevelSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesMaxWaterLevel" unique_id=398144546]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="CavesSpaceRatio" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=398051888]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesSpaceRatio" unique_id=2060788798]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Cave Space Ratio"
+
+[node name="CavesSpaceRationSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesSpaceRatio" unique_id=103860303]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="CavesTunnelsRatio" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1834790291]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesTunnelsRatio" unique_id=1155772221]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Cave Tunnels Ratio"
+
+[node name="CavesTunnelsRatioSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesTunnelsRatio" unique_id=866771176]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="CavesTunnelEntrancesRatio" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1812951080]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesTunnelEntrancesRatio" unique_id=741423614]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Cave Tunnel Entrances Ratio"
+
+[node name="CavesTunnelEntrancesRatioSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesTunnelEntrancesRatio" unique_id=1174292069]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="CavesStalactitesChance" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1117691548]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesStalactitesChance" unique_id=565927418]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Cave Stalactites Chance"
+
+[node name="CavesStalactitesChanceSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesStalactitesChance" unique_id=1003601048]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="CavesWaterfallChance" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings" unique_id=1169361781]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesWaterfallChance" unique_id=1265910415]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Cave Waterfall Chance"
+
+[node name="CavesWaterfallChanceSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/CavesSettings/CavesWaterfallChance" unique_id=710196896]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="HSeparator3" type="HSeparator" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=497487374]
+layout_mode = 2
+
+[node name="WaterSettings" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings" unique_id=1281354967]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=712192199]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Water System"
+
+[node name="WaterPrefillTerrainHeight" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=765550008]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/WaterPrefillTerrainHeight" unique_id=907478557]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Prefilled Water Height Level"
+
+[node name="WaterPrefillTerrainHeightSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/WaterPrefillTerrainHeight" unique_id=442249534]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+step = 0.01
+
+[node name="LakeSize" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=1381556416]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/LakeSize" unique_id=1069216615]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Lake Size"
+
+[node name="LakeSizeSelect" type="OptionButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/LakeSize" unique_id=65898523]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MaxRiverLength" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=1974550532]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/MaxRiverLength" unique_id=1837359448]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Maximum River Length"
+
+[node name="MaxRiverLengthSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/MaxRiverLength" unique_id=690257503]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="WaterAvailabilityStrength" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=2145036169]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/WaterAvailabilityStrength" unique_id=342665478]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Water Availability Strength"
+
+[node name="WaterAvailabilityStrengthSelect" type="OptionButton" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/WaterAvailabilityStrength" unique_id=368614837]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ImplicitWaterAvailabilityEffect" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings" unique_id=1696250869]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/ImplicitWaterAvailabilityEffect" unique_id=1226424858]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Under. Water Avail. Effect"
+
+[node name="ImplicitWaterAvailabilityEffectSlider" type="HSlider" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/WaterSettings/ImplicitWaterAvailabilityEffect" unique_id=735430305]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+rounded = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer" unique_id=1556564639]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 16
+
+[node name="BackFromCreateButton" type="Button" parent="Menu/Menu/NewWorld/VBoxContainer/HBoxContainer" unique_id=541018607]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Back"
+
+[node name="CreateNewWorldButton" type="Button" parent="Menu/Menu/NewWorld/VBoxContainer/HBoxContainer" unique_id=449297280]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Create"
+
+[node name="PauseMenu" type="HBoxContainer" parent="Menu/Menu" unique_id=2133816150]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="ControlsMenu" type="PanelContainer" parent="Menu/Menu/PauseMenu" unique_id=510717786]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu" unique_id=137696178]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title2" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer" unique_id=451130997]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "Controls"
+
+[node name="Controls" type="VBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer" unique_id=1280225465]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=446570655]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer" unique_id=524226929]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Movement"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer" unique_id=888874157]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer" unique_id=1762471309]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer/HBoxContainer" unique_id=526544383]
+layout_mode = 2
+text = "W"
+
+[node name="Button2" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer/HBoxContainer" unique_id=2070543623]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "A"
+
+[node name="Button3" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer/HBoxContainer" unique_id=1118218001]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "S"
+
+[node name="Button4" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer/HBoxContainer" unique_id=749240924]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "D"
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1747167439]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8" unique_id=1528953569]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fly Up / Down"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8" unique_id=893694944]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8" unique_id=536192222]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8/HBoxContainer" unique_id=77753799]
+layout_mode = 2
+text = "Q"
+
+[node name="Button2" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8/HBoxContainer" unique_id=500215441]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "E"
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1293826261]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer9" unique_id=144451819]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Jump"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer9" unique_id=212925270]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer9" unique_id=874398330]
+layout_mode = 2
+text = "Space"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=178463794]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer2" unique_id=1159858829]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Toggle Torch"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer2" unique_id=1271950160]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer2" unique_id=1777438726]
+layout_mode = 2
+text = "T"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=86281015]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=1758509965]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Toggle Sun Movement"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=88699402]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=1393890217]
+layout_mode = 2
+text = "R"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=542383226]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer4" unique_id=1799243992]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete Block"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer4" unique_id=417891285]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer4" unique_id=444739326]
+layout_mode = 2
+text = "Mouse Left"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=213605958]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer5" unique_id=436188782]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Place Block"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer5" unique_id=1175233144]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer5" unique_id=1372351802]
+layout_mode = 2
+text = "Mouse Right"
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=547671543]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer6" unique_id=2115182090]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Toggle Fly / Move"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer6" unique_id=2076944528]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer6" unique_id=630424333]
+layout_mode = 2
+text = "F"
+
+[node name="HBoxContainer10" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1775520469]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer10" unique_id=489263222]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Faster Fly / Move"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer10" unique_id=878016544]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer10" unique_id=214113345]
+layout_mode = 2
+text = "Left Shift"
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1850676963]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer7" unique_id=401601916]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Toggle Wireframe"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer7" unique_id=436363]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer7" unique_id=1146478485]
+layout_mode = 2
+text = "Y"
+
+[node name="HBoxContainer11" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1426290196]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer11" unique_id=778833562]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Debug Menu"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer11" unique_id=143367431]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer11" unique_id=2589522]
+layout_mode = 2
+text = "F2"
+
+[node name="HBoxContainer12" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=2100876572]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer12" unique_id=562434892]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Performance Menu"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer12" unique_id=760145234]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer12" unique_id=1244392294]
+layout_mode = 2
+text = "F3"
+
+[node name="PauseMenuCenter" type="PanelContainer" parent="Menu/Menu/PauseMenu" unique_id=389058089]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/PauseMenu/PauseMenuCenter" unique_id=1807563309]
+layout_mode = 2
+theme_override_constants/separation = 36
+
+[node name="Title2" type="Label" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer" unique_id=1111218779]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "Menu"
+
+[node name="Buttons" type="VBoxContainer" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer" unique_id=1169886306]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+
+[node name="PauseBackButton" type="Button" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons" unique_id=252810318]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Back"
+
+[node name="PauseSettingsButton" type="Button" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons" unique_id=1131363751]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Settings"
+
+[node name="PauseMainMenuButton" type="Button" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons" unique_id=335613494]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Main Menu"
+
+[node name="PauseExitButton" type="Button" parent="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons" unique_id=786468596]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Exit"
+
+[node name="EditTeleportMenu" type="PanelContainer" parent="Menu/Menu/PauseMenu" unique_id=304323213]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
+
+[node name="EditTeleportVBox" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu" unique_id=347784687]
+layout_mode = 2
+
+[node name="VoxelEditMenu" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox" unique_id=1988225896]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Title2" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu" unique_id=1668636237]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "Editing"
+
+[node name="Options" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu" unique_id=1932250007]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/separation = 20
+
+[node name="VoxelSize" type="HBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options" unique_id=1694403448]
+layout_mode = 2
+
+[node name="VoxelSizeLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize" unique_id=208055263]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Voxel Size"
+
+[node name="VoxelSizeEdit" type="SpinBox" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize" unique_id=913314586]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 1.0
+max_value = 7.0
+value = 1.0
+
+[node name="VoxelType" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options" unique_id=1641080584]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=895030854]
+layout_mode = 2
+text = "Voxel Type"
+
+[node name="VoxelTypeContainer" type="GridContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=116537683]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 5
+
+[node name="HSeparator" type="HSeparator" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox" unique_id=1131142582]
+layout_mode = 2
+
+[node name="TeleportMenu" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox" unique_id=797903550]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title2" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu" unique_id=1613839983]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 26
+text = "Teleport"
+
+[node name="PositionsContainer" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu" unique_id=2009592825]
+layout_mode = 2
+
+[node name="TeleportPositionX" type="HBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer" unique_id=1417819135]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TeleportPositionXLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer/TeleportPositionX" unique_id=2009141353]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Position X"
+
+[node name="TeleportPositionXEdit" type="SpinBox" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer/TeleportPositionX" unique_id=1368252395]
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+
+[node name="TeleportPositionZ" type="HBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer" unique_id=1530737658]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TeleportPositionZLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer/TeleportPositionZ" unique_id=93069381]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Position Z"
+
+[node name="TeleportPositionZEdit" type="SpinBox" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/PositionsContainer/TeleportPositionZ" unique_id=1425212601]
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+
+[node name="TeleportButton" type="Button" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu" unique_id=1503431472]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
+text = "Teleport"
+
+[node name="AlertDialog" type="PanelContainer" parent="Menu/Menu" unique_id=1671839139]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lwnbm")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/Menu/AlertDialog" unique_id=1349331722]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="AlertMessageLabel" type="Label" parent="Menu/Menu/AlertDialog/VBoxContainer" unique_id=618425987]
+layout_mode = 2
+text = "This is an error message"
+
+[node name="AlertMessageCollapseButton" type="Button" parent="Menu/Menu/AlertDialog/VBoxContainer" unique_id=1324213103]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "OK"
+
+[connection signal="tree_exiting" from="Menu" to="Menu" method="_on_tree_exiting"]
+[connection signal="button_up" from="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer/WorldsButton" to="Menu" method="_on_worlds_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer/SettingsButton" to="Menu" method="_on_settings_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer/ExitButton" to="Menu" method="_on_exit_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer/WorldsSelectionCreateNewWorldButton" to="Menu" method="_on_worlds_selection_create_new_world_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/WorldsSelection/VBoxContainer/WorldsBackButton" to="Menu" method="_on_worlds_back_button_button_up"]
+[connection signal="item_selected" from="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldProfile/HBoxContainer/WorldProfileSelect" to="Menu" method="_on_world_profile_select_item_selected"]
+[connection signal="button_up" from="Menu/Menu/NewWorld/VBoxContainer/HBoxContainer/BackFromCreateButton" to="Menu" method="_on_back_from_create_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/NewWorld/VBoxContainer/HBoxContainer/CreateNewWorldButton" to="Menu" method="_on_create_new_world_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons/PauseBackButton" to="Menu" method="_on_pause_back_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons/PauseSettingsButton" to="Menu" method="_on_pause_settings_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons/PauseMainMenuButton" to="Menu" method="_on_pause_main_menu_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/PauseMenu/PauseMenuCenter/VBoxContainer/Buttons/PauseExitButton" to="Menu" method="_on_pause_exit_button_button_up"]
+[connection signal="value_changed" from="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize/VoxelSizeEdit" to="Menu" method="_on_voxel_size_edit_value_changed"]
+[connection signal="button_up" from="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/TeleportMenu/TeleportButton" to="Menu" method="_on_teleport_button_button_up"]
+[connection signal="button_up" from="Menu/Menu/AlertDialog/VBoxContainer/AlertMessageCollapseButton" to="Menu" method="_on_alert_message_collapse_button_button_up"]

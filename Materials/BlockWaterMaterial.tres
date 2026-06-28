@@ -1,0 +1,29 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://ytvskf8d227b"]
+
+[ext_resource type="Shader" uid="uid://bqyfgxjdfa2ya" path="res://Materials/BlockWaterShader.gdshader" id="1_m35r5"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_m35r5"]
+frequency = 0.008
+offset = Vector3(250, 0, 0)
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_p1of4"]
+width = 192
+depth = 192
+noise = SubResource("FastNoiseLite_m35r5")
+seamless = true
+seamless_blend_skirt = 0.5
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_m35r5")
+shader_parameter/water_color = Color(0.3565383, 0.6340883, 0.7259988, 1)
+shader_parameter/variation_noise = SubResource("NoiseTexture3D_p1of4")
+shader_parameter/voxels_per_meter = 16.0
+shader_parameter/variation_strength = 1.0
+shader_parameter/variation_speed = 4.0
+shader_parameter/noise_scale = 0.05
+shader_parameter/wave_height = 0.05
+shader_parameter/wave_speed = 1.5
+shader_parameter/wave_scale = 0.8
+shader_parameter/y_offset = 0.0625
+shader_parameter/water_alpha = 0.8

@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://bky4giq3ba0ar"]
+
+[ext_resource type="Script" uid="uid://lo18iku0mokx" path="res://Scripts/WorldSelectItem.cs" id="1_n51u4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cr58a"]
+bg_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cr58a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5gtjh"]
+bg_color = Color(0.706985, 0.15170373, 0.15170373, 1)
+border_width_left = 10
+border_width_top = 5
+border_width_right = 10
+border_width_bottom = 5
+border_color = Color(0.7058824, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n51u4"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+border_width_left = 10
+border_width_top = 5
+border_width_right = 10
+border_width_bottom = 5
+border_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="WorldSelectItem" type="PanelContainer" unique_id=1461167906]
+offset_right = 435.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cr58a")
+script = ExtResource("1_n51u4")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1458827189]
+layout_mode = 2
+
+[node name="WorldNameLabel" type="Label" parent="HBoxContainer" unique_id=497409434]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "World Name"
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=1421566476]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 80
+theme_override_styles/separator = SubResource("StyleBoxEmpty_cr58a")
+
+[node name="DeleteWorldButton" type="Button" parent="HBoxContainer" unique_id=1948818277]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_5gtjh")
+text = "Delete"
+
+[node name="OpenWorldButton" type="Button" parent="HBoxContainer" unique_id=1729401623]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_n51u4")
+text = "Open"

@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://wdh3kbk5lht1"]
+
+[ext_resource type="Shader" uid="uid://jwdhyf4algdp" path="res://Materials/BlockShader.gdshader" id="1_8n6nw"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8n6nw")
+shader_parameter/voxels_per_meter = 16.0
+shader_parameter/variation_strength = 0.22

@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://dggtw4akyvyud"]
+
+[ext_resource type="Script" uid="uid://b0icaget7dwwp" path="res://Scripts/Player.cs" id="1_rpqav"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qbkls"]
+radius = 0.25
+height = 1.5
+
+[node name="Player" type="CharacterBody3D" unique_id=3164163]
+script = ExtResource("1_rpqav")
+
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=500246932]
+shape = SubResource("CapsuleShape3D_qbkls")
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1777038947]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Torch" type="OmniLight3D" parent="." unique_id=1640697374]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4302957, 0.6888671, -0.24657339)
+visible = false
+light_color = Color(0.8709775, 0.7342224, 0.44358617, 1)
+light_size = 0.01
+shadow_enabled = true
+distance_fade_enabled = true
+omni_range = 10.058

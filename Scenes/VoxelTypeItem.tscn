@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://qjvjwo5dgpfs"]
+
+[ext_resource type="Script" uid="uid://byud2ks8vp0x3" path="res://Scripts/VoxelTypeItem.cs" id="1_47f5n"]
+
+[sub_resource type="Gradient" id="Gradient_47f5n"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_flqed"]
+gradient = SubResource("Gradient_47f5n")
+width = 1
+
+[sub_resource type="Gradient" id="Gradient_k2c0l"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_jnxed"]
+gradient = SubResource("Gradient_k2c0l")
+width = 1
+
+[node name="TextureRect" type="TextureRect" unique_id=334102160]
+custom_minimum_size = Vector2(32, 32)
+offset_right = 32.0
+offset_bottom = 32.0
+texture = SubResource("GradientTexture1D_flqed")
+stretch_mode = 1
+script = ExtResource("1_47f5n")
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=1804375480]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 26.0
+offset_bottom = 26.0
+texture_normal = SubResource("GradientTexture1D_jnxed")
+stretch_mode = 0
