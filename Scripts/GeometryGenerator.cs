@@ -389,9 +389,7 @@ public class GeometryGenerator
                     VoxelType voxelType = column.GetVoxel(x, (uint)y, z, voxelStep);
                     
                     // treat plant voxels in water as water for meshing purposes, but only at higher LOD levels
-                    if (voxelStep > 1 && voxelType is VoxelType.PLANT_WATER or VoxelType.PLANT_DARK_WATER or
-                            VoxelType.YELLOW_WATER or VoxelType.BROWN_WATER or VoxelType.RED_WATER or
-                            VoxelType.BLUE_WATER or VoxelType.WHITE_WATER)
+                    if (voxelStep > 1 && voxelType >= VoxelType.PLANT_WATER && voxelType == VoxelType.WHITE_WATER)
                     {
                         voxelType = VoxelType.WATER;
                     }
@@ -410,7 +408,6 @@ public class GeometryGenerator
                             continue;
                         
                         // should be rendered
-                        Vector3 directionVector = GetDirectionVectorGodot(direction);
                         Vector3 basePosition = new((x - startX) * voxelSize, (y - startY) * voxelSize, (z - startZ) * voxelSize);
                         Vector3[] vertices = _faceVertices[direction];
 
@@ -419,13 +416,17 @@ public class GeometryGenerator
                         waterVertices.Add(basePosition + vertices[1] * cubeSize);
                         waterVertices.Add(basePosition + vertices[2] * cubeSize);
                         waterVertices.Add(basePosition + vertices[3] * cubeSize);
+                        
                         // only single normal, expanded before display
-                        waterNormals.Add(directionVector);
+                        waterNormals.Add(GetDirectionVectorGodot(direction));
+                        
                         // uvs not needed in shader
+                        
                         // build up indices for both triangles
                         waterIndices.Add(waterVertexOffset);
                         waterIndices.Add(waterVertexOffset + 1);
                         waterIndices.Add(waterVertexOffset + 2);
+                        
                         waterIndices.Add(waterVertexOffset + 3);
                         waterIndices.Add(waterVertexOffset + 1);
                         waterIndices.Add(waterVertexOffset);
@@ -445,23 +446,23 @@ public class GeometryGenerator
     private bool ShouldRenderWaterFace(ChunkColumn column, int x, int y, int z, DIRECTION direction, byte voxelStep, int chunkX, int chunkZ)
     {
         Vector3Sys directionVector = GetDirectionVector(direction);
-        
-        int nX = x + (int)directionVector.X * voxelStep;
         int nY = y + (int)directionVector.Y * voxelStep;
-        int nZ = z + (int)directionVector.Z * voxelStep;
         
         // render faces pointing up above world height limit
-        if (direction == DIRECTION.UP && nY >= column.totalVoxelsY)
+        if (nY >= column.totalVoxelsY && direction == DIRECTION.UP)
         {
             return true;
         }
 
         // do not render faces pointing down below y=0
-        if (direction == DIRECTION.DOWN && nY < 0)
+        if (nY < 0 && direction == DIRECTION.DOWN)
         {
             return false;
         }
-
+        
+        int nX = x + (int)directionVector.X * voxelStep;
+        int nZ = z + (int)directionVector.Z * voxelStep;
+        
         // check if chunk boundary is crossed
         int neighborChunkX = nX >= 0 ? nX / chunkVoxelSize : (nX - chunkVoxelSize + 1) / chunkVoxelSize;
         int neighborChunkZ = nZ >= 0 ? nZ / chunkVoxelSize : (nZ - chunkVoxelSize + 1) / chunkVoxelSize;
@@ -688,20 +689,17 @@ public class GeometryGenerator
         // scale quad face vertices based on quad dimensions and cube size
         Vector3[] quadVertices = ScaleQuadVertices(direction, quad.width, quad.height, quad.cubeSize);
         
-        Vector3 directionVector = GetDirectionVectorGodot(direction);
-        
         // add vertices, apply local base position, scaling done in ScaleQuadVertices
-        for (int i = 0; i < 4; i++)
-        {
-            vertices.Add(basePosition + quadVertices[i]);
-        }
+        vertices.Add(basePosition + quadVertices[0]);
+        vertices.Add(basePosition + quadVertices[1]);
+        vertices.Add(basePosition + quadVertices[2]);
+        vertices.Add(basePosition + quadVertices[3]);
+        
         // add single normal, expanded during geometry display
-        normals.Add(directionVector);
+        normals.Add(GetDirectionVectorGodot(direction));
 
-        // obtain UV coordinates from texture atlas manager
-        Vector2 atlasUV = VoxelAtlas.GetAtlasUV(quad.voxelType);
-        // apply only once, expanded during geometry display
-        uvs.Add(atlasUV);
+        // apply single UV from voxel atlas, expanded during geometry display
+        uvs.Add(VoxelAtlas.GetAtlasUV(quad.voxelType));
 
         // add indices
         indices.Add(vertexOffset);
@@ -806,39 +804,39 @@ public class GeometryGenerator
     private bool ShouldRenderFace(VoxelType currentType, ChunkColumn column, int x, int y, int z, DIRECTION direction, byte voxelStep, int chunkX, int chunkZ)
     {
         // do not render faces for water or air blocks
-        if (currentType is VoxelType.WATER or VoxelType.AIR)
+        if (currentType is VoxelType.AIR or VoxelType.WATER)
         {
             return false;
         }
         
         Vector3Sys directionVector = GetDirectionVector(direction);
-        int nx = x + (int)directionVector.X * voxelStep;
         int ny = y + (int)directionVector.Y * voxelStep;
-        int nz = z + (int)directionVector.Z * voxelStep;
         
         // render faces pointing up above world height limit
-        if (direction == DIRECTION.UP && ny >= column.totalVoxelsY)
+        if (ny >= column.totalVoxelsY && direction == DIRECTION.UP)
         {
             return true;
         }
         
         // do not render faces pointing down below y=0
-        if (direction == DIRECTION.DOWN && ny < 0)
+        if (ny < 0 && direction == DIRECTION.DOWN)
         {
             return false;
         }
+        
+        // do not render vegetation voxels (plants, colors, water enclosed) at LOD levels > 0
+        if (voxelStep > 1 && currentType >= VoxelType.PLANT && currentType <= VoxelType.WHITE_WATER)
+        {
+            return false;
+        }
+        
+        int nx = x + (int)directionVector.X * voxelStep;
+        int nz = z + (int)directionVector.Z * voxelStep;
 
         // check if chunk boundary is crossed
         int neighborChunkX = nx >= 0 ? nx / chunkVoxelSize : (nx - chunkVoxelSize + 1) / chunkVoxelSize;
         int neighborChunkZ = nz >= 0 ? nz / chunkVoxelSize : (nz - chunkVoxelSize + 1) / chunkVoxelSize;
         
-        // do not render vegetation voxels (plants and colors for flowers) at LOD levels > 0
-        if (voxelStep > 1 && currentType is VoxelType.PLANT or VoxelType.PLANT_DARK or VoxelType.RED or VoxelType.YELLOW or VoxelType.BLUE or VoxelType.WHITE or VoxelType.BROWN
-                or VoxelType.PLANT_WATER or VoxelType.PLANT_DARK_WATER or VoxelType.YELLOW_WATER or VoxelType.BROWN_WATER or VoxelType.RED_WATER or VoxelType.BLUE_WATER or VoxelType.WHITE_WATER)
-        {
-            return false;
-        }
-
         // check for cross-column boundary (different X or Z chunk)
         bool crossingColumnBoundary = (neighborChunkX != chunkX || neighborChunkZ != chunkZ);
 
@@ -866,9 +864,8 @@ public class GeometryGenerator
                     {
                         neighborType = VoxelType.AIR;
                     }
-                    // also treat foliage as air at higher LOD levels
-                    else if (neighborType is VoxelType.PLANT or VoxelType.PLANT_DARK or VoxelType.RED or VoxelType.YELLOW or VoxelType.BLUE or VoxelType.WHITE or VoxelType.BROWN
-                             or VoxelType.PLANT_WATER or VoxelType.PLANT_DARK_WATER or VoxelType.YELLOW_WATER or VoxelType.BROWN_WATER or VoxelType.RED_WATER or VoxelType.BLUE_WATER or VoxelType.WHITE_WATER)
+                    // also treat foliage (plants, colors, water enclosed) as air at higher LOD levels
+                    else if (neighborType >= VoxelType.PLANT && neighborType <= VoxelType.WHITE_WATER)
                     {
                         neighborType = VoxelType.AIR;
                     }
@@ -881,9 +878,8 @@ public class GeometryGenerator
             neighborType = column.GetVoxel(nx, (uint)ny, nz, voxelStep);
         }
 
-        // skip plants at higher LOD levels, render faces that face them
-        if (voxelStep > 1 && neighborType is VoxelType.PLANT or VoxelType.PLANT_DARK or VoxelType.RED or VoxelType.YELLOW or VoxelType.BLUE or VoxelType.WHITE or VoxelType.BROWN
-                or VoxelType.PLANT_WATER or VoxelType.PLANT_DARK_WATER or VoxelType.YELLOW_WATER or VoxelType.BROWN_WATER or VoxelType.RED_WATER or VoxelType.BLUE_WATER or VoxelType.WHITE_WATER)
+        // skip plants (plants, colors, water enclosed) at higher LOD levels, render faces that face them
+        if (voxelStep > 1 && neighborType >= VoxelType.PLANT && neighborType <= VoxelType.WHITE_WATER)
         {
             return true;
         }
