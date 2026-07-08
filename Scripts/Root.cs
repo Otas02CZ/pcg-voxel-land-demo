@@ -979,7 +979,7 @@ public partial class Root : Node3D
 			var geometryGenRemainingTasks = geometryGeneratorService.GetRemainingTasksCount();
 			var geometryGenLockedTasks = geometryGeneratorService.GetLockedTasksCount();
 			var geometryGenActiveColumns = geometryGeneratorService.GetActiveColumnsCount();
-			var geometryGenAverageChunkLODTime = geometryGeneratorService.GetAverageChunkLodGenerationTime();
+            (long lod0, long lod1, long lod2) = geometryGeneratorService.GetAverageChunkLodGenerationTime();
 			var meshViewDisplayedColumns = worldDisplayService.GetDisplayedColumnsCount();
 			var meshViewRemainingTasks = worldDisplayService.GetRemainingTasksCount();
 			var meshViewLockedTasks = worldDisplayService.GetLockedTasksCount();
@@ -994,7 +994,7 @@ public partial class Root : Node3D
 			fpsLabel.Text = $"WORLD GEN (A/W/R/L): {worldGenActiveRegions}/{worldGenWorkingTasks}/{worldGenRemainingTasks}/{worldGenLockedTasks}\n" +
 							$"VOXEL GEN (A/R/L): {voxelGenActiveColumns}/{voxelGenRemainingTasks}/{voxelGenLockedTasks}/{voxelGenWaitingNeighborsCount}\n" +
 							$"GEOMT GEN (A/R/L): {geometryGenActiveColumns}/{geometryGenRemainingTasks}/{geometryGenLockedTasks}\n" +
-							$"MESH  GEN: {geometryGenAverageChunkLODTime} ms average\n" +
+							$"MESH  GEN: {lod0}/{lod1}/{lod2} ms average\n" +
 							$"MESH VIEW (A/R/L): {meshViewDisplayedColumns}/{meshViewRemainingTasks}/{meshViewLockedTasks}\n" +
 							$"MODEL GEN (R): {modelGenRemainingTasks}\n" +
 							$"CAMERA CHUNK: {cameraChunk.x}, {cameraChunk.y}, {cameraChunk.z}\n" +

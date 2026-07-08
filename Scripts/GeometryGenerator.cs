@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Diagnostics;
 using Godot;
 using Vector3Sys = System.Numerics.Vector3;
 
@@ -190,10 +191,11 @@ public class GeometryGenerator
     private readonly int chunkVoxelSize;
     private readonly int lodCount;
     // generation speed tracking
-    private readonly List<long> lodGenerationTimes;
+    private List<long>[] lodGenerationTimes;
     private readonly Lock lodGenerationTimesLock;
     private readonly int maxLodGenerationTimes = 1000;
-    private long currentSumLodGenerationTimes;
+    private long[] currentSumLodGenerationTimes;
+    
     
     
     public GeometryGenerator(int voxelsPerMeter, int chunkVoxelSize, int lodCount)
@@ -202,20 +204,30 @@ public class GeometryGenerator
         voxelSize = 1f / voxelsPerMeter;
         this.chunkVoxelSize = chunkVoxelSize;
         this.lodCount = lodCount;
-        lodGenerationTimes = [];
+        lodGenerationTimes = new List<long>[lodCount];
+        lodGenerationTimes[0] = new List<long>();
+        lodGenerationTimes[1] = new List<long>();
+        lodGenerationTimes[2] = new List<long>();
+        currentSumLodGenerationTimes = new long[3];
         lodGenerationTimesLock = new Lock();
     }
     
     /**
      * Returns average time in ms it takes to generate single LOD level of a chunk.
      */
-    public long GetAverageChunkLodGenerationTime()
+    public (long lod0, long lod1, long lod2) GetAverageChunkLodGenerationTime()
     {
         lock (lodGenerationTimesLock)
         {
-            if (lodGenerationTimes.Count == 0)
-                return 0;
-            return currentSumLodGenerationTimes / lodGenerationTimes.Count;
+            List<long> lodResults = [0, 0, 0];
+
+            for (int i = 0; i < lodCount; i++)
+            {
+                if (lodGenerationTimes[i].Count != 0)
+                    lodResults[i] = currentSumLodGenerationTimes[i] / lodGenerationTimes[i].Count;
+            }
+
+            return (lodResults[0], lodResults[1], lodResults[2]);
         }
     }
 
@@ -240,18 +252,18 @@ public class GeometryGenerator
             // process the chunk at all LOD levels
             for (int lod = 0; lod < lodCount; lod++)
             {
-                long chunkLODTimeStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 chunkGeometry.lods[lod] = GenerateChunkMesh(column, column.chunkX, y, column.chunkZ, (LodLevel)lod);
-                long chunkLODTotal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - chunkLODTimeStart;
+                stopwatch.Stop();
                 lock (lodGenerationTimesLock)
                 {
-                    if (lodGenerationTimes.Count >= maxLodGenerationTimes)
+                    if (lodGenerationTimes[lod].Count >= maxLodGenerationTimes)
                     {
-                        currentSumLodGenerationTimes -= lodGenerationTimes[0];
-                        lodGenerationTimes.RemoveAt(0);
+                        currentSumLodGenerationTimes[lod] -= lodGenerationTimes[lod][0];
+                        lodGenerationTimes[lod].RemoveAt(0);
                     }
-                    lodGenerationTimes.Add(chunkLODTotal);
-                    currentSumLodGenerationTimes += chunkLODTotal;
+                    lodGenerationTimes[lod].Add(stopwatch.ElapsedMilliseconds);
+                    currentSumLodGenerationTimes[lod] += stopwatch.ElapsedMilliseconds;
                 }
 
                 // if LOD0 has no geometry, it can be skipped
@@ -278,18 +290,18 @@ public class GeometryGenerator
         // generate all lods
         for (int lod = 0; lod < lodCount; lod++)
         {
-            long chunkLODTimeStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            Stopwatch stopwatch = Stopwatch.StartNew();
             lodMeshes[lod] = GenerateChunkMesh(column, column.chunkX, chunkY, column.chunkZ, (LodLevel)lod);
-            long chunkLODTotal = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - chunkLODTimeStart;
+            stopwatch.Stop();
             lock (lodGenerationTimesLock)
             {
-                if (lodGenerationTimes.Count >= maxLodGenerationTimes)
+                if (lodGenerationTimes[lod].Count >= maxLodGenerationTimes)
                 {
-                    currentSumLodGenerationTimes -= lodGenerationTimes[0];
-                    lodGenerationTimes.RemoveAt(0);
+                    currentSumLodGenerationTimes[lod] -= lodGenerationTimes[lod][0];
+                    lodGenerationTimes[lod].RemoveAt(0);
                 }
-                lodGenerationTimes.Add(chunkLODTotal);
-                currentSumLodGenerationTimes += chunkLODTotal;
+                lodGenerationTimes[lod].Add(stopwatch.ElapsedMilliseconds);
+                currentSumLodGenerationTimes[lod] += stopwatch.ElapsedMilliseconds;
             }
         }
         
