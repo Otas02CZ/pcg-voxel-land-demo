@@ -113,6 +113,14 @@ public class WorldDisplayService
             {
                 if (task.chunkX == chunkColumnGeometry.chunkX && task.chunkZ == chunkColumnGeometry.chunkZ)
                 {
+                    // need to check that required lods are present
+                    if (chunkColumnGeometry.columnLods[(int)task.lodLevel] == null || !chunkColumnGeometry.columnLods[(int)task.lodLevel].ready || 
+                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.columnLods[(int)LodLevel.LOD1] == null || !chunkColumnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                        )
+                    {
+                        continue;
+                    }
+                    
                     taskList.Add(task);
                     tasksToRemove.Add(task);
                 }
@@ -151,7 +159,7 @@ public class WorldDisplayService
      * engine data structures.
      */
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-    private MeshInstance3D CreateChunkMeshInstance(ChunkMesh meshData, bool enableVoxelVariance)
+    private MeshInstance3D CreateChunkMeshInstance(ChunkGeometry geometryData, bool enableVoxelVariance)
     {
         try
         {
@@ -159,39 +167,39 @@ public class WorldDisplayService
             bool hasAnySurface = false;
 
             // surface 0 - solid blocks
-            if (meshData.hasGeometry && meshData.vertices?.Length > 0)
+            if (geometryData.hasGeometry && geometryData.vertices?.Length > 0)
             {
                 hasAnySurface = true;
 
                 // extend compacted normals and uv arrays
                 int baseIndex;
-                Vector3[] extendedNormals = new Vector3[meshData.vertices.Length];
-                for (int i = 0; i < meshData.normals.Length; i++)
+                Vector3[] extendedNormals = new Vector3[geometryData.vertices.Length];
+                for (int i = 0; i < geometryData.normals.Length; i++)
                 {
                     baseIndex = i * 4;
-                    extendedNormals[baseIndex] = meshData.normals[i];
-                    extendedNormals[baseIndex + 1] = meshData.normals[i];
-                    extendedNormals[baseIndex + 2] = meshData.normals[i];
-                    extendedNormals[baseIndex + 3] = meshData.normals[i];
+                    extendedNormals[baseIndex] = geometryData.normals[i];
+                    extendedNormals[baseIndex + 1] = geometryData.normals[i];
+                    extendedNormals[baseIndex + 2] = geometryData.normals[i];
+                    extendedNormals[baseIndex + 3] = geometryData.normals[i];
                 }
 
-                Vector2[] extendedUVs = new Vector2[meshData.vertices.Length];
-                for (int i = 0; i < meshData.uvs.Length; i++)
+                Vector2[] extendedUVs = new Vector2[geometryData.vertices.Length];
+                for (int i = 0; i < geometryData.uvs.Length; i++)
                 {
                     baseIndex = i * 4;
-                    extendedUVs[baseIndex] = meshData.uvs[i];
-                    extendedUVs[baseIndex + 1] = meshData.uvs[i];
-                    extendedUVs[baseIndex + 2] = meshData.uvs[i];
-                    extendedUVs[baseIndex + 3] = meshData.uvs[i];
+                    extendedUVs[baseIndex] = geometryData.uvs[i];
+                    extendedUVs[baseIndex + 1] = geometryData.uvs[i];
+                    extendedUVs[baseIndex + 2] = geometryData.uvs[i];
+                    extendedUVs[baseIndex + 3] = geometryData.uvs[i];
                 }
                 
                 // build engine expected array structure
                 Godot.Collections.Array solidArrays = new();
                 solidArrays.Resize((int)Mesh.ArrayType.Max);
-                solidArrays[(int)Mesh.ArrayType.Vertex] = meshData.vertices;
+                solidArrays[(int)Mesh.ArrayType.Vertex] = geometryData.vertices;
                 solidArrays[(int)Mesh.ArrayType.Normal] = extendedNormals;
                 solidArrays[(int)Mesh.ArrayType.TexUV] = extendedUVs;
-                solidArrays[(int)Mesh.ArrayType.Index] = meshData.indices;
+                solidArrays[(int)Mesh.ArrayType.Index] = geometryData.indices;
 
                 Mesh.ArrayFormat arrayFormat = Mesh.ArrayFormat.FormatVertex | Mesh.ArrayFormat.FormatNormal | Mesh.ArrayFormat.FormatTexUV | Mesh.ArrayFormat.FormatIndex;
 
@@ -210,28 +218,28 @@ public class WorldDisplayService
             }
 
             // surface 1 - water
-            if (meshData.hasWaterGeometry && meshData.waterVertices?.Length > 0)
+            if (geometryData.hasWaterGeometry && geometryData.waterVertices?.Length > 0)
             {
                 hasAnySurface = true;
 
                 // extend compacted array of normals
                 int baseIndex;
-                Vector3[] extendedNormals = new Vector3[meshData.waterVertices.Length];
-                for (int i = 0; i < meshData.waterNormals.Length; i++)
+                Vector3[] extendedNormals = new Vector3[geometryData.waterVertices.Length];
+                for (int i = 0; i < geometryData.waterNormals.Length; i++)
                 {
                     baseIndex = i * 4;
-                    extendedNormals[baseIndex] = meshData.waterNormals[i];
-                    extendedNormals[baseIndex + 1] = meshData.waterNormals[i];
-                    extendedNormals[baseIndex + 2] = meshData.waterNormals[i];
-                    extendedNormals[baseIndex + 3] = meshData.waterNormals[i];
+                    extendedNormals[baseIndex] = geometryData.waterNormals[i];
+                    extendedNormals[baseIndex + 1] = geometryData.waterNormals[i];
+                    extendedNormals[baseIndex + 2] = geometryData.waterNormals[i];
+                    extendedNormals[baseIndex + 3] = geometryData.waterNormals[i];
                 }
 
                 // build array for engine
                 Godot.Collections.Array waterArrays = new();
                 waterArrays.Resize((int)Mesh.ArrayType.Max);
-                waterArrays[(int)Mesh.ArrayType.Vertex] = meshData.waterVertices;
+                waterArrays[(int)Mesh.ArrayType.Vertex] = geometryData.waterVertices;
                 waterArrays[(int)Mesh.ArrayType.Normal] = extendedNormals;
-                waterArrays[(int)Mesh.ArrayType.Index] = meshData.waterIndices;
+                waterArrays[(int)Mesh.ArrayType.Index] = geometryData.waterIndices;
 
                 Mesh.ArrayFormat arrayFormat = Mesh.ArrayFormat.FormatVertex | Mesh.ArrayFormat.FormatNormal | Mesh.ArrayFormat.FormatIndex;
                 // add water surface
@@ -255,7 +263,7 @@ public class WorldDisplayService
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"Failed to create combined mesh for chunk {meshData.chunkX},{meshData.chunkY},{meshData.chunkZ}: {ex.Message}");
+            GD.PrintErr($"Failed to create combined mesh for chunk {geometryData.chunkX},{geometryData.chunkY},{geometryData.chunkZ}: {ex.Message}");
             return null;
         }
     }
@@ -309,15 +317,26 @@ public class WorldDisplayService
             {
                 case WorldDisplayTaskType.DISPLAY:
                     // if column is ready add it to tasks that can be processed, otherwise it must wait
+                    // for lod0 - lod0 and lod1 must be ready, otherwise only the lod specified
                     ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
                     if (columnGeometry == null)
                     {
                         notReadyTasks.Add(task);
+                        break;
                     }
-                    else
+                    
+                    // check lods ready
+                    if (columnGeometry.columnLods[(int)task.lodLevel] == null || !columnGeometry.columnLods[(int)task.lodLevel].ready ||
+                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.columnLods[(int)LodLevel.LOD1] == null || !columnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                        )
                     {
-                        taskList.Add(task);
+                        // not ready
+                        notReadyTasks.Add(task);
+                        break;
                     }
+                    
+                    // otherwise ready
+                    taskList.Add(task);
                     break;
                 case WorldDisplayTaskType.HIDE:
                     // remove from notReadyTasks if it is present
@@ -436,6 +455,14 @@ public class WorldDisplayService
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry.");
                     return;
                 }
+                // check that necessary lods are present, lod0 must have lod1 for collision
+                if (columnGeometry.columnLods[(int)task.lodLevel] == null || !columnGeometry.columnLods[(int)task.lodLevel].ready || 
+                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.columnLods[(int)LodLevel.LOD1] == null || !columnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                    )
+                {
+                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
+                    return;
+                }
 
                 // find out whether the column is currently displayed
                 DisplayedColumn displayedColumn;
@@ -454,6 +481,7 @@ public class WorldDisplayService
                 if (displayedColumn.currentLod != task.lodLevel)
                 {
                     displayedColumn.currentLod = task.lodLevel;
+                    
                     // process all its chunks
                     for (int y = 0; y < chunkCountY; y++)
                     {
@@ -471,30 +499,30 @@ public class WorldDisplayService
                             displayedColumn.chunkInstances[y] = null;
                         }
                         
-                        if (!columnGeometry.chunks[y].hasGeometry)
+                        if (!columnGeometry.columnLods[(int)task.lodLevel].chunks[y].hasGeometry)
                         {
                             continue; // might not have any geometry to display
                         }
                         
-                        ChunkMesh chunkMesh = columnGeometry.chunks[y].lods[(byte)task.lodLevel];
+                        ChunkGeometry chunkGeometry = columnGeometry.columnLods[(int)task.lodLevel].chunks[y];
                         bool enableVoxelVariance = task.lodLevel == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
-                        instance = CreateChunkMeshInstance(chunkMesh, enableVoxelVariance); // generate engine MeshInstance3D with block and water surface
+                        instance = CreateChunkMeshInstance(chunkGeometry, enableVoxelVariance); // generate engine MeshInstance3D with block and water surface
                         if (instance == null)
                         {
                             continue;
                         }
                         // assign it and apply origin shift offset
                         displayedColumn.chunkInstances[y] = instance;
-                        displayedColumn.realPositions[y] = chunkMesh.worldPosition;
-                        worldPositionOffset = chunkMesh.worldPosition + originShiftOffsetXZ;
+                        displayedColumn.realPositions[y] = chunkGeometry.worldPosition;
+                        worldPositionOffset = chunkGeometry.worldPosition + originShiftOffsetXZ;
                         instance.Position = worldPositionOffset.ToGodotVector3();
                         voxelWorld.AddChild(instance);
                             
                         // add collision if current LOD is LOD0 (use LOD1 for collision)
                         if (task.lodLevel == LodLevel.LOD0)
                         {
-                            chunkMesh = columnGeometry.chunks[y].lods[(byte)LodLevel.LOD1];
-                            instanceForCollision = CreateChunkMeshInstance(chunkMesh, false);
+                            chunkGeometry = columnGeometry.columnLods[(int)LodLevel.LOD1].chunks[y];
+                            instanceForCollision = CreateChunkMeshInstance(chunkGeometry, false);
                             if (instanceForCollision == null)
                             {
                                 continue;
@@ -513,6 +541,9 @@ public class WorldDisplayService
             
             // only updating a single chunk of a column to its new geometry
             case WorldDisplayTaskType.UPDATE_EDIT:
+                break;
+                // TODO needs to be reworked
+                /*
                 // check whether it was not already unloaded
                 if (!displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
@@ -549,9 +580,9 @@ public class WorldDisplayService
                 }
                 
                 // create the mesh instance with both surfaces
-                ChunkMesh chunkMeshToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)displayedColumnToUpdate.currentLod];
+                ChunkGeometry chunkGeometryToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)displayedColumnToUpdate.currentLod];
                 bool enableVoxelVarianceForUpdate = displayedColumnToUpdate.currentLod == LodLevel.LOD0;
-                instance = CreateChunkMeshInstance(chunkMeshToUpdate, enableVoxelVarianceForUpdate);
+                instance = CreateChunkMeshInstance(chunkGeometryToUpdate, enableVoxelVarianceForUpdate);
                 if (instance == null)
                 {
                     return;
@@ -559,16 +590,16 @@ public class WorldDisplayService
                 
                 // assign it and apply origin shift offset
                 displayedColumnToUpdate.chunkInstances[yIndex] = instance;
-                displayedColumnToUpdate.realPositions[yIndex] = chunkMeshToUpdate.worldPosition;
-                worldPositionOffset = chunkMeshToUpdate.worldPosition + originShiftOffsetXZ;
+                displayedColumnToUpdate.realPositions[yIndex] = chunkGeometryToUpdate.worldPosition;
+                worldPositionOffset = chunkGeometryToUpdate.worldPosition + originShiftOffsetXZ;
                 instance.Position = worldPositionOffset.ToGodotVector3();
                 voxelWorld.AddChild(instance);
                             
                 // add collision if current LOD is LOD0 (use LOD1 for collision)
                 if (displayedColumnToUpdate.currentLod == LodLevel.LOD0)
                 {
-                    chunkMeshToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)LodLevel.LOD1];
-                    instanceForCollision = CreateChunkMeshInstance(chunkMeshToUpdate, false);
+                    chunkGeometryToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)LodLevel.LOD1];
+                    instanceForCollision = CreateChunkMeshInstance(chunkGeometryToUpdate, false);
                     if (instanceForCollision == null)
                     {
                         return;
@@ -581,6 +612,7 @@ public class WorldDisplayService
                     instance.AddChild(collision);
                     instanceForCollision.QueueFree();
                 }
+                */
                 break;
         }
     }

@@ -118,13 +118,14 @@ public partial class Root : Node3D
 	private int lodDistance2 = 80;
 	// margins and distance additions for related voxelization and region generation distances
 	private int lodDistanceMax;
-	private const int lodUnloadMargin = 5;
+	private const int columnUnloadMargin = 5;
 	private const int regionTerrainMin = 320;
 	private const int regionFeaturesMin = 160;
 	private const int regionUnloadMargin = 80;
 	private const int columnPreparationDistanceAddition = 25;
 	private const int columnVoxelizationDistanceAddition = 15;
-	private const int columnMeshingDistanceAddition = 5;
+	private const int columnMeshingDistanceAddition = 5; // further away higher
+    private const int columnGeometryUnloadMargin = 5;
 	// total number of lods
 	private const int lodCount = 3;
 	// maximum count of display column applications per frame
@@ -135,17 +136,24 @@ public partial class Root : Node3D
 	private int regionFeaturesTriggerDistance; // distance where regions need to be fully generated
 	private int columnPreparationDistance; // distance for columns to be readied in voxel storage
 	private int columnVoxelizationDistance; // distance for columns to be voxelized
-	private int columnMeshingDistance; // distance for columns that need to have generated geometry
+	private int columnMeshingDistanceLod0; // distance for columns that need to have generated geometry at lod0
+    private int columnMeshingDistanceLod1; // distance for columns that need to have generated geometry at lod1
+    private int columnMeshingDistanceLod2; // distance for columns that need to have generated geometry at lod2
 
 	private int regionTriggerDistanceUnload; // regions beyond this distance need to be unloaded
 	private int columnDistanceUnload; // columns beyond this distance need to be unloaded at the voxel level
-	private int columnMeshingDistanceUnload; // columns beyond this distance need to be unloaded at the geometry level
+	private int columnMeshingDistanceUnloadLod0; // columns beyond this distance need to be unloaded at the geometry lod0 level
+    private int columnMeshingDistanceUnloadLod1; // columns beyond this distance need to be unloaded at the geometry lod1 level
+    private int columnMeshingDistanceUnloadLod2; // columns beyond this distance need to be unloaded at the geometry lod2 level
+    
 	// collections for tracking currently active / loaded regions and columns on all levels
 	private HashSet<(int x, int z)> loadedRegions;
 	private HashSet<(int x, int z)> generatedRegions;
 	private HashSet<(int x, int z)> loadedColumns;
 	private HashSet<(int x, int z)> generatedColumns;
-	private HashSet<(int x, int z)> meshedColumns;
+	private HashSet<(int x, int z)> meshedColumnsLod0;
+    private HashSet<(int x, int z)> meshedColumnsLod1;
+    private HashSet<(int x, int z)> meshedColumnsLod2;
 	private Dictionary<(int x, int z), LodLevel> columnLods;
 
 	private const double lodUpdateInterval = 0.5; // update LOD every 0.5 seconds
@@ -407,7 +415,9 @@ public partial class Root : Node3D
 		generatedRegions = [];
 		loadedColumns = [];
 		generatedColumns = [];
-		meshedColumns = [];
+		meshedColumnsLod0 = [];
+        meshedColumnsLod1 = [];
+        meshedColumnsLod2 = [];
 		columnLods = new Dictionary<(int, int), LodLevel>();
 		// initialize voxel storage and cave gen helper
 		voxelStorage = new VoxelStorage(metersPerChunk, voxelsPerMeter, chunkCountY);
@@ -532,7 +542,9 @@ public partial class Root : Node3D
 		generatedRegions = null;
 		loadedColumns = null;
 		generatedColumns = null;
-		meshedColumns = null;
+		meshedColumnsLod0 = null;
+        meshedColumnsLod1 = null;
+        meshedColumnsLod2 = null;
 		columnLods = null;
 	}
 	
@@ -566,11 +578,16 @@ public partial class Root : Node3D
 		regionFeaturesTriggerDistance = regionFeaturesMin + lodDistanceMax;
 		columnPreparationDistance = lodDistanceMax + columnPreparationDistanceAddition;
 		columnVoxelizationDistance = lodDistanceMax + columnVoxelizationDistanceAddition;
-		columnMeshingDistance = lodDistanceMax + columnMeshingDistanceAddition;
-
+        
+		columnMeshingDistanceLod0 = lodDistance0 + columnMeshingDistanceAddition;
+        columnMeshingDistanceLod1 = lodDistance1 + columnMeshingDistanceAddition;
+        columnMeshingDistanceLod2 = lodDistance2 + columnMeshingDistanceAddition;
+        
 		regionTriggerDistanceUnload = regionTerrainTriggerDistance + regionUnloadMargin;
-		columnDistanceUnload = columnPreparationDistance + lodUnloadMargin;
-		columnMeshingDistanceUnload = columnMeshingDistance + lodUnloadMargin;
+		columnDistanceUnload = columnPreparationDistance + columnUnloadMargin;
+		columnMeshingDistanceUnloadLod0 = columnMeshingDistanceLod0 + columnGeometryUnloadMargin;
+        columnMeshingDistanceUnloadLod1 = columnMeshingDistanceLod1 + columnGeometryUnloadMargin;
+        columnMeshingDistanceUnloadLod2 = columnMeshingDistanceLod2 + columnGeometryUnloadMargin;
 	}
 
 	/**
@@ -730,13 +747,15 @@ public partial class Root : Node3D
 				}
 			}
 		}
+        
+        // GEOMETRY UNLOADING
 		
-		// geometry unloading
-		minPos = cameraPosition - new Vector3Double(columnMeshingDistanceUnload, 0, columnMeshingDistanceUnload);
-		maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceUnload, 0, columnMeshingDistanceUnload);
+		// geometry unloading lod0
+		minPos = cameraPosition - new Vector3Double(columnMeshingDistanceUnloadLod0, 0, columnMeshingDistanceUnloadLod0);
+		maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceUnloadLod0, 0, columnMeshingDistanceUnloadLod0);
 		(minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
 		(maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
-		foreach (var (chunkX, chunkZ) in meshedColumns)
+		foreach (var (chunkX, chunkZ) in meshedColumnsLod0)
 		{
 			if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
 			{
@@ -746,15 +765,59 @@ public partial class Root : Node3D
 		
 		foreach (var chunk in columnsToUnload)
 		{
-			meshedColumns.Remove(chunk);
+            meshedColumnsLod0.Remove(chunk);
 		}
 		// unload geometry in one pass
-		geometryGeneratorService.UnloadColumns(columnsToUnload);
+		geometryGeneratorService.UnloadColumns(columnsToUnload, LodLevel.LOD0);
 		columnsToUnload.Clear();
+        
+        // geometry unloading lod1
+        minPos = cameraPosition - new Vector3Double(columnMeshingDistanceUnloadLod1, 0, columnMeshingDistanceUnloadLod1);
+        maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceUnloadLod1, 0, columnMeshingDistanceUnloadLod1);
+        (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
+        (maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
+        foreach (var (chunkX, chunkZ) in meshedColumnsLod1)
+        {
+            if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
+            {
+                columnsToUnload.Add((chunkX, chunkZ));
+            }
+        }
 		
-		// geometry loading
-		minPos = cameraPosition - new Vector3Double(columnMeshingDistance, 0, columnMeshingDistance);
-		maxPos = cameraPosition + new Vector3Double(columnMeshingDistance, 0, columnMeshingDistance);
+        foreach (var chunk in columnsToUnload)
+        {
+            meshedColumnsLod1.Remove(chunk);
+        }
+        // unload geometry in one pass
+        geometryGeneratorService.UnloadColumns(columnsToUnload, LodLevel.LOD1);
+        columnsToUnload.Clear();
+        
+        // geometry unloading lod2
+        minPos = cameraPosition - new Vector3Double(columnMeshingDistanceUnloadLod2, 0, columnMeshingDistanceUnloadLod2);
+        maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceUnloadLod2, 0, columnMeshingDistanceUnloadLod2);
+        (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
+        (maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
+        foreach (var (chunkX, chunkZ) in meshedColumnsLod2)
+        {
+            if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
+            {
+                columnsToUnload.Add((chunkX, chunkZ));
+            }
+        }
+		
+        foreach (var chunk in columnsToUnload)
+        {
+            meshedColumnsLod2.Remove(chunk);
+        }
+        // unload geometry in one pass
+        geometryGeneratorService.UnloadColumns(columnsToUnload, LodLevel.LOD2);
+        columnsToUnload.Clear();
+		
+        // GEOMETRY LOADING
+        
+		// geometry loading lod0
+		minPos = cameraPosition - new Vector3Double(columnMeshingDistanceLod0, 0, columnMeshingDistanceLod0);
+		maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceLod0, 0, columnMeshingDistanceLod0);
 		(minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
 		(maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
 		// plan generation of not yet planned geometry
@@ -762,15 +825,57 @@ public partial class Root : Node3D
 		{
 			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
 			{
-				if (!meshedColumns.Contains((chunkX, chunkZ)))
+				if (!meshedColumnsLod0.Contains((chunkX, chunkZ)))
 				{
-					meshedColumns.Add((chunkX, chunkZ));
+                    meshedColumnsLod0.Add((chunkX, chunkZ));
 					// calculate priority with manhattan distance
 					int priority = Math.Abs(chunkX - camChunkX) + Math.Abs(chunkZ - camChunkZ);
-					geometryGeneratorService.AddNormalTask(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.GENERATE, chunkX, uint.MaxValue, chunkZ, priority));
+					geometryGeneratorService.AddNormalTask(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.GENERATE, LodLevel.LOD0, chunkX, uint.MaxValue, chunkZ, priority));
 				}
 			}
 		}
+        
+        // geometry loading lod1
+        minPos = cameraPosition - new Vector3Double(columnMeshingDistanceLod1, 0, columnMeshingDistanceLod1);
+        maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceLod1, 0, columnMeshingDistanceLod1);
+        (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
+        (maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
+        // plan generation of not yet planned geometry
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++)
+        {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
+            {
+                if (!meshedColumnsLod1.Contains((chunkX, chunkZ)))
+                {
+                    meshedColumnsLod1.Add((chunkX, chunkZ));
+                    // calculate priority with manhattan distance
+                    int priority = Math.Abs(chunkX - camChunkX) + Math.Abs(chunkZ - camChunkZ);
+                    geometryGeneratorService.AddNormalTask(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.GENERATE, LodLevel.LOD1, chunkX, uint.MaxValue, chunkZ, priority));
+                }
+            }
+        }
+        
+        // geometry loading lod2
+        minPos = cameraPosition - new Vector3Double(columnMeshingDistanceLod2, 0, columnMeshingDistanceLod2);
+        maxPos = cameraPosition + new Vector3Double(columnMeshingDistanceLod2, 0, columnMeshingDistanceLod2);
+        (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
+        (maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
+        // plan generation of not yet planned geometry
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++)
+        {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
+            {
+                if (!meshedColumnsLod2.Contains((chunkX, chunkZ)))
+                {
+                    meshedColumnsLod2.Add((chunkX, chunkZ));
+                    // calculate priority with manhattan distance
+                    int priority = Math.Abs(chunkX - camChunkX) + Math.Abs(chunkZ - camChunkZ);
+                    geometryGeneratorService.AddNormalTask(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.GENERATE, LodLevel.LOD2, chunkX, uint.MaxValue, chunkZ, priority));
+                }
+            }
+        }
+        
+        // DISPLAY
 		
 		// calculate target lods for viewing
 		Vector3Double minPosLod2 = cameraPosition - new Vector3Double(lodDistance2, 0, lodDistance2);

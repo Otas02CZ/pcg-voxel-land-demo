@@ -18,7 +18,7 @@ namespace PCGVoxelLandscapes.Scripts;
 /**
  * Structure holding geometry data of single lod level of a chunk.
  */
-public struct ChunkMesh
+public struct ChunkGeometry
 {
     public int chunkX;
     public int chunkY;
@@ -41,23 +41,22 @@ public struct ChunkMesh
 }
 
 /**
- * Structure holding geometry for all lods of a given chunk.
+ * Holds one geometry lod of a single chunk column.
  */
-public struct ChunkGeometry(int lodCount)
+public class ColumnGeometryLod(int chunkCountY)
 {
-    public bool hasGeometry = false;
-    public ChunkMesh[] lods = new ChunkMesh[lodCount];
+    public bool ready;
+    public ChunkGeometry[] chunks = new ChunkGeometry[chunkCountY];
 }
 
 /**
- * Holds all geometry of a single chunk column.
+ * Holds all geometry (lods) of a single chunk column.
  */
-public class ChunkColumnGeometry(int chunkX, int chunkZ, int chunkCountY)
+public class ChunkColumnGeometry(int chunkX, int chunkZ, int lodCount)
 {
     public readonly int chunkX = chunkX;
     public readonly int chunkZ = chunkZ;
-    public bool ready;
-    public ChunkGeometry[] chunks = new ChunkGeometry[chunkCountY];
+    public ColumnGeometryLod[] columnLods = new ColumnGeometryLod[lodCount];
 }
 
 /**
@@ -232,80 +231,61 @@ public class GeometryGenerator
     }
 
     /**
-     * Generates geometry for all chunks of all lods of given column.
+     * Generates geometry at given lod for all chunks of the supplied column.
      */
-    public ChunkGeometry[] GenerateChunkColumnGeometry(ChunkColumn column)
+    public ChunkGeometry[] GenerateChunkColumnGeometry(ChunkColumn column, LodLevel lodLevel)
     {
-        ChunkGeometry[] chunks = new ChunkGeometry[column.chunkCountY];
+        ChunkGeometry[] chunkGeometry =  new ChunkGeometry[column.chunkCountY];
         // process all chunks
         for (int y = 0; y < column.chunkCountY; y++)
         {
-            ChunkGeometry chunkGeometry = new ChunkGeometry(lodCount);
             // skip processing of air only chunks as these will result in no geometry
             if (column.IsChunkCompletelyAir((uint)y))
             {
-                chunks[y] = chunkGeometry;
+                ChunkGeometry chunk = new ChunkGeometry();
+                chunkGeometry[y] = chunk;
                 continue;
             }
             
-            chunkGeometry.hasGeometry = true;
-            // process the chunk at all LOD levels
-            for (int lod = 0; lod < lodCount; lod++)
-            {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                chunkGeometry.lods[lod] = GenerateChunkMesh(column, column.chunkX, y, column.chunkZ, (LodLevel)lod);
-                stopwatch.Stop();
-                lock (lodGenerationTimesLock)
-                {
-                    if (lodGenerationTimes[lod].Count >= maxLodGenerationTimes)
-                    {
-                        currentSumLodGenerationTimes[lod] -= lodGenerationTimes[lod][0];
-                        lodGenerationTimes[lod].RemoveAt(0);
-                    }
-                    lodGenerationTimes[lod].Add(stopwatch.ElapsedMilliseconds);
-                    currentSumLodGenerationTimes[lod] += stopwatch.ElapsedMilliseconds;
-                }
-
-                // if LOD0 has no geometry, it can be skipped
-                if (lod == 0 && !chunkGeometry.lods[lod].hasGeometry && !chunkGeometry.lods[lod].hasWaterGeometry)
-                {
-                    chunkGeometry.hasGeometry = false;
-                    break;
-                }
-            }
-
-            chunks[y] = chunkGeometry;
-        }
-        return chunks;
-    }
-
-    /**
-     * Regenerates geometry for specified chunk in given column.
-     * Works the same as GenerateChunkColumnGeometry, but generates lods only for the specified chunk.
-     */
-    public ChunkMesh[] RegenerateChunkGeometry(ChunkColumn column, int chunkY)
-    {
-        ChunkMesh[] lodMeshes = new ChunkMesh[lodCount];
-        
-        // generate all lods
-        for (int lod = 0; lod < lodCount; lod++)
-        {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            lodMeshes[lod] = GenerateChunkMesh(column, column.chunkX, chunkY, column.chunkZ, (LodLevel)lod);
+            chunkGeometry[y] = GenerateChunkMesh(column, column.chunkX, y, column.chunkZ, lodLevel);
             stopwatch.Stop();
             lock (lodGenerationTimesLock)
             {
-                if (lodGenerationTimes[lod].Count >= maxLodGenerationTimes)
+                if (lodGenerationTimes[(int)lodLevel].Count >= maxLodGenerationTimes)
                 {
-                    currentSumLodGenerationTimes[lod] -= lodGenerationTimes[lod][0];
-                    lodGenerationTimes[lod].RemoveAt(0);
+                    currentSumLodGenerationTimes[(int)lodLevel] -= lodGenerationTimes[(int)lodLevel][0];
+                    lodGenerationTimes[(int)lodLevel].RemoveAt(0);
                 }
-                lodGenerationTimes[lod].Add(stopwatch.ElapsedMilliseconds);
-                currentSumLodGenerationTimes[lod] += stopwatch.ElapsedMilliseconds;
+                lodGenerationTimes[(int)lodLevel].Add(stopwatch.ElapsedMilliseconds);
+                currentSumLodGenerationTimes[(int)lodLevel] += stopwatch.ElapsedMilliseconds;
             }
         }
         
-        return lodMeshes;
+        return chunkGeometry;
+    }
+
+    /**
+     * Regenerates geometry lod for specified chunk in given column.
+     * Works the same as GenerateChunkColumnGeometry, but generates lod only for the specified chunk.
+     */
+    public ChunkGeometry RegenerateChunkGeometry(ChunkColumn column, int chunkY, LodLevel lodLevel)
+    {
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        ChunkGeometry chunkGeometry = GenerateChunkMesh(column, column.chunkX, chunkY, column.chunkZ, lodLevel);
+        stopwatch.Stop();
+        lock (lodGenerationTimesLock)
+        {
+            if (lodGenerationTimes[(int)lodLevel].Count >= maxLodGenerationTimes)
+            {
+                currentSumLodGenerationTimes[(int)lodLevel] -= lodGenerationTimes[(int)lodLevel][0];
+                lodGenerationTimes[(int)lodLevel].RemoveAt(0);
+            }
+            lodGenerationTimes[(int)lodLevel].Add(stopwatch.ElapsedMilliseconds);
+            currentSumLodGenerationTimes[(int)lodLevel] += stopwatch.ElapsedMilliseconds;
+        }
+        
+        return chunkGeometry;
     }
 
     /**
@@ -313,7 +293,7 @@ public class GeometryGenerator
      * Non-water geometry uses greedy meshing algorithm to minimize amount of geometry.
      * Water geometry uses simple meshing, as all vertices are needed for waves in the water shader.
      */
-    private ChunkMesh GenerateChunkMesh(ChunkColumn column, int chunkX, int chunkY, int chunkZ, LodLevel lodLevel)
+    private ChunkGeometry GenerateChunkMesh(ChunkColumn column, int chunkX, int chunkY, int chunkZ, LodLevel lodLevel)
     {
         byte voxelStep = GetVoxelStepForLod(lodLevel);
         // setup collections for non-water and water geometry
@@ -352,7 +332,7 @@ public class GeometryGenerator
         GenerateWaterGeometrySimple(column, chunkX, chunkY, chunkZ, voxelStep, cubeSize, waterVertices, waterNormals, waterIndices);
 
         // return chunk mesh structure with the geometry
-        return new ChunkMesh()
+        return new ChunkGeometry()
         {
             chunkX = chunkX,
             chunkY = chunkY,

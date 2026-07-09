@@ -24,9 +24,10 @@ public enum GEOMETRY_TASK_TYPE : byte
 /**
  * Represents single geometry generation task for the geometry generator service to process.
  */
-public class ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE type, int chunkX, uint chunkY, int chunkZ, int priority)
+public class ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE type, LodLevel lodLevel, int chunkX, uint chunkY, int chunkZ, int priority)
 {
     public readonly GEOMETRY_TASK_TYPE type = type;
+    public readonly LodLevel lodLevel = lodLevel;
     public readonly int chunkX = chunkX;
     public readonly uint chunkY = chunkY; // only used when updating changed chunks
     public readonly int chunkZ = chunkZ;
@@ -58,6 +59,7 @@ public class GeometryGeneratorService : IDisposable
     private readonly GeometryGenerator geometryGenerator;
 
     private readonly int chunkCountY;
+    private readonly int lodCount;
 
     // columns with generated or currently generating geometry
     private readonly ConcurrentDictionary<(int, int), ChunkColumnGeometry> activeColumns;
@@ -78,6 +80,7 @@ public class GeometryGeneratorService : IDisposable
     {
         this.voxelStorage = voxelStorage;
         this.chunkCountY = chunkCountY;
+        this.lodCount = lodCount;
         geometryGenerator = new GeometryGenerator(voxelStorage.voxelsPerMeter, voxelStorage.chunkVoxelSize, lodCount);
         
         activeColumns = new ConcurrentDictionary<(int, int), ChunkColumnGeometry>();
@@ -155,6 +158,8 @@ public class GeometryGeneratorService : IDisposable
      */
     private void OnChunkModified(int chunkX, uint chunkY, int chunkZ)
     {
+        // TODO needs to be reworked
+        /*
         Vector2Int[] neighborOffsets = [
             new(0, 0),
             new(1, 0),
@@ -179,12 +184,13 @@ public class GeometryGeneratorService : IDisposable
             taskQueue.Enqueue(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.UPDATE_EDIT, chunkX, chunkY, chunkZ, 0), 0);
             taskAvailable.Set();
         }
+        */
     }
     
     /**
      * Immediately unloads and cancels planned generation tasks of given set of columns.
      */
-    public void UnloadColumns(HashSet<(int chunkX, int chunkZ)> columnsToUnload)
+    public void UnloadColumns(HashSet<(int chunkX, int chunkZ)> columnsToUnload, LodLevel lodLevel)
     {
         if (columnsToUnload == null || columnsToUnload.Count == 0)
             return;
@@ -196,7 +202,7 @@ public class GeometryGeneratorService : IDisposable
             
             foreach (ChunkColumnGeometryTask pendingTask in pendingLockedTasks)
             {
-                if (columnsToUnload.Contains((pendingTask.chunkX, pendingTask.chunkZ)))
+                if (columnsToUnload.Contains((pendingTask.chunkX, pendingTask.chunkZ)) && pendingTask.lodLevel == lodLevel)
                 {
                     tasksToRemove.Add(pendingTask);
                     columnsToUnload.Remove((pendingTask.chunkX, pendingTask.chunkZ));
@@ -211,9 +217,26 @@ public class GeometryGeneratorService : IDisposable
             // remove active columns if they are there
             foreach (var column in columnsToUnload)
             {
-                if (activeColumns.ContainsKey(column))
+                if (activeColumns.TryGetValue(column, out var columnGeometry))
                 {
-                    activeColumns.Remove((column.chunkX, column.chunkZ), out _);
+                    // remove supplied lod level
+                    columnGeometry.columnLods[(int)lodLevel] = null;
+                    
+                    // might be completely empty - delete it from active columns
+                    bool isEmpty = true;
+                    for (int lod = 0; lod < lodCount; lod++)
+                    {
+                        if (columnGeometry.columnLods[lod] != null)
+                        {
+                            isEmpty = false;
+                            break;
+                        }
+                    }
+
+                    if (isEmpty)
+                    {
+                        activeColumns.Remove((column.chunkX, column.chunkZ), out _);
+                    }
                 }
             }
             
@@ -223,7 +246,7 @@ public class GeometryGeneratorService : IDisposable
             while (taskQueue.Count > 0)
             {
                 ChunkColumnGeometryTask task = taskQueue.Dequeue();
-                if (!columnsToUnload.Contains((task.chunkX, task.chunkZ)))
+                if (!(columnsToUnload.Contains((task.chunkX, task.chunkZ)) && task.lodLevel == lodLevel))
                 {
                     remainingTasks.Add(task);
                 }
@@ -266,18 +289,15 @@ public class GeometryGeneratorService : IDisposable
 
     /**
      * Returns chunk column geometry for given column coordinates if it exists, or null.
+     * Lod readiness must be checked manually.
      */
     public ChunkColumnGeometry GetColumn(int chunkX, int chunkZ)
     {
         if (activeColumns.ContainsKey((chunkX, chunkZ)))
         {
-            ChunkColumnGeometry column = activeColumns[(chunkX, chunkZ)];
-            if (column.ready)
-            {
-                return column;
-            }
+            return activeColumns[(chunkX, chunkZ)];
         }
-        
+
         return null;
     }
     
@@ -311,7 +331,6 @@ public class GeometryGeneratorService : IDisposable
                 taskQueue.Enqueue(task, task.priority);
                 taskAvailable.Set();
                 tasksToRemove.Add(task);
-                break;
             }
             
             foreach (ChunkColumnGeometryTask task in tasksToRemove)
@@ -326,7 +345,7 @@ public class GeometryGeneratorService : IDisposable
      * Uses geometry generator.
      * Fires columnGeometryGenerated to notify WorldDisplayService.
      */
-    private void GenerateColumn(ChunkColumnGeometry columnGeometry)
+    private void GenerateColumnAtLod(ChunkColumnGeometry columnGeometry, ColumnGeometryLod columnGeometryLod, LodLevel lodLevel)
     {
         if (columnGeometry == null)
         {
@@ -354,9 +373,9 @@ public class GeometryGeneratorService : IDisposable
             return;
         }
 
-        // generate the column
-        columnGeometry.chunks = geometryGenerator.GenerateChunkColumnGeometry(column);
-        columnGeometry.ready = true;
+        // generate the column at given lod level
+        columnGeometryLod.chunks = geometryGenerator.GenerateChunkColumnGeometry(column, lodLevel);
+        columnGeometryLod.ready = true;
         lock (eventLock)
         {
             columnGeometryGenerated?.Invoke(columnGeometry);
@@ -371,6 +390,9 @@ public class GeometryGeneratorService : IDisposable
      */
     private void RegenerateChunks(List<ChunkUpdateTask> chunkUpdateTasks)
     {
+        // TODO needs to be reworked
+        return;
+        /*
         // regenerates all supplied chunks
         foreach (ChunkUpdateTask updateTask in chunkUpdateTasks)
         {
@@ -399,7 +421,7 @@ public class GeometryGeneratorService : IDisposable
             // regenerate this chunk
             updateTask.columnGeometry.chunks[updateTask.chunkY].lods = geometryGenerator.RegenerateChunkGeometry(column, (int)updateTask.chunkY);
             bool hasGeometry = false;
-            foreach (ChunkMesh lod in updateTask.columnGeometry.chunks[updateTask.chunkY].lods)
+            foreach (ChunkGeometry lod in updateTask.columnGeometry.chunks[updateTask.chunkY].lods)
             {
                 if (lod.hasGeometry || lod.hasWaterGeometry)
                 {
@@ -419,6 +441,7 @@ public class GeometryGeneratorService : IDisposable
             // inform root, that changes needed after editing were processed (does not wait for display service)
             editingProcessed?.Invoke();
         }
+        */
     }
 
     /**
@@ -431,6 +454,7 @@ public class GeometryGeneratorService : IDisposable
         {
             ChunkColumnGeometryTask task = null;
             ChunkColumnGeometry columnGeometry = null;
+            ColumnGeometryLod columnGeometryLod = null;
             List<ChunkUpdateTask> chunkUpdateTasks = [];
             bool hasTask = false;
             // find work and prepare instances to work on
@@ -442,16 +466,35 @@ public class GeometryGeneratorService : IDisposable
                    if (task.type == GEOMETRY_TASK_TYPE.GENERATE)
                    {
                        // generate column geometry
-                       if (!activeColumns.ContainsKey((task.chunkX, task.chunkZ)))
+                       if (!activeColumns.ContainsKey((task.chunkX, task.chunkZ))) // it is new
                        {
-                           columnGeometry = new ChunkColumnGeometry(task.chunkX, task.chunkZ, voxelStorage.chunkCountY);
+                           columnGeometry = new ChunkColumnGeometry(task.chunkX, task.chunkZ, lodCount);
+                           columnGeometryLod = new ColumnGeometryLod(chunkCountY);
+                           columnGeometry.columnLods[(int)task.lodLevel] = columnGeometryLod;
                            activeColumns[(task.chunkX, task.chunkZ)] = columnGeometry;
                            hasTask = true;
                        }
-                       // already loaded, skip
+                       else
+                       {
+                           // already loaded, could be a different lod level
+                       
+                           columnGeometry = activeColumns[(task.chunkX, task.chunkZ)];
+                           columnGeometryLod = columnGeometry.columnLods[(int)task.lodLevel];
+                           if (columnGeometryLod == null)
+                           {
+                               // lod not generated yet
+                               columnGeometryLod = new ColumnGeometryLod(chunkCountY);
+                               columnGeometry.columnLods[(int)task.lodLevel] = columnGeometryLod;
+                               hasTask = true;
+                           }
+                       }
+                       
+                       
                    }
+                   // TODO needs to be reworked
                    else if (task.type == GEOMETRY_TASK_TYPE.UPDATE_EDIT)
                    {
+                       /*
                        // need to regenerate this chunkY in the given column, together with 4 neighbor chunks horizontally,
                        // and 2 vertically
                        // prepare horizontal offsets
@@ -492,6 +535,7 @@ public class GeometryGeneratorService : IDisposable
                        {
                            hasTask = true;
                        }
+                       */
                    }
                }
             }
@@ -501,9 +545,9 @@ public class GeometryGeneratorService : IDisposable
                 switch (task.type)
                 {
                     case GEOMETRY_TASK_TYPE.GENERATE:
-                        GenerateColumn(columnGeometry);
+                        GenerateColumnAtLod(columnGeometry, columnGeometryLod, task.lodLevel);
                         break;
-                    case GEOMETRY_TASK_TYPE.UPDATE_EDIT:
+                    case GEOMETRY_TASK_TYPE.UPDATE_EDIT: // TODO needs to be reworked
                         RegenerateChunks(chunkUpdateTasks);
                         break;
                 }
