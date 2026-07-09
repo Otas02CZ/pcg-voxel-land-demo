@@ -541,65 +541,72 @@ public class WorldDisplayService
             
             // only updating a single chunk of a column to its new geometry
             case WorldDisplayTaskType.UPDATE_EDIT:
-                break;
-                // TODO needs to be reworked
-                /*
                 // check whether it was not already unloaded
                 if (!displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
                     return;
                 }
                 // obtain the column
-                DisplayedColumn displayedColumnToUpdate = displayedColumns[(task.chunkX, task.chunkZ)];
-                if (displayedColumnToUpdate.currentLod == LodLevel.UNLOADED)
+                DisplayedColumn disColToUpdate = displayedColumns[(task.chunkX, task.chunkZ)];
+                LodLevel lod = disColToUpdate.currentLod;
+                if (lod == LodLevel.UNLOADED)
                 {
                     return;
                 }
                 // obtain the column geometry, will only use a single chunk though
-                ChunkColumnGeometry columnGeometryToUpdate = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
-                if (columnGeometryToUpdate == null)
+                ChunkColumnGeometry colGeomToUpdate = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
+                if (colGeomToUpdate == null)
                 {
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry.");
+                    return;
+                }
+                
+                // check that necessary lods are present, lod0 must have lod1 for collision
+                if (colGeomToUpdate.columnLods[(int)lod] == null || !colGeomToUpdate.columnLods[(int)lod].ready || 
+                    (lod == LodLevel.LOD0 && (colGeomToUpdate.columnLods[(int)lod] == null || !colGeomToUpdate.columnLods[(int)lod].ready))
+                   )
+                {
+                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
                     return;
                 }
 
                 int yIndex = (int)task.chunkY;
                 
                 // unload old geometry instance
-                if (displayedColumnToUpdate.chunkInstances[yIndex] != null)
+                if (disColToUpdate.chunkInstances[yIndex] != null)
                 {
-                    displayedColumnToUpdate.chunkInstances[yIndex].QueueFree();
-                    displayedColumnToUpdate.chunkInstances[yIndex] = null;
+                    disColToUpdate.chunkInstances[yIndex].QueueFree();
+                    disColToUpdate.chunkInstances[yIndex] = null;
                 }
                     
                 // unload old chunk collision
-                if (displayedColumnToUpdate.chunkCollisions[yIndex] != null)
+                if (disColToUpdate.chunkCollisions[yIndex] != null)
                 {
-                    displayedColumnToUpdate.chunkCollisions[yIndex].QueueFree();
-                    displayedColumnToUpdate.chunkCollisions[yIndex] = null;
+                    disColToUpdate.chunkCollisions[yIndex].QueueFree();
+                    disColToUpdate.chunkCollisions[yIndex] = null;
                 }
                 
                 // create the mesh instance with both surfaces
-                ChunkGeometry chunkGeometryToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)displayedColumnToUpdate.currentLod];
-                bool enableVoxelVarianceForUpdate = displayedColumnToUpdate.currentLod == LodLevel.LOD0;
-                instance = CreateChunkMeshInstance(chunkGeometryToUpdate, enableVoxelVarianceForUpdate);
+                ChunkGeometry chunkGeomToUpdate = colGeomToUpdate.columnLods[(int)lod].chunks[yIndex];
+                bool enableVoxelVarianceForUpdate = disColToUpdate.currentLod == LodLevel.LOD0;
+                instance = CreateChunkMeshInstance(chunkGeomToUpdate, enableVoxelVarianceForUpdate);
                 if (instance == null)
                 {
                     return;
                 }
                 
                 // assign it and apply origin shift offset
-                displayedColumnToUpdate.chunkInstances[yIndex] = instance;
-                displayedColumnToUpdate.realPositions[yIndex] = chunkGeometryToUpdate.worldPosition;
-                worldPositionOffset = chunkGeometryToUpdate.worldPosition + originShiftOffsetXZ;
+                disColToUpdate.chunkInstances[yIndex] = instance;
+                disColToUpdate.realPositions[yIndex] = chunkGeomToUpdate.worldPosition;
+                worldPositionOffset = chunkGeomToUpdate.worldPosition + originShiftOffsetXZ;
                 instance.Position = worldPositionOffset.ToGodotVector3();
                 voxelWorld.AddChild(instance);
                             
                 // add collision if current LOD is LOD0 (use LOD1 for collision)
-                if (displayedColumnToUpdate.currentLod == LodLevel.LOD0)
+                if (disColToUpdate.currentLod == LodLevel.LOD0)
                 {
-                    chunkGeometryToUpdate = columnGeometryToUpdate.chunks[yIndex].lods[(byte)LodLevel.LOD1];
-                    instanceForCollision = CreateChunkMeshInstance(chunkGeometryToUpdate, false);
+                    chunkGeomToUpdate = colGeomToUpdate.columnLods[(int)LodLevel.LOD1].chunks[yIndex];
+                    instanceForCollision = CreateChunkMeshInstance(chunkGeomToUpdate, false);
                     if (instanceForCollision == null)
                     {
                         return;
@@ -608,11 +615,10 @@ public class WorldDisplayService
                     instanceForCollision.CreateTrimeshCollision();
                     StaticBody3D collision = instanceForCollision.GetChild<StaticBody3D>(0);
                     instanceForCollision.RemoveChild(collision);
-                    displayedColumnToUpdate.chunkCollisions[yIndex] = collision;
+                    disColToUpdate.chunkCollisions[yIndex] = collision;
                     instance.AddChild(collision);
                     instanceForCollision.QueueFree();
                 }
-                */
                 break;
         }
     }

@@ -38,10 +38,11 @@ public class ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE type, LodLevel lodLevel,
  * Internal struct for passing over tuple of column and its chunk that needs to
  * be regenerated.
  */
-public struct ChunkUpdateTask(ChunkColumnGeometry columnGeometry, uint chunkY)
+public struct ChunkUpdateTask(ChunkColumnGeometry columnGeometry, uint chunkY, LodLevel lodLevel)
 {
     public readonly ChunkColumnGeometry columnGeometry = columnGeometry;
     public readonly uint chunkY = chunkY;
+    public readonly LodLevel lodLevel = lodLevel;
 }
 
 /**
@@ -158,8 +159,6 @@ public class GeometryGeneratorService : IDisposable
      */
     private void OnChunkModified(int chunkX, uint chunkY, int chunkZ)
     {
-        // TODO needs to be reworked
-        /*
         Vector2Int[] neighborOffsets = [
             new(0, 0),
             new(1, 0),
@@ -181,10 +180,9 @@ public class GeometryGeneratorService : IDisposable
         // plan high priority update task
         lock (taskQueueLock)
         {
-            taskQueue.Enqueue(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.UPDATE_EDIT, chunkX, chunkY, chunkZ, 0), 0);
+            taskQueue.Enqueue(new ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE.UPDATE_EDIT, LodLevel.UNLOADED, chunkX, chunkY, chunkZ, 0), 0);
             taskAvailable.Set();
         }
-        */
     }
     
     /**
@@ -390,9 +388,6 @@ public class GeometryGeneratorService : IDisposable
      */
     private void RegenerateChunks(List<ChunkUpdateTask> chunkUpdateTasks)
     {
-        // TODO needs to be reworked
-        return;
-        /*
         // regenerates all supplied chunks
         foreach (ChunkUpdateTask updateTask in chunkUpdateTasks)
         {
@@ -419,17 +414,7 @@ public class GeometryGeneratorService : IDisposable
             }
             
             // regenerate this chunk
-            updateTask.columnGeometry.chunks[updateTask.chunkY].lods = geometryGenerator.RegenerateChunkGeometry(column, (int)updateTask.chunkY);
-            bool hasGeometry = false;
-            foreach (ChunkGeometry lod in updateTask.columnGeometry.chunks[updateTask.chunkY].lods)
-            {
-                if (lod.hasGeometry || lod.hasWaterGeometry)
-                {
-                    hasGeometry = true;
-                    break;
-                }
-            }
-            updateTask.columnGeometry.chunks[updateTask.chunkY].hasGeometry = hasGeometry;
+            updateTask.columnGeometry.columnLods[(int)updateTask.lodLevel].chunks[updateTask.chunkY] = geometryGenerator.GenerateChunkGeometry(column, (int)updateTask.chunkY, updateTask.lodLevel);
             lock (eventLock)
             {
                 // inform world display service of the need to update this chunk
@@ -441,7 +426,6 @@ public class GeometryGeneratorService : IDisposable
             // inform root, that changes needed after editing were processed (does not wait for display service)
             editingProcessed?.Invoke();
         }
-        */
     }
 
     /**
@@ -489,12 +473,9 @@ public class GeometryGeneratorService : IDisposable
                            }
                        }
                        
-                       
                    }
-                   // TODO needs to be reworked
                    else if (task.type == GEOMETRY_TASK_TYPE.UPDATE_EDIT)
                    {
-                       /*
                        // need to regenerate this chunkY in the given column, together with 4 neighbor chunks horizontally,
                        // and 2 vertically
                        // prepare horizontal offsets
@@ -522,11 +503,14 @@ public class GeometryGeneratorService : IDisposable
                            int neighborChunkZ = task.chunkZ + (int)offset.dir.Y;
                            if (activeColumns.ContainsKey((neighborChunkX, neighborChunkZ)))
                            {
-                               // sets up a tuple of column + chunk to that needs to be regenerated
+                               // sets up update tasks (column, y, lod level)
                                ChunkColumnGeometry neighborColumn = activeColumns[(neighborChunkX, neighborChunkZ)];
-                               if (neighborColumn.ready)
+                               for (int lod = 0; lod < lodCount; lod++)
                                {
-                                   chunkUpdateTasks.Add(new ChunkUpdateTask(neighborColumn, offset.chunkY));
+                                   if (neighborColumn.columnLods[lod] != null && neighborColumn.columnLods[lod].ready)
+                                   {
+                                       chunkUpdateTasks.Add(new ChunkUpdateTask(neighborColumn, offset.chunkY, (LodLevel)lod));
+                                   }
                                }
                            }
                        }
@@ -535,7 +519,6 @@ public class GeometryGeneratorService : IDisposable
                        {
                            hasTask = true;
                        }
-                       */
                    }
                }
             }
@@ -547,7 +530,7 @@ public class GeometryGeneratorService : IDisposable
                     case GEOMETRY_TASK_TYPE.GENERATE:
                         GenerateColumnAtLod(columnGeometry, columnGeometryLod, task.lodLevel);
                         break;
-                    case GEOMETRY_TASK_TYPE.UPDATE_EDIT: // TODO needs to be reworked
+                    case GEOMETRY_TASK_TYPE.UPDATE_EDIT:
                         RegenerateChunks(chunkUpdateTasks);
                         break;
                 }

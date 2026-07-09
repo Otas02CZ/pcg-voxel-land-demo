@@ -246,30 +246,17 @@ public class GeometryGenerator
                 chunkGeometry[y] = chunk;
                 continue;
             }
-            
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            chunkGeometry[y] = GenerateChunkMesh(column, column.chunkX, y, column.chunkZ, lodLevel);
-            stopwatch.Stop();
-            lock (lodGenerationTimesLock)
-            {
-                if (lodGenerationTimes[(int)lodLevel].Count >= maxLodGenerationTimes)
-                {
-                    currentSumLodGenerationTimes[(int)lodLevel] -= lodGenerationTimes[(int)lodLevel][0];
-                    lodGenerationTimes[(int)lodLevel].RemoveAt(0);
-                }
-                lodGenerationTimes[(int)lodLevel].Add(stopwatch.ElapsedMilliseconds);
-                currentSumLodGenerationTimes[(int)lodLevel] += stopwatch.ElapsedMilliseconds;
-            }
+
+            chunkGeometry[y] = GenerateChunkGeometry(column, y, lodLevel);
         }
         
         return chunkGeometry;
     }
 
     /**
-     * Regenerates geometry lod for specified chunk in given column.
-     * Works the same as GenerateChunkColumnGeometry, but generates lod only for the specified chunk.
+     * Generates geometry lod for specified chunk in given column.
      */
-    public ChunkGeometry RegenerateChunkGeometry(ChunkColumn column, int chunkY, LodLevel lodLevel)
+    public ChunkGeometry GenerateChunkGeometry(ChunkColumn column, int chunkY, LodLevel lodLevel)
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
         ChunkGeometry chunkGeometry = GenerateChunkMesh(column, column.chunkX, chunkY, column.chunkZ, lodLevel);
