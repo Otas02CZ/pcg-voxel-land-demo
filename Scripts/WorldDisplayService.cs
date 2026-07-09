@@ -113,9 +113,9 @@ public class WorldDisplayService
             {
                 if (task.chunkX == chunkColumnGeometry.chunkX && task.chunkZ == chunkColumnGeometry.chunkZ)
                 {
-                    // need to check that required lods are present
-                    if (chunkColumnGeometry.columnLods[(int)task.lodLevel] == null || !chunkColumnGeometry.columnLods[(int)task.lodLevel].ready || 
-                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.columnLods[(int)LodLevel.LOD1] == null || !chunkColumnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                    // need to check that required lods are present, lod0 also requires lod1 for collisions
+                    if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready || 
+                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD1] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD1].ready))
                         )
                     {
                         continue;
@@ -326,8 +326,8 @@ public class WorldDisplayService
                     }
                     
                     // check lods ready
-                    if (columnGeometry.columnLods[(int)task.lodLevel] == null || !columnGeometry.columnLods[(int)task.lodLevel].ready ||
-                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.columnLods[(int)LodLevel.LOD1] == null || !columnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                    if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
+                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD1] == null || !columnGeometry.lods[(int)LodLevel.LOD1].ready))
                         )
                     {
                         // not ready
@@ -456,8 +456,8 @@ public class WorldDisplayService
                     return;
                 }
                 // check that necessary lods are present, lod0 must have lod1 for collision
-                if (columnGeometry.columnLods[(int)task.lodLevel] == null || !columnGeometry.columnLods[(int)task.lodLevel].ready || 
-                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.columnLods[(int)LodLevel.LOD1] == null || !columnGeometry.columnLods[(int)LodLevel.LOD1].ready))
+                if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready || 
+                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD1] == null || !columnGeometry.lods[(int)LodLevel.LOD1].ready))
                     )
                 {
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
@@ -499,12 +499,12 @@ public class WorldDisplayService
                             displayedColumn.chunkInstances[y] = null;
                         }
                         
-                        if (!columnGeometry.columnLods[(int)task.lodLevel].chunks[y].hasGeometry)
+                        if (!columnGeometry.lods[(int)task.lodLevel].chunks[y].hasGeometry)
                         {
                             continue; // might not have any geometry to display
                         }
                         
-                        ChunkGeometry chunkGeometry = columnGeometry.columnLods[(int)task.lodLevel].chunks[y];
+                        ChunkGeometry chunkGeometry = columnGeometry.lods[(int)task.lodLevel].chunks[y];
                         bool enableVoxelVariance = task.lodLevel == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
                         instance = CreateChunkMeshInstance(chunkGeometry, enableVoxelVariance); // generate engine MeshInstance3D with block and water surface
                         if (instance == null)
@@ -521,7 +521,7 @@ public class WorldDisplayService
                         // add collision if current LOD is LOD0 (use LOD1 for collision)
                         if (task.lodLevel == LodLevel.LOD0)
                         {
-                            chunkGeometry = columnGeometry.columnLods[(int)LodLevel.LOD1].chunks[y];
+                            chunkGeometry = columnGeometry.lods[(int)LodLevel.LOD1].chunks[y];
                             instanceForCollision = CreateChunkMeshInstance(chunkGeometry, false);
                             if (instanceForCollision == null)
                             {
@@ -562,8 +562,8 @@ public class WorldDisplayService
                 }
                 
                 // check that necessary lods are present, lod0 must have lod1 for collision
-                if (colGeomToUpdate.columnLods[(int)lod] == null || !colGeomToUpdate.columnLods[(int)lod].ready || 
-                    (lod == LodLevel.LOD0 && (colGeomToUpdate.columnLods[(int)lod] == null || !colGeomToUpdate.columnLods[(int)lod].ready))
+                if (colGeomToUpdate.lods[(int)lod] == null || !colGeomToUpdate.lods[(int)lod].ready || 
+                    (lod == LodLevel.LOD0 && (colGeomToUpdate.lods[(int)lod] == null || !colGeomToUpdate.lods[(int)lod].ready))
                    )
                 {
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
@@ -587,7 +587,7 @@ public class WorldDisplayService
                 }
                 
                 // create the mesh instance with both surfaces
-                ChunkGeometry chunkGeomToUpdate = colGeomToUpdate.columnLods[(int)lod].chunks[yIndex];
+                ChunkGeometry chunkGeomToUpdate = colGeomToUpdate.lods[(int)lod].chunks[yIndex];
                 bool enableVoxelVarianceForUpdate = disColToUpdate.currentLod == LodLevel.LOD0;
                 instance = CreateChunkMeshInstance(chunkGeomToUpdate, enableVoxelVarianceForUpdate);
                 if (instance == null)
@@ -605,7 +605,7 @@ public class WorldDisplayService
                 // add collision if current LOD is LOD0 (use LOD1 for collision)
                 if (disColToUpdate.currentLod == LodLevel.LOD0)
                 {
-                    chunkGeomToUpdate = colGeomToUpdate.columnLods[(int)LodLevel.LOD1].chunks[yIndex];
+                    chunkGeomToUpdate = colGeomToUpdate.lods[(int)LodLevel.LOD1].chunks[yIndex];
                     instanceForCollision = CreateChunkMeshInstance(chunkGeomToUpdate, false);
                     if (instanceForCollision == null)
                     {

@@ -35,8 +35,7 @@ public class ChunkColumnGeometryTask(GEOMETRY_TASK_TYPE type, LodLevel lodLevel,
 }
 
 /**
- * Internal struct for passing over tuple of column and its chunk that needs to
- * be regenerated.
+ * Represents triplet (column, y, lod) of chunk that needs to have regenerated geometry after voxel editing.
  */
 public struct ChunkUpdateTask(ChunkColumnGeometry columnGeometry, uint chunkY, LodLevel lodLevel)
 {
@@ -53,6 +52,7 @@ public struct ChunkUpdateTask(ChunkColumnGeometry columnGeometry, uint chunkY, L
  * Unloading of column geometry signaled from Root is processed immediately in batches via the UnloadColumns function.
  * Before a column can have its geometry generated it needs to be fully voxelized together with its 4 neighbors.
  * Columns with finished geometry are signaled further to WorldDisplayService.
+ * Lods are generated independently.
  */
 public class GeometryGeneratorService : IDisposable
 {
@@ -218,13 +218,13 @@ public class GeometryGeneratorService : IDisposable
                 if (activeColumns.TryGetValue(column, out var columnGeometry))
                 {
                     // remove supplied lod level
-                    columnGeometry.columnLods[(int)lodLevel] = null;
+                    columnGeometry.lods[(int)lodLevel] = null;
                     
                     // might be completely empty - delete it from active columns
                     bool isEmpty = true;
                     for (int lod = 0; lod < lodCount; lod++)
                     {
-                        if (columnGeometry.columnLods[lod] != null)
+                        if (columnGeometry.lods[lod] != null)
                         {
                             isEmpty = false;
                             break;
@@ -302,9 +302,6 @@ public class GeometryGeneratorService : IDisposable
     /**
      * Fired to signal that voxel generator service has finished given column.
      * Loops through all pending tasks to find out whether they were unlocked by this event, if yes, plan them.
-     * Ideally it would be enough to check only for the signaled column,
-     * but due to an issue with overlapping teleports that cause a line of columns never to be signaled as ready
-     * I need to loop over all as their neighbors will be signaled. TODO: might fix this later
      */
     private void OnChunkColumnGenerated(ChunkColumn column)
     {
@@ -339,7 +336,7 @@ public class GeometryGeneratorService : IDisposable
     }
 
     /**
-     * Generates geometry for all chunks at all lod levels for given column.
+     * Generates single geometry lod for all chunks of given column.
      * Uses geometry generator.
      * Fires columnGeometryGenerated to notify WorldDisplayService.
      */
@@ -381,7 +378,7 @@ public class GeometryGeneratorService : IDisposable
     }
     
     /**
-     * Regenerates geometry for the supplied set of chunks.
+     * Regenerates geometry for the supplied chunk triplets (column, chunkY, lod)
      * Uses geometry generator.
      * Fires chunkGeometryUpdated for each chunk to notify world display service of chunks to re-display.
      * Fires editingProcessed at the end to re-enable user editing from Root.
@@ -414,7 +411,7 @@ public class GeometryGeneratorService : IDisposable
             }
             
             // regenerate this chunk
-            updateTask.columnGeometry.columnLods[(int)updateTask.lodLevel].chunks[updateTask.chunkY] = geometryGenerator.GenerateChunkGeometry(column, (int)updateTask.chunkY, updateTask.lodLevel);
+            updateTask.columnGeometry.lods[(int)updateTask.lodLevel].chunks[updateTask.chunkY] = geometryGenerator.GenerateChunkGeometry(column, (int)updateTask.chunkY, updateTask.lodLevel);
             lock (eventLock)
             {
                 // inform world display service of the need to update this chunk
@@ -454,7 +451,7 @@ public class GeometryGeneratorService : IDisposable
                        {
                            columnGeometry = new ChunkColumnGeometry(task.chunkX, task.chunkZ, lodCount);
                            columnGeometryLod = new ColumnGeometryLod(chunkCountY);
-                           columnGeometry.columnLods[(int)task.lodLevel] = columnGeometryLod;
+                           columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
                            activeColumns[(task.chunkX, task.chunkZ)] = columnGeometry;
                            hasTask = true;
                        }
@@ -463,12 +460,12 @@ public class GeometryGeneratorService : IDisposable
                            // already loaded, could be a different lod level
                        
                            columnGeometry = activeColumns[(task.chunkX, task.chunkZ)];
-                           columnGeometryLod = columnGeometry.columnLods[(int)task.lodLevel];
+                           columnGeometryLod = columnGeometry.lods[(int)task.lodLevel];
                            if (columnGeometryLod == null)
                            {
                                // lod not generated yet
                                columnGeometryLod = new ColumnGeometryLod(chunkCountY);
-                               columnGeometry.columnLods[(int)task.lodLevel] = columnGeometryLod;
+                               columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
                                hasTask = true;
                            }
                        }
@@ -507,7 +504,7 @@ public class GeometryGeneratorService : IDisposable
                                ChunkColumnGeometry neighborColumn = activeColumns[(neighborChunkX, neighborChunkZ)];
                                for (int lod = 0; lod < lodCount; lod++)
                                {
-                                   if (neighborColumn.columnLods[lod] != null && neighborColumn.columnLods[lod].ready)
+                                   if (neighborColumn.lods[lod] != null && neighborColumn.lods[lod].ready)
                                    {
                                        chunkUpdateTasks.Add(new ChunkUpdateTask(neighborColumn, offset.chunkY, (LodLevel)lod));
                                    }
