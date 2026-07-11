@@ -48,7 +48,7 @@ public class ApplicationSettings
     public bool vsyncEnabled { get; set; } = true;
     public int maxFPS { get; set; } = 60;
 
-    public int[] viewDistanceLod = [5, 10, 15, 20];
+    public int[] viewDistanceLod { get; set; } = [5, 10, 15, 20];
 
     /**
      * Copies current values into a new instance
