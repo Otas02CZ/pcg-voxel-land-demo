@@ -172,6 +172,26 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 rounded = true
 
+[node name="VisibilityRangeLod3" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1865751776]
+layout_mode = 2
+
+[node name="Lod3Label" type="Label" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=2030126695]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "LOD3 distance"
+
+[node name="Lod3Slider" type="HSlider" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=841102970]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+
+[node name="Lod3SpinBox" type="SpinBox" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=1484984830]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+rounded = true
+
 [node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/Main/VisibilityRanges" unique_id=1039664680]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 14
@@ -482,6 +502,8 @@ text = "Apply
 [connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox" to="." method="_on_lod_1_spin_box_value_changed"]
 [connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2Slider" to="." method="_on_lod_2_slider_value_changed"]
 [connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox" to="." method="_on_lod_2_spin_box_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3Slider" to="." method="_on_lod_3_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox" to="." method="_on_lod_3_spin_box_value_changed"]
 [connection signal="button_up" from="PanelContainer/Main/Shadows/HBoxContainer/ShadowsOffButton" to="." method="_on_shadows_off_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Shadows/HBoxContainer/ShadowsOnButton" to="." method="_on_shadows_on_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/GlobalIllumination/HBoxContainer/GIOffButton" to="." method="_on_gi_off_button_button_up"]

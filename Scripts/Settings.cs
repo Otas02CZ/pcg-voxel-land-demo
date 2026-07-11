@@ -47,9 +47,8 @@ public class ApplicationSettings
     public float fsrSharpness { get; set; } = 0.25f;
     public bool vsyncEnabled { get; set; } = true;
     public int maxFPS { get; set; } = 60;
-    public int viewDistanceLod0 { get; set; } = 5;
-    public int viewDistanceLod1 { get; set; } = 10;
-    public int viewDistanceLod2 { get; set; } = 15;
+
+    public int[] viewDistanceLod = [5, 10, 15, 20];
 
     /**
      * Copies current values into a new instance
@@ -68,9 +67,7 @@ public class ApplicationSettings
         copy.fsrSharpness = this.fsrSharpness;
         copy.vsyncEnabled = this.vsyncEnabled;
         copy.maxFPS = this.maxFPS;
-        copy.viewDistanceLod0 = this.viewDistanceLod0;
-        copy.viewDistanceLod1 = this.viewDistanceLod1;
-        copy.viewDistanceLod2 = this.viewDistanceLod2;
+        copy.viewDistanceLod = this.viewDistanceLod;
         
         return copy;
     }
@@ -116,6 +113,8 @@ public partial class Settings : CenterContainer
     private SpinBox lod1SpinBox;
     private HSlider lod2Slider;
     private SpinBox lod2SpinBox;
+    private HSlider lod3Slider;
+    private SpinBox lod3SpinBox;
     
     private Button shadowsOffButton;
     private Button shadowsOnButton;
@@ -186,6 +185,8 @@ public partial class Settings : CenterContainer
         lod1SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox");
         lod2Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2Slider");
         lod2SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox");
+        lod3Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3Slider");
+        lod3SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox");
         
         shadowsOffButton = GetNode<Button>("PanelContainer/Main/Shadows/HBoxContainer/ShadowsOffButton");
         shadowsOnButton = GetNode<Button>("PanelContainer/Main/Shadows/HBoxContainer/ShadowsOnButton");
@@ -256,6 +257,11 @@ public partial class Settings : CenterContainer
         lod2Slider.MaxValue = viewDistanceLodMax;
         lod2SpinBox.MinValue = viewDistanceLodMin;
         lod2SpinBox.MaxValue = viewDistanceLodMax;
+        
+        lod3Slider.MinValue = viewDistanceLodMin;
+        lod3Slider.MaxValue = viewDistanceLodMax;
+        lod3SpinBox.MinValue = viewDistanceLodMin;
+        lod3SpinBox.MaxValue = viewDistanceLodMax;
         
         scaleSlider.MinValue = renderScaleMin;
         scaleSlider.MaxValue = renderScaleMax;
@@ -336,9 +342,7 @@ public partial class Settings : CenterContainer
      */
     private void DistributeAll(ApplicationSettings newSettings)
     {
-        DistributeViewDistanceLod0(newSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(newSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(newSettings.viewDistanceLod2);
+        DistributeViewDistanceLods(newSettings.viewDistanceLod);
         DistributeShadows(newSettings.shadowsEnabled);
         DistributeGI(newSettings.globalIlluminationEnabled);
         DistributeFog(newSettings.fogEnabled);
@@ -540,7 +544,7 @@ public partial class Settings : CenterContainer
         // signal lod configuration to menu
         if (visibilityChangesEnabled)
         {
-            menu.OnSetLodDistanceConfiguration(currentSettings.viewDistanceLod0, currentSettings.viewDistanceLod1, currentSettings.viewDistanceLod2);
+            menu.OnSetLodDistanceConfiguration(currentSettings.viewDistanceLod);
         }
     }
     
@@ -549,75 +553,88 @@ public partial class Settings : CenterContainer
      */
     private void ValidateFixViewDistanceLods(ApplicationSettings settings)
     {
-        settings.viewDistanceLod0 = Math.Clamp(settings.viewDistanceLod0, viewDistanceLodMin, viewDistanceLodMax);
-        settings.viewDistanceLod1 = Math.Clamp(settings.viewDistanceLod1, viewDistanceLodMin, viewDistanceLodMax);
-        settings.viewDistanceLod2 = Math.Clamp(settings.viewDistanceLod2, viewDistanceLodMin, viewDistanceLodMax);
+        settings.viewDistanceLod[0] = Math.Clamp(settings.viewDistanceLod[0], viewDistanceLodMin, viewDistanceLodMax);
+        settings.viewDistanceLod[1] = Math.Clamp(settings.viewDistanceLod[1], viewDistanceLodMin, viewDistanceLodMax);
+        settings.viewDistanceLod[2] = Math.Clamp(settings.viewDistanceLod[2], viewDistanceLodMin, viewDistanceLodMax);
+        settings.viewDistanceLod[3] = Math.Clamp(settings.viewDistanceLod[3], viewDistanceLodMin, viewDistanceLodMax);
 
-        settings.viewDistanceLod0 = Math.Clamp(settings.viewDistanceLod0, viewDistanceLodMin, settings.viewDistanceLod1);
-        settings.viewDistanceLod1 = Math.Clamp(settings.viewDistanceLod1, settings.viewDistanceLod0, settings.viewDistanceLod2);
-        settings.viewDistanceLod2 = Math.Clamp(settings.viewDistanceLod2, settings.viewDistanceLod1, viewDistanceLodMax);
+        settings.viewDistanceLod[0] = Math.Clamp(settings.viewDistanceLod[0], viewDistanceLodMin, settings.viewDistanceLod[1]);
+        settings.viewDistanceLod[1] = Math.Clamp(settings.viewDistanceLod[1], settings.viewDistanceLod[0], settings.viewDistanceLod[2]);
+        settings.viewDistanceLod[2] = Math.Clamp(settings.viewDistanceLod[2], settings.viewDistanceLod[1], settings.viewDistanceLod[3]);
+        settings.viewDistanceLod[3] = Math.Clamp(settings.viewDistanceLod[3], settings.viewDistanceLod[2], viewDistanceLodMax);
     }
     
     // BUTTON HANDLERS
     
     private void _on_lod_0_slider_value_changed(float value)
     {
-        changedSettings.viewDistanceLod0 = (int)value;
-        DistributeViewDistanceLod0((int)value);
+        changedSettings.viewDistanceLod[0] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
     }
 
     private void _on_lod_0_spin_box_value_changed(float value)
     {
-        changedSettings.viewDistanceLod0 = (int)value;
-        DistributeViewDistanceLod0((int)value);
+        changedSettings.viewDistanceLod[0] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
-    }
-
-    private void DistributeViewDistanceLod0(int value)
-    {
-        lod0Slider.SetValueNoSignal(value);
-        lod0SpinBox.SetValueNoSignal(value);
     }
 
     private void _on_lod_1_slider_value_changed(float value)
     {
-        changedSettings.viewDistanceLod1 = (int)value;
-        DistributeViewDistanceLod1((int)value);
+        changedSettings.viewDistanceLod[1] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
     }
 
     private void _on_lod_1_spin_box_value_changed(float value)
     {
-        changedSettings.viewDistanceLod1 = (int)value;
-        DistributeViewDistanceLod1((int)value);
+        changedSettings.viewDistanceLod[1] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
-    }
-    
-    private void DistributeViewDistanceLod1(int value)
-    {
-        lod1Slider.SetValueNoSignal(value);
-        lod1SpinBox.SetValueNoSignal(value);
     }
 
     private void _on_lod_2_slider_value_changed(float value)
     {
-        changedSettings.viewDistanceLod2 = (int)value;
-        DistributeViewDistanceLod2((int)value);
+        changedSettings.viewDistanceLod[2] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
     }
 
     private void _on_lod_2_spin_box_value_changed(float value)
     {
-        changedSettings.viewDistanceLod2 = (int)value;
-        DistributeViewDistanceLod2((int)value);
+        changedSettings.viewDistanceLod[2] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         settingsChanged = true;
     }
-    
-    private void DistributeViewDistanceLod2(int value)
+
+    private void _on_lod_3_slider_value_changed(float value)
     {
-        lod2Slider.SetValueNoSignal(value);
-        lod2SpinBox.SetValueNoSignal(value);
+        changedSettings.viewDistanceLod[3] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
+        settingsChanged = true;
+    }
+
+    private void _on_lod_3_spin_box_value_changed(float value)
+    {
+        changedSettings.viewDistanceLod[3] = (int)value;
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
+        settingsChanged = true;
+    }
+
+    private void DistributeViewDistanceLods(int[] lodDistances)
+    {
+        lod0Slider.SetValueNoSignal(lodDistances[0]);
+        lod0SpinBox.SetValueNoSignal(lodDistances[0]);
+        
+        lod1Slider.SetValueNoSignal(lodDistances[1]);
+        lod1SpinBox.SetValueNoSignal(lodDistances[1]);
+        
+        lod2Slider.SetValueNoSignal(lodDistances[2]);
+        lod2SpinBox.SetValueNoSignal(lodDistances[2]);
+        
+        lod3Slider.SetValueNoSignal(lodDistances[3]);
+        lod3SpinBox.SetValueNoSignal(lodDistances[3]);
     }
 
     private void _on_shadows_off_button_button_up()
@@ -876,57 +893,38 @@ public partial class Settings : CenterContainer
 
     private void _on_very_low_button_up()
     {
-        changedSettings.viewDistanceLod0 = 5;
-        changedSettings.viewDistanceLod1 = 10;
-        changedSettings.viewDistanceLod2 = 15;
+        changedSettings.viewDistanceLod = [5, 10, 15, 20];
         settingsChanged = true;
-        DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
     }
     
     private void _on_low_button_up()
     {
-        changedSettings.viewDistanceLod0 = 10;
-        changedSettings.viewDistanceLod1 = 15;
-        changedSettings.viewDistanceLod2 = 30;
+        changedSettings.viewDistanceLod = [10, 15, 25, 35];
         settingsChanged = true;
-        DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
     }
     
     private void _on_medium_button_up()
     {
-        changedSettings.viewDistanceLod0 = 15;
-        changedSettings.viewDistanceLod1 = 25;
-        changedSettings.viewDistanceLod2 = 45;
+        changedSettings.viewDistanceLod = [15, 25, 40, 55];
         settingsChanged = true;
-        DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
     }
     
     private void _on_high_button_up()
     {
-        changedSettings.viewDistanceLod0 = 20;
-        changedSettings.viewDistanceLod1 = 40;
-        changedSettings.viewDistanceLod2 = 80;
+        changedSettings.viewDistanceLod = [20, 40, 60, 80];
         settingsChanged = true;
-        DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+        
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
     }
     
     private void _on_ultra_button_up()
     {
-        changedSettings.viewDistanceLod0 = 30;
-        changedSettings.viewDistanceLod1 = 50;
-        changedSettings.viewDistanceLod2 = 120;
+        changedSettings.viewDistanceLod = [30, 50, 80, 120];
         settingsChanged = true;
-        DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-        DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-        DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
     }
     
     /**
@@ -939,9 +937,7 @@ public partial class Settings : CenterContainer
         if (visibilityChangesEnabled)
         {
             ValidateFixViewDistanceLods(changedSettings);
-            DistributeViewDistanceLod0(changedSettings.viewDistanceLod0);
-            DistributeViewDistanceLod1(changedSettings.viewDistanceLod1);
-            DistributeViewDistanceLod2(changedSettings.viewDistanceLod2);
+            DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         }
         
         currentSettings = changedSettings.Duplicate();

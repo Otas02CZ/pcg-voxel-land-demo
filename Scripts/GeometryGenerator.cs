@@ -123,7 +123,7 @@ public struct GreedyQuad(int x, int y, int z, uint width, uint height, VoxelType
 /**
  * Generates geometry from voxel data on a column - chunk basis.
  * Uses both simple meshing for water, and greedy meshing algorithm for everything else.
- * Geometry is always generated at all LOD levels.
+ * Geometry is generated for specified lod levels (one lod at a time).
  */
 public class GeometryGenerator
 {
@@ -207,18 +207,19 @@ public class GeometryGenerator
         lodGenerationTimes[0] = new List<long>();
         lodGenerationTimes[1] = new List<long>();
         lodGenerationTimes[2] = new List<long>();
-        currentSumLodGenerationTimes = new long[3];
+        lodGenerationTimes[3] = new List<long>();
+        currentSumLodGenerationTimes = new long[lodCount];
         lodGenerationTimesLock = new Lock();
     }
     
     /**
      * Returns average time in ms it takes to generate single LOD level of a chunk.
      */
-    public (long lod0, long lod1, long lod2) GetAverageChunkLodGenerationTime()
+    public List<long> GetAverageChunkLodGenerationTime()
     {
         lock (lodGenerationTimesLock)
         {
-            List<long> lodResults = [0, 0, 0];
+            List<long> lodResults = [0, 0, 0, 0];
 
             for (int i = 0; i < lodCount; i++)
             {
@@ -226,7 +227,7 @@ public class GeometryGenerator
                     lodResults[i] = currentSumLodGenerationTimes[i] / lodGenerationTimes[i].Count;
             }
 
-            return (lodResults[0], lodResults[1], lodResults[2]);
+            return lodResults;
         }
     }
 
@@ -368,7 +369,7 @@ public class GeometryGenerator
                     VoxelType voxelType = column.GetVoxel(x, (uint)y, z, voxelStep);
                     
                     // treat plant voxels in water as water for meshing purposes, but only at higher LOD levels
-                    if (voxelStep > 1 && voxelType >= VoxelType.PLANT_WATER && voxelType == VoxelType.WHITE_WATER)
+                    if (voxelStep > 1 && voxelType >= VoxelType.PLANT_WATER && voxelType <= VoxelType.WHITE_WATER)
                     {
                         voxelType = VoxelType.WATER;
                     }
@@ -472,8 +473,7 @@ public class GeometryGenerator
         }
 
         // also render water when facing plants up
-        if (direction == DIRECTION.UP && neighborType is VoxelType.BLUE or VoxelType.BROWN
-                or VoxelType.PLANT or VoxelType.PLANT_DARK or VoxelType.RED or VoxelType.YELLOW or VoxelType.WHITE)
+        if (direction == DIRECTION.UP && neighborType >= VoxelType.PLANT && neighborType <= VoxelType.BROWN)
         {
             return true;
         }
@@ -877,6 +877,7 @@ public class GeometryGenerator
             LodLevel.LOD0 => 1,
             LodLevel.LOD1 => 4,
             LodLevel.LOD2 => 8,
+            LodLevel.LOD3 => 16,
             _ => 1
         };
     }

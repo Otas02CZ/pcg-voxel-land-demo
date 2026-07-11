@@ -117,7 +117,7 @@ public class GeometryGeneratorService : IDisposable
     /**
      * Returns average time geometry generator spends at generating single chunk lod.
      */
-    public (long lod0, long lod1, long lod2) GetAverageChunkLodGenerationTime()
+    public List<long> GetAverageChunkLodGenerationTime()
     {
         return geometryGenerator.GetAverageChunkLodGenerationTime();
     }

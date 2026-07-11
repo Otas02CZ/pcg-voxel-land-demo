@@ -837,9 +837,9 @@ public partial class Menu : Control
     /**
      * Signal lod distance configuration to root.
      */
-    public void OnSetLodDistanceConfiguration(int lodDistance0, int lodDistance1, int lodDistance2)
+    public void OnSetLodDistanceConfiguration(int[] lodDistances)
     {
-        root.SetLodConfiguration(lodDistance0, lodDistance1, lodDistance2);
+        root.SetLodConfiguration(lodDistances);
     }
 
     public void OnSettingsBackButtonPressed()

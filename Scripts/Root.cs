@@ -76,8 +76,9 @@ public enum DisplayMode : byte
 public enum LodLevel : byte
 {
 	LOD0, // full quality - each voxel has a cube
-	LOD1, // lower quality, used for collisions
-	LOD2, // very low quality
+	LOD1, // medium quality, used for collisions
+	LOD2, // low quality
+    LOD3, // very low quality
 	UNLOADED // not rendered, no geometry
 }
 
@@ -113,7 +114,7 @@ public partial class Root : Node3D
 
 	// iterative generation system configuration
 	// LOD system configuration, maximal distance of given lod level
-    private int[] lodDistances = new int[lodCount] {10, 40, 80};
+    private int[] lodDistances = new int[lodCount] {10, 30, 50, 90};
     
 	// margins and distance additions for related voxelization and region generation distances
 	private int lodDistanceMax;
@@ -126,7 +127,7 @@ public partial class Root : Node3D
 	private const int columnMeshingDistanceAddition = 5; // further away higher
     private const int columnGeometryUnloadMargin = 5;
 	// total number of lods
-	private const int lodCount = 3;
+	private const int lodCount = 4;
 	// maximum count of display column applications per frame
 	const int maxProcessPerFrame = 2;
 	
@@ -411,6 +412,7 @@ public partial class Root : Node3D
         meshedColumnLods[0] = [];
         meshedColumnLods[1] = [];
         meshedColumnLods[2] = [];
+        meshedColumnLods[3] = [];
 		columnLods = new Dictionary<(int, int), LodLevel>();
 		// initialize voxel storage and cave gen helper
 		voxelStorage = new VoxelStorage(metersPerChunk, voxelsPerMeter, chunkCountY);
@@ -538,6 +540,7 @@ public partial class Root : Node3D
         meshedColumnLods[0] = null;
         meshedColumnLods[1] = null;
         meshedColumnLods[2] = null;
+        meshedColumnLods[3] = null;
 		columnLods = null;
 	}
 	
@@ -545,11 +548,14 @@ public partial class Root : Node3D
 	 * Configures LOD distances based on supplied values.
 	 * For changes of values from UI and loaded application settings.
 	 */
-	public void SetLodConfiguration(int distance0, int distance1, int distance2)
+	public void SetLodConfiguration(int[] distances)
 	{
-		lodDistances[0] = distance0;
-		lodDistances[1] = distance1;
-		lodDistances[2] = distance2;
+        if (lodDistances == null || lodDistances.Length != lodCount)
+        {
+            GD.PrintErr("Incorrect number of lod distances");
+        }
+        
+        lodDistances = distances;
 		
 		CalculateRegionChunksDistances(); // needs to recalculate all dependent distances for the iterative system
 
@@ -792,6 +798,10 @@ public partial class Root : Node3D
         }
         
 		// calculate target lods for viewing
+        Vector3Double minPosLod3 = cameraPosition - new Vector3Double(lodDistances[3], 0, lodDistances[3]);
+        Vector3Double maxPosLod3 = cameraPosition + new Vector3Double(lodDistances[3], 0, lodDistances[3]);
+        var (minChunkXLod3, minChunkZLod3) = voxelStorage.WorldPosToChunkCoords(minPosLod3.x, minPosLod3.z);
+        var (maxChunkXLod3, maxChunkZLod3) = voxelStorage.WorldPosToChunkCoords(maxPosLod3.x, maxPosLod3.z);
 		Vector3Double minPosLod2 = cameraPosition - new Vector3Double(lodDistances[2], 0, lodDistances[2]);
 		Vector3Double maxPosLod2 = cameraPosition + new Vector3Double(lodDistances[2], 0, lodDistances[2]);
 		var (minChunkXLod2, minChunkZLod2) = voxelStorage.WorldPosToChunkCoords(minPosLod2.x, minPosLod2.z);
@@ -805,9 +815,9 @@ public partial class Root : Node3D
 		var (minChunkXLod0, minChunkZLod0) = voxelStorage.WorldPosToChunkCoords(minPosLod0.x, minPosLod0.z);
 		var (maxChunkXLod0, maxChunkZLod0) = voxelStorage.WorldPosToChunkCoords(maxPosLod0.x, maxPosLod0.z);
 		// recalculate the lods for chunk columns
-		for (int chunkX = minChunkXLod2; chunkX <= maxChunkXLod2; chunkX++)
+		for (int chunkX = minChunkXLod3; chunkX <= maxChunkXLod3; chunkX++)
 		{
-			for (int chunkZ = minChunkZLod2; chunkZ <= maxChunkZLod2; chunkZ++)
+			for (int chunkZ = minChunkZLod3; chunkZ <= maxChunkZLod3; chunkZ++)
 			{
 				// switch to correct lod
 				LodLevel correctLod = LodLevel.UNLOADED;
@@ -825,6 +835,11 @@ public partial class Root : Node3D
 				{
 					correctLod = LodLevel.LOD2;
 				}
+                else
+                if (chunkX >= minChunkXLod3 && chunkX <= maxChunkXLod3 && chunkZ >= minChunkZLod3 && chunkZ <= maxChunkZLod3)
+                {
+                    correctLod = LodLevel.LOD3;
+                }
 
 				// new column to display
 				if (!columnLods.ContainsKey((chunkX, chunkZ)))
@@ -847,7 +862,7 @@ public partial class Root : Node3D
 		// displayed columns unloading
 		foreach (var (chunkX, chunkZ) in columnLods.Keys)
 		{
-			if (chunkX < minChunkXLod2 || chunkX > maxChunkXLod2 || chunkZ < minChunkZLod2 || chunkZ > maxChunkZLod2)
+			if (chunkX < minChunkXLod3 || chunkX > maxChunkXLod3 || chunkZ < minChunkZLod3 || chunkZ > maxChunkZLod3)
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
@@ -998,7 +1013,7 @@ public partial class Root : Node3D
 			var geometryGenRemainingTasks = geometryGeneratorService.GetRemainingTasksCount();
 			var geometryGenLockedTasks = geometryGeneratorService.GetLockedTasksCount();
 			var geometryGenActiveColumns = geometryGeneratorService.GetActiveColumnsCount();
-            (long lod0, long lod1, long lod2) = geometryGeneratorService.GetAverageChunkLodGenerationTime();
+            List<long> lodResults = geometryGeneratorService.GetAverageChunkLodGenerationTime();
 			var meshViewDisplayedColumns = worldDisplayService.GetDisplayedColumnsCount();
 			var meshViewRemainingTasks = worldDisplayService.GetRemainingTasksCount();
 			var meshViewLockedTasks = worldDisplayService.GetLockedTasksCount();
@@ -1013,7 +1028,7 @@ public partial class Root : Node3D
 			fpsLabel.Text = $"WORLD GEN (A/W/R/L): {worldGenActiveRegions}/{worldGenWorkingTasks}/{worldGenRemainingTasks}/{worldGenLockedTasks}\n" +
 							$"VOXEL GEN (A/R/L): {voxelGenActiveColumns}/{voxelGenRemainingTasks}/{voxelGenLockedTasks}/{voxelGenWaitingNeighborsCount}\n" +
 							$"GEOMT GEN (A/R/L): {geometryGenActiveColumns}/{geometryGenRemainingTasks}/{geometryGenLockedTasks}\n" +
-							$"MESH  GEN: {lod0}/{lod1}/{lod2} ms average\n" +
+							$"MESH  GEN: {lodResults[0]}/{lodResults[1]}/{lodResults[2]}/{lodResults[3]} ms average\n" +
 							$"MESH VIEW (A/R/L): {meshViewDisplayedColumns}/{meshViewRemainingTasks}/{meshViewLockedTasks}\n" +
 							$"MODEL GEN (R): {modelGenRemainingTasks}\n" +
 							$"CAMERA CHUNK: {cameraChunk.x}, {cameraChunk.y}, {cameraChunk.z}\n" +
