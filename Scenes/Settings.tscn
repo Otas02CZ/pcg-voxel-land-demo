@@ -50,29 +50,22 @@ custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VisibilityRangesOff" type="VBoxContainer" parent="PanelContainer/Main" unique_id=1973781908]
-layout_mode = 2
-
-[node name="Label3" type="Label" parent="PanelContainer/Main/VisibilityRangesOff" unique_id=1176528838]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Visibility Ranges"
-label_settings = SubResource("LabelSettings_flfri")
-
-[node name="Label" type="Label" parent="PanelContainer/Main/VisibilityRangesOff" unique_id=82508516]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Visibility ranges can only be changed from the title menu."
-
 [node name="VisibilityRanges" type="VBoxContainer" parent="PanelContainer/Main" unique_id=209674359]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="PanelContainer/Main/VisibilityRanges" unique_id=925855731]
+[node name="RenderDistanceLabel" type="Label" parent="PanelContainer/Main/VisibilityRanges" unique_id=925855731]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Visibility Ranges"
+text = "Render Distance"
 label_settings = SubResource("LabelSettings_flfri")
+
+[node name="RenderDistanceInGameWarning" type="Label" parent="PanelContainer/Main/VisibilityRanges" unique_id=82508516]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "!!! Changing when in-game can cause errors, missing chunks, etc. !!!"
+horizontal_alignment = 1
 
 [node name="ViewDistancePreset" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1441830379]
 layout_mode = 2
@@ -197,10 +190,11 @@ layout_mode = 2
 theme_override_font_sizes/normal_font_size = 14
 theme_override_font_sizes/bold_font_size = 14
 bbcode_enabled = true
-text = "[b]8		GB[/b] RAM,	[b]4[/b]c [b]CPU[/b] 		- [b]Very Low[/b]
-[b]12	GB[/b] RAM,	[b]6[/b]c [b]CPU[/b] 		- [b]Low[/b]
-[b]16	GB[/b] RAM,	[b]8[/b]c [b]CPU[/b]		- [b]Medium[/b]
-[b]32[/b]+	[b]GB[/b] RAM,	[b]12[/b]c [b]CPU[/b]		- [b]High[/b] / [b]Ultra[/b]"
+text = "[b]6		GB[/b] RAM,	[b]4[/b]c		[b]CPU[/b] 		- [b]Very Low[/b]
+[b]8		GB[/b] RAM,	[b]4-6[/b]c		[b]CPU[/b] 		- [b]Low[/b]
+[b]12	GB[/b] RAM,	[b]6-8[/b]c		[b]CPU[/b]			- [b]Medium[/b]
+[b]16	GB[/b] RAM,	[b]8[/b]c		[b]CPU[/b]			- [b]High[/b]
+[b]32	GB[/b] RAM,	[b]12[/b]c		[b]CPU[/b]			- [b]Ultra[/b]"
 fit_content = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main" unique_id=715373217]

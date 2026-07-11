@@ -558,9 +558,7 @@ public partial class Root : Node3D
         lodDistances = distances;
 		
 		CalculateRegionChunksDistances(); // needs to recalculate all dependent distances for the iterative system
-
-		// this part does not execute now, as lod can be configured only outside running game
-		// I changed this due to remaining issues of the iterative system that resulted in missing columns
+        
 		if (iterativeRuns)
 		{
 			CalculateRegionsChunksAsync(player.GetRealPosition());

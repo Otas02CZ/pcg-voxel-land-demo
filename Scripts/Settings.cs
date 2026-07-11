@@ -103,9 +103,6 @@ public partial class Settings : CenterContainer
     private const int viewDistanceLodMin = 1;
     private const int viewDistanceLodMax = 256;
     
-    // configuration of visibility ranges is disabled in world
-    private bool visibilityChangesEnabled = true;
-    
     // ui elements
     private HSlider lod0Slider;
     private SpinBox lod0SpinBox;
@@ -152,8 +149,7 @@ public partial class Settings : CenterContainer
     private HSlider maxFPSSlider;
     private SpinBox maxFPSSpinBox;
 
-    private VBoxContainer visibilityRangesOffContainer;
-    private VBoxContainer visibilityRangesOnContainer;
+    private Label inGameRenderDistWarning;
 
     public override void _Ready()
     {
@@ -223,19 +219,16 @@ public partial class Settings : CenterContainer
         
         maxFPSSlider = GetNode<HSlider>("PanelContainer/Main/MaxFPS/MaxFPSSlider");
         maxFPSSpinBox = GetNode<SpinBox>("PanelContainer/Main/MaxFPS/MaxFPSSpinBox");
-        
-        visibilityRangesOffContainer = GetNode<VBoxContainer>("PanelContainer/Main/VisibilityRangesOff");
-        visibilityRangesOnContainer = GetNode<VBoxContainer>("PanelContainer/Main/VisibilityRanges");
+
+        inGameRenderDistWarning = GetNode<Label>("PanelContainer/Main/VisibilityRanges/RenderDistanceInGameWarning");
     }
     
     /**
-     * Toggles the ability of changing visibility ranges from the settings menu.
+     * Sets the warning for setting render distances in-game from the settings menu.
      */
-    public void SetVisibilityRangesEnabled(bool enabled)
+    public void SetRenderDistanceWarningInGame(bool enabled)
     {
-        visibilityRangesOffContainer.Visible = !enabled;
-        visibilityRangesOnContainer.Visible = enabled;
-        visibilityChangesEnabled = enabled;
+        inGameRenderDistWarning.Visible = enabled;
     }
 
     /**
@@ -537,15 +530,11 @@ public partial class Settings : CenterContainer
 
     /**
      * Signals new LOD distances to menu. Menu passes it to the root of the project.
-     * Allowed only when in the title menu. Controlled from menu by visibilityChangesEnabled.
      */
     private void ApplyViewDistanceLodSettings()
     {
         // signal lod configuration to menu
-        if (visibilityChangesEnabled)
-        {
-            menu.OnSetLodDistanceConfiguration(currentSettings.viewDistanceLod);
-        }
+        menu.OnSetLodDistanceConfiguration(currentSettings.viewDistanceLod);
     }
     
     /**
@@ -934,11 +923,9 @@ public partial class Settings : CenterContainer
     {
         if (!settingsChanged)
             return;
-        if (visibilityChangesEnabled)
-        {
-            ValidateFixViewDistanceLods(changedSettings);
-            DistributeViewDistanceLods(changedSettings.viewDistanceLod);
-        }
+        
+        ValidateFixViewDistanceLods(changedSettings);
+        DistributeViewDistanceLods(changedSettings.viewDistanceLod);
         
         currentSettings = changedSettings.Duplicate();
         ApplyAllSettings();

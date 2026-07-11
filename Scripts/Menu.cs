@@ -589,11 +589,11 @@ public partial class Menu : Control
     }
 
     /**
-     * Switches menu to in-game settings. This menu does not allow editing of visibility ranges.
+     * Switches menu to in-game settings. This menu shows warning when editing render distances.
      */
     private void SwitchToSettingsInGame()
     {
-        settings.SetVisibilityRangesEnabled(false);
+        settings.SetRenderDistanceWarningInGame(true);
         background.Visible = false;
         titleMenu.Visible = false;
         worldsSelection.Visible = false;
@@ -608,11 +608,11 @@ public partial class Menu : Control
     }
     
     /**
-     * Switches to fully featured seetings from title menu.
+     * Switches to main menu settings.
      */
     private void SwitchToSettingsInTitle()
     {
-        settings.SetVisibilityRangesEnabled(true);
+        settings.SetRenderDistanceWarningInGame(false);
         background.Visible = true;
         titleMenu.Visible = false;
         worldsSelection.Visible = false;
