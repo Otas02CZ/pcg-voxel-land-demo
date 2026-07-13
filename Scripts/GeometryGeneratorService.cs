@@ -217,8 +217,11 @@ public class GeometryGeneratorService : IDisposable
             {
                 if (activeColumns.TryGetValue(column, out var columnGeometry))
                 {
-                    // remove supplied lod level
-                    columnGeometry.lods[(int)lodLevel] = null;
+                    lock (columnGeometry.lodLock)
+                    {
+                        // remove supplied lod level
+                        columnGeometry.lods[(int)lodLevel] = null;
+                    }
                     
                     // might be completely empty - delete it from active columns
                     bool isEmpty = true;
@@ -411,7 +414,12 @@ public class GeometryGeneratorService : IDisposable
             }
             
             // regenerate this chunk
-            updateTask.columnGeometry.lods[(int)updateTask.lodLevel].chunks[updateTask.chunkY] = geometryGenerator.GenerateChunkGeometry(column, (int)updateTask.chunkY, updateTask.lodLevel);
+            ChunkGeometry chunkGeometry = geometryGenerator.GenerateChunkGeometry(column, (int)updateTask.chunkY, updateTask.lodLevel);
+            lock (updateTask.columnGeometry.lodLock)
+            {
+                updateTask.columnGeometry.lods[(int)updateTask.lodLevel].chunks[updateTask.chunkY] = chunkGeometry;
+            }
+            
             lock (eventLock)
             {
                 // inform world display service of the need to update this chunk
@@ -450,23 +458,29 @@ public class GeometryGeneratorService : IDisposable
                        if (!activeColumns.ContainsKey((task.chunkX, task.chunkZ))) // it is new
                        {
                            columnGeometry = new ChunkColumnGeometry(task.chunkX, task.chunkZ, lodCount);
-                           columnGeometryLod = new ColumnGeometryLod(chunkCountY);
-                           columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
-                           activeColumns[(task.chunkX, task.chunkZ)] = columnGeometry;
-                           hasTask = true;
+                           lock (columnGeometry.lodLock)
+                           {
+                               columnGeometryLod = new ColumnGeometryLod(chunkCountY);
+                               columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
+                               activeColumns[(task.chunkX, task.chunkZ)] = columnGeometry;
+                               hasTask = true;
+                           }
                        }
                        else
                        {
                            // already loaded, could be a different lod level
                        
                            columnGeometry = activeColumns[(task.chunkX, task.chunkZ)];
-                           columnGeometryLod = columnGeometry.lods[(int)task.lodLevel];
-                           if (columnGeometryLod == null)
+                           lock (columnGeometry.lodLock)
                            {
-                               // lod not generated yet
-                               columnGeometryLod = new ColumnGeometryLod(chunkCountY);
-                               columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
-                               hasTask = true;
+                               columnGeometryLod = columnGeometry.lods[(int)task.lodLevel];
+                               if (columnGeometryLod == null)
+                               {
+                                   // lod not generated yet
+                                   columnGeometryLod = new ColumnGeometryLod(chunkCountY);
+                                   columnGeometry.lods[(int)task.lodLevel] = columnGeometryLod;
+                                   hasTask = true;
+                               }
                            }
                        }
                        
@@ -502,11 +516,14 @@ public class GeometryGeneratorService : IDisposable
                            {
                                // sets up update tasks (column, y, lod level)
                                ChunkColumnGeometry neighborColumn = activeColumns[(neighborChunkX, neighborChunkZ)];
-                               for (int lod = 0; lod < lodCount; lod++)
+                               lock (neighborColumn.lodLock)
                                {
-                                   if (neighborColumn.lods[lod] != null && neighborColumn.lods[lod].ready)
+                                   for (int lod = 0; lod < lodCount; lod++)
                                    {
-                                       chunkUpdateTasks.Add(new ChunkUpdateTask(neighborColumn, offset.chunkY, (LodLevel)lod));
+                                       if (neighborColumn.lods[lod] != null && neighborColumn.lods[lod].ready)
+                                       {
+                                           chunkUpdateTasks.Add(new ChunkUpdateTask(neighborColumn, offset.chunkY, (LodLevel)lod));
+                                       }
                                    }
                                }
                            }

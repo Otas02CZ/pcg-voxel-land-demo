@@ -48,6 +48,19 @@ public class WorldDisplayTask(WorldDisplayTaskType type, int chunkX, uint chunkY
     public readonly LodLevel lodLevel = lodLevel;
 }
 
+public class PreProcessedChunk(ArrayMesh arrayMesh, Vector3[] collisionGeometry, Vector3Int worldPosition)
+{
+    public readonly ArrayMesh arrayMesh = arrayMesh;
+    public readonly Vector3[] collisionGeometry = collisionGeometry;
+    public readonly Vector3Int worldPosition = worldPosition;
+}
+
+public class PreProcessedChunkColumn(PreProcessedChunk[] chunks, WorldDisplayTask task)
+{
+    public readonly PreProcessedChunk[] chunks = chunks;
+    public readonly WorldDisplayTask task = task;
+}
+
 /**
  * Chunk column geometry display, update and unload service for displaying world voxel geometry in the Godot Engine.
  * Includes support for LOD changes.
@@ -57,6 +70,7 @@ public class WorldDisplayTask(WorldDisplayTaskType type, int chunkX, uint chunkY
  * from root so that mesh changes in Godot scene happen correctly on the main thread.
  * Supports repositioning of column geometry to engine world center to eliminate floating point errors during rendering and physics.
  * TODO: try rework with async processing
+ * TODO rewrite
  */
 public class WorldDisplayService
 {
@@ -66,12 +80,22 @@ public class WorldDisplayService
     private readonly Lock taskAccessLock;
 
     private readonly List<(int chunkX, int chunkZ)> columnsToHide; // columns to unload in next batched removal
+    
+    // pre-processing data and thread management
+    private readonly int maxPreProcessedColumns = 100;
+    private readonly List<PreProcessedChunkColumn> preProcessedColumns;
+    private Thread processingThread;
+    private volatile bool stopThread = false;
+    private const int threadSleepMs = 100;
+    
     // dependencies
     private readonly GeometryGeneratorService geometryGeneratorService;
     private readonly ShaderMaterial waterMaterial;
     private readonly ShaderMaterial blockMaterialVariance;
     private readonly StandardMaterial3D blockMaterialBasic;
     private readonly Node3D voxelWorld;
+    private readonly PackedScene collisionScene;
+        
     private readonly int chunkCountY;
     
     // current origin shifting offset
@@ -84,6 +108,11 @@ public class WorldDisplayService
         columnsToHide = [];
         notReadyTasks = [];
         taskAccessLock = new Lock();
+        collisionScene = GD.Load<PackedScene>("res://Scenes/ChunkCollision.tscn");
+        
+        preProcessedColumns = [];
+        processingThread = new Thread(PreProcessingWorkThread);
+        processingThread.Start();
         
         this.geometryGeneratorService = geometryGeneratorService;
         this.chunkCountY = chunkCountY;
@@ -96,6 +125,132 @@ public class WorldDisplayService
         // subscribe to signals
         geometryGeneratorService.SubscribeOnColumnGeometryGenerated(OnChunkColumnGeometryReady);
         geometryGeneratorService.SubscribeOnChunkGeometryUpdated(OnChunkGeometryUpdated);
+    }
+
+    /**
+     * TODO description
+     */
+    private void PreProcessingWorkThread()
+    {
+        while (!stopThread)
+        {
+            if (preProcessedColumns.Count >= maxPreProcessedColumns)
+            {
+                Thread.Sleep(threadSleepMs);
+                continue;
+            }
+            
+            // try to obtain the first task
+            WorldDisplayTask task = null;
+            lock (taskAccessLock)
+            {
+                if (taskList.Count > 0)
+                {
+                    task = taskList[0];
+                    taskList.RemoveAt(0);
+                }
+                
+                // need to prepare the display column as well
+                if (task != null && !displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
+                {
+                    DisplayedColumn displayedColumn = new DisplayedColumn(task.chunkX, task.chunkZ, LodLevel.UNLOADED, chunkCountY);
+                    displayedColumns.Add((task.chunkX, task.chunkZ), displayedColumn);
+                }
+            }
+
+            if (task == null)
+            {
+                Thread.Sleep(threadSleepMs);
+                continue;
+            }
+
+            switch (task.type)
+            {
+                // pre-processing data for display of a new column or update of existing one to different LOD
+                case WorldDisplayTaskType.DISPLAY:
+                    // obtain its geometry from geometry service
+                    ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
+                    if (columnGeometry == null)
+                    {
+                        GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry");
+                        continue;
+                    }
+
+                    ColumnGeometryLod geometry;
+                    ColumnGeometryLod collisionGeometry;
+
+                    lock (columnGeometry.lodLock)
+                    {
+                        // check that necessary lods are present, lod0 must have lod2 for collision
+                        if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready || 
+                            (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
+                           )
+                        {
+                            GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
+                            continue;
+                        }
+
+                        geometry = columnGeometry.lods[(int)task.lodLevel];
+                        collisionGeometry = columnGeometry.lods[(int)LodLevel.LOD2];
+                    }
+                    
+                    PreProcessedChunk[] preProcessedChunks = new PreProcessedChunk[chunkCountY];
+                    
+                    // process all chunks
+                    for (int y = 0; y < chunkCountY; y++)
+                    {
+                        if (!geometry.chunks[y].hasGeometry)
+                        {
+                            continue; // might not have any geometry
+                        }
+
+                        ChunkGeometry chunkGeometry = geometry.chunks[y];
+                        bool voxelVariance = task.lodLevel == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
+                        ArrayMesh arrayMesh = CreateChunkArrayMesh(chunkGeometry, voxelVariance);
+                        
+                        // also prepare collision geometry for lod0
+                        Vector3[] collisionGeometryData = null;
+                        if (task.lodLevel == LodLevel.LOD0)
+                        {
+                            chunkGeometry = collisionGeometry.chunks[y];
+                            int totalLength = chunkGeometry.hasGeometry ? chunkGeometry.indices.Length : 0;
+                            totalLength += chunkGeometry.hasWaterGeometry ? chunkGeometry.waterIndices.Length : 0;
+
+                            if (totalLength > 0)
+                            {
+                                collisionGeometryData = new Vector3[totalLength];
+                                if (chunkGeometry.hasGeometry)
+                                {
+                                    for (int i = 0; i < chunkGeometry.indices.Length; i++)
+                                    {
+                                        collisionGeometryData[i] = chunkGeometry.vertices[chunkGeometry.indices[i]];
+                                    }
+                                }
+
+                                if (chunkGeometry.hasWaterGeometry)
+                                {
+                                    for (int i = 0; i < chunkGeometry.waterIndices.Length; i++)
+                                    {
+                                        collisionGeometryData[i + chunkGeometry.indices.Length] = chunkGeometry.waterVertices[chunkGeometry.waterIndices[i]];
+                                    }
+                                }
+                            }
+                        }
+                        
+                        preProcessedChunks[y] = new PreProcessedChunk(arrayMesh, collisionGeometryData, chunkGeometry.worldPosition);
+                    }
+                    
+                    PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
+                    preProcessedColumns.Add(preProcessedColumn);
+                    
+                    break;
+                
+                // TODO description
+                case WorldDisplayTaskType.UPDATE_EDIT:
+                    // TODO updating is missing
+                    break;
+            }
+        }
     }
 
     /**
@@ -113,12 +268,15 @@ public class WorldDisplayService
             {
                 if (task.chunkX == chunkColumnGeometry.chunkX && task.chunkZ == chunkColumnGeometry.chunkZ)
                 {
-                    // need to check that required lods are present, lod0 also requires lod2 for collisions
-                    if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready || 
-                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD2] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD2].ready))
-                        )
+                    lock (chunkColumnGeometry.lodLock)
                     {
-                        continue;
+                        // need to check that required lods are present, lod0 also requires lod2 for collisions
+                        if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready || 
+                            (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD2] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD2].ready))
+                           )
+                        {
+                            continue;
+                        }
                     }
                     
                     taskList.Add(task);
@@ -154,12 +312,9 @@ public class WorldDisplayService
     }
     
     /**
-     * Creates Godot Engine MeshInstance3D with block and water surfaces from geometry of supplied chunk.
-     * Optimizations must be disabled, otherwise I had issues with csharp - godot interconnect bridge, that resulted in broken and out of order array operations on internal
-     * engine data structures.
+     * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
      */
-    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-    private MeshInstance3D CreateChunkMeshInstance(ChunkGeometry geometryData, bool enableVoxelVariance)
+    private ArrayMesh CreateChunkArrayMesh(ChunkGeometry geometryData, bool enableVoxelVariance)
     {
         try
         {
@@ -256,10 +411,7 @@ public class WorldDisplayService
                 return null;
             }
 
-            // create its MeshInstance3D
-            MeshInstance3D meshInstance = new MeshInstance3D();
-            meshInstance.Mesh = arrayMesh;
-            return meshInstance;
+            return arrayMesh;
         }
         catch (Exception ex)
         {
@@ -326,13 +478,16 @@ public class WorldDisplayService
                     }
                     
                     // check lods ready
-                    if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
-                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
-                        )
+                    lock (columnGeometry.lodLock)
                     {
-                        // not ready
-                        notReadyTasks.Add(task);
-                        break;
+                        if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
+                            (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
+                           )
+                        {
+                            // not ready
+                            notReadyTasks.Add(task);
+                            break;
+                        }
                     }
                     
                     // otherwise ready
@@ -415,6 +570,7 @@ public class WorldDisplayService
     }
 
     /**
+     * TODO update description
      * Processes single scheduled display / update task.
      * Creates engine mesh instances and places the into the godot scene.
      * All mesh instances are placed to shifted engine scene positions defined by origin shift offset.
@@ -422,125 +578,110 @@ public class WorldDisplayService
      * UPDATE_EDIT tasks only replace single chunk of the column with the updated geometry.
      * For columns currently displayed at LOD0 is also placed a collision body build from their LOD1 version. 
      */
-    public void ProcessDisplayUpdateTask()
+    public bool ProcessDisplayUpdateTask()
     {
-        // try to obtain the first task
-        WorldDisplayTask task = null;
-        lock (taskAccessLock)
+        // try to obtain first pre-processed task
+        PreProcessedChunkColumn preProcessedColumn = null;
+        lock (taskAccessLock) // maybe not needed
         {
-            if (taskList.Count > 0)
+            if (preProcessedColumns.Count > 0)
             {
-                task = taskList[0];
-                taskList.RemoveAt(0);
+                preProcessedColumn = preProcessedColumns[0];
+                preProcessedColumns.RemoveAt(0);
             }
         }
 
-        if (task == null)
+        if (preProcessedColumn == null)
         {
-            return; // exit if none
+            return false;
         }
 
         MeshInstance3D instance;
-        MeshInstance3D instanceForCollision;
         Vector3Int worldPositionOffset;
+        WorldDisplayTask task = preProcessedColumn.task;
 
         switch (task.type)
         {
             // displaying a new column or updating an existing one to different LOD
             case WorldDisplayTaskType.DISPLAY:
-                // obtain its geometry from geometry service
-                ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
-                if (columnGeometry == null)
-                {
-                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry.");
-                    return;
-                }
-                // check that necessary lods are present, lod0 must have lod2 for collision
-                if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready || 
-                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
-                    )
-                {
-                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
-                    return;
-                }
-
-                // find out whether the column is currently displayed
+                // firstly check and queue-free existing if needed
+                // displayed column was prepared during pre-process
                 DisplayedColumn displayedColumn;
                 if (displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
-                    displayedColumn = displayedColumns[(task.chunkX, task.chunkZ)]; // it is, lod update will proceed
+                    displayedColumn = displayedColumns[(task.chunkX, task.chunkZ)];
                 }
                 else
                 {
-                    // new column is being displayed
-                    displayedColumn = new DisplayedColumn(task.chunkX, task.chunkZ, LodLevel.UNLOADED, chunkCountY);
-                    displayedColumns.Add((task.chunkX, task.chunkZ), displayedColumn);
+                    // might have been already discarded
+                    return true;
                 }
                 
                 // existing column might already be at correct lod level, should not really happen
-                if (displayedColumn.currentLod != task.lodLevel)
+                if (displayedColumn.currentLod == task.lodLevel)
                 {
-                    displayedColumn.currentLod = task.lodLevel;
-                    
-                    // process all its chunks
-                    for (int y = 0; y < chunkCountY; y++)
+                    return true;
+                }
+                
+                displayedColumn.currentLod = task.lodLevel;
+                
+                // queue-free existing
+                for (int y = 0; y < chunkCountY; y++)
+                {
+                    // unload old chunk collision if updating
+                    if (displayedColumn.chunkCollisions[y] != null)
                     {
-                        // unload old chunk collision if updating
-                        if (displayedColumn.chunkCollisions[y] != null)
-                        {
-                            displayedColumn.chunkCollisions[y].QueueFree();
-                            displayedColumn.chunkCollisions[y] = null;
-                        }
+                        displayedColumn.chunkCollisions[y].QueueFree();
+                        displayedColumn.chunkCollisions[y] = null;
+                    }
+
+                    // cleanup old geometry instance if updating
+                    if (displayedColumn.chunkInstances[y] != null)
+                    {
+                        displayedColumn.chunkInstances[y].QueueFree();
+                        displayedColumn.chunkInstances[y] = null;
+                    }
+                }
+
+                // process all its chunks
+                for (int y = 0; y < chunkCountY; y++)
+                {
+                    if (preProcessedColumn.chunks[y] == null)
+                    {
+                        continue; // todo check correct
+                    }
+
+                    ArrayMesh arrayMesh = preProcessedColumn.chunks[y].arrayMesh;
+                    if (arrayMesh == null)
+                    {
+                        continue;
+                    }
+
+                    instance = new MeshInstance3D();
+                    instance.Mesh = arrayMesh;
+                    // assign it and apply origin shift offset
+                    displayedColumn.chunkInstances[y] = instance;
+                    displayedColumn.realPositions[y] = preProcessedColumn.chunks[y].worldPosition;
+                    worldPositionOffset = preProcessedColumn.chunks[y].worldPosition + originShiftOffsetXZ;
+                    instance.Position = worldPositionOffset.ToGodotVector3();
+                    voxelWorld.AddChild(instance);
                         
-                        // cleanup old geometry instance if updating
-                        if (displayedColumn.chunkInstances[y] != null)
-                        {
-                            displayedColumn.chunkInstances[y].QueueFree();
-                            displayedColumn.chunkInstances[y] = null;
-                        }
-                        
-                        if (!columnGeometry.lods[(int)task.lodLevel].chunks[y].hasGeometry)
-                        {
-                            continue; // might not have any geometry to display
-                        }
-                        
-                        ChunkGeometry chunkGeometry = columnGeometry.lods[(int)task.lodLevel].chunks[y];
-                        bool enableVoxelVariance = task.lodLevel == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
-                        instance = CreateChunkMeshInstance(chunkGeometry, enableVoxelVariance); // generate engine MeshInstance3D with block and water surface
-                        if (instance == null)
-                        {
-                            continue;
-                        }
-                        // assign it and apply origin shift offset
-                        displayedColumn.chunkInstances[y] = instance;
-                        displayedColumn.realPositions[y] = chunkGeometry.worldPosition;
-                        worldPositionOffset = chunkGeometry.worldPosition + originShiftOffsetXZ;
-                        instance.Position = worldPositionOffset.ToGodotVector3();
-                        voxelWorld.AddChild(instance);
-                            
-                        // add collision if current LOD is LOD0 (use LOD1 for collision)
-                        if (task.lodLevel == LodLevel.LOD0)
-                        {
-                            chunkGeometry = columnGeometry.lods[(int)LodLevel.LOD2].chunks[y];
-                            instanceForCollision = CreateChunkMeshInstance(chunkGeometry, false);
-                            if (instanceForCollision == null)
-                            {
-                                continue;
-                            }
-                            // engine generates collision from node geometry
-                            instanceForCollision.CreateTrimeshCollision();
-                            StaticBody3D collision = instanceForCollision.GetChild<StaticBody3D>(0);
-                            instanceForCollision.RemoveChild(collision);
-                            displayedColumn.chunkCollisions[y] = collision;
-                            instance.AddChild(collision);
-                            instanceForCollision.QueueFree();
-                        }
+                    // add collision if current LOD is LOD0 (use LOD2 for collision)
+                    if (task.lodLevel == LodLevel.LOD0)
+                    {
+                        StaticBody3D staticBodyNode = collisionScene.Instantiate<StaticBody3D>();
+                        ConcavePolygonShape3D shape = new ConcavePolygonShape3D();
+                        shape.SetFaces(preProcessedColumn.chunks[y].collisionGeometry);
+                        staticBodyNode.GetNode<CollisionShape3D>("CollisionShape").SetShape(shape);
+                        instance.AddChild(staticBodyNode);
                     }
                 }
                 break;
             
             // only updating a single chunk of a column to its new geometry
             case WorldDisplayTaskType.UPDATE_EDIT:
+                // TODO implement edit updates
+                /*
                 // check whether it was not already unloaded
                 if (!displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
@@ -619,8 +760,11 @@ public class WorldDisplayService
                     instance.AddChild(collision);
                     instanceForCollision.QueueFree();
                 }
+                */
                 break;
         }
+
+        return true;
     }
     
     /**
@@ -652,6 +796,10 @@ public class WorldDisplayService
      */
     public void Dispose()
     {
+        stopThread = true;
+        processingThread.Join();
+        processingThread = null;
+        
         foreach (DisplayedColumn displayedColumn in displayedColumns.Values)
         {
             // remove its chunk collisions

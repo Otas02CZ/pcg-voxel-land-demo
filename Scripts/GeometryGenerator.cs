@@ -57,6 +57,7 @@ public class ChunkColumnGeometry(int chunkX, int chunkZ, int lodCount)
     public readonly int chunkX = chunkX;
     public readonly int chunkZ = chunkZ;
     public ColumnGeometryLod[] lods = new ColumnGeometryLod[lodCount];
+    public Lock lodLock = new Lock();
 }
 
 /**

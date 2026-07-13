@@ -56,6 +56,7 @@ Root catches editing events triggers raycast in VoxelEditService, disables voxel
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Godot;
 
@@ -128,8 +129,6 @@ public partial class Root : Node3D
     private const int columnGeometryUnloadMargin = 5;
 	// total number of lods
 	private const int lodCount = 4;
-	// maximum count of display column applications per frame
-	const int maxProcessPerFrame = 2;
 	
 	// distances for region, voxel and geometry generation and unloading
 	private int regionTerrainTriggerDistance; // distance where regions need to have generated terrain
@@ -876,12 +875,17 @@ public partial class Root : Node3D
 	/**
 	 * Yields current thread to world display service to apply DISPLAY / UPDATE tasks.
 	 */
-	private void ProcessCompletedMeshes()
+	private void ProcessCompletedMeshes(double delta)
 	{
-		for (int i=0; i < maxProcessPerFrame; i++)
-		{
-			worldDisplayService.ProcessDisplayUpdateTask();
-		}
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        while (true)
+        {
+            if (!worldDisplayService.ProcessDisplayUpdateTask() ||
+                stopwatch.ElapsedMilliseconds >= delta)
+            {
+                break;
+            }
+        }
 	}
 	
 	/**
@@ -983,6 +987,8 @@ public partial class Root : Node3D
 	
 	/**
 	 * Periodic engine yielded invocation.
+	 * Yields itself to the world display service to process its tasks - display, update and cleanup.
+	 * Performs planned origin shift update.
 	 * Processes updates to the debug menu, allows toggling of several features (debug menu, wireframe, sun movement).
 	 * Triggers voxel editing based on user input and runs the sun movement code.
 	 */
@@ -998,6 +1004,18 @@ public partial class Root : Node3D
 
 		if (iterativeRuns)
 		{
+            // column display management
+            // hide columns
+            worldDisplayService.ProcessPlannedMeshUnloads();
+            // process column display and updates
+            ProcessCompletedMeshes(delta);
+            // perform origin shift when planned
+            if (originShiftPlanned)
+            {
+                PerformOriginShift();
+                originShiftPlanned = false;
+            }
+            
 			// update debug menu with stats
 			var worldGenActiveRegions = worldGeneratorService.GetActiveRegionsCount();
 			var worldGenRemainingTasks = worldGeneratorService.GetRemainingTasksCount();
@@ -1115,29 +1133,6 @@ public partial class Root : Node3D
 		else
 		{
 			Input.MouseMode = Input.MouseModeEnum.Visible;
-		}
-	}
-	
-	/**
-	 * Periodic engine yielded invocation.
-	 * Yields itself to the world display service to process its tasks.
-	 * Runs cleanup of displayed columns that are to be removed.
-	 * And performs planned origin shift update.
-	 */
-	public override void _PhysicsProcess(double delta)
-	{
-		if (!iterativeRuns)
-			return;
-		
-		// hide columns
-		worldDisplayService.ProcessPlannedMeshUnloads();
-		// process column display and updates
-		ProcessCompletedMeshes();
-		// perform origin shift when planned
-		if (originShiftPlanned)
-		{
-			PerformOriginShift();
-			originShiftPlanned = false;
 		}
 	}
 	
