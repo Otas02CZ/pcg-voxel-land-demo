@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://b0icaget7dwwp" path="res://Scripts/Player.cs" id="1_rpqav"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qbkls"]
-radius = 0.25
-height = 1.5
+radius = 0.2
+height = 1.0
 
 [node name="Player" type="CharacterBody3D" unique_id=3164163]
 script = ExtResource("1_rpqav")
@@ -13,7 +13,7 @@ script = ExtResource("1_rpqav")
 shape = SubResource("CapsuleShape3D_qbkls")
 
 [node name="Camera" type="Camera3D" parent="." unique_id=1777038947]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
 [node name="Torch" type="OmniLight3D" parent="." unique_id=1640697374]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4302957, 0.6888671, -0.24657339)

@@ -113,9 +113,9 @@ public class WorldDisplayService
             {
                 if (task.chunkX == chunkColumnGeometry.chunkX && task.chunkZ == chunkColumnGeometry.chunkZ)
                 {
-                    // need to check that required lods are present, lod0 also requires lod1 for collisions
+                    // need to check that required lods are present, lod0 also requires lod2 for collisions
                     if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready || 
-                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD1] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD1].ready))
+                        (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD2] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD2].ready))
                         )
                     {
                         continue;
@@ -317,7 +317,7 @@ public class WorldDisplayService
             {
                 case WorldDisplayTaskType.DISPLAY:
                     // if column is ready add it to tasks that can be processed, otherwise it must wait
-                    // for lod0 - lod0 and lod1 must be ready, otherwise only the lod specified
+                    // for lod0 - lod0 and lod2 must be ready, otherwise only the lod specified
                     ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
                     if (columnGeometry == null)
                     {
@@ -327,7 +327,7 @@ public class WorldDisplayService
                     
                     // check lods ready
                     if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
-                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD1] == null || !columnGeometry.lods[(int)LodLevel.LOD1].ready))
+                        (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
                         )
                     {
                         // not ready
@@ -455,9 +455,9 @@ public class WorldDisplayService
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry.");
                     return;
                 }
-                // check that necessary lods are present, lod0 must have lod1 for collision
+                // check that necessary lods are present, lod0 must have lod2 for collision
                 if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready || 
-                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD1] == null || !columnGeometry.lods[(int)LodLevel.LOD1].ready))
+                    (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
                     )
                 {
                     GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
@@ -521,7 +521,7 @@ public class WorldDisplayService
                         // add collision if current LOD is LOD0 (use LOD1 for collision)
                         if (task.lodLevel == LodLevel.LOD0)
                         {
-                            chunkGeometry = columnGeometry.lods[(int)LodLevel.LOD1].chunks[y];
+                            chunkGeometry = columnGeometry.lods[(int)LodLevel.LOD2].chunks[y];
                             instanceForCollision = CreateChunkMeshInstance(chunkGeometry, false);
                             if (instanceForCollision == null)
                             {
@@ -605,7 +605,7 @@ public class WorldDisplayService
                 // add collision if current LOD is LOD0 (use LOD1 for collision)
                 if (disColToUpdate.currentLod == LodLevel.LOD0)
                 {
-                    chunkGeomToUpdate = colGeomToUpdate.lods[(int)LodLevel.LOD1].chunks[yIndex];
+                    chunkGeomToUpdate = colGeomToUpdate.lods[(int)LodLevel.LOD2].chunks[yIndex];
                     instanceForCollision = CreateChunkMeshInstance(chunkGeomToUpdate, false);
                     if (instanceForCollision == null)
                     {
