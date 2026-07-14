@@ -209,18 +209,20 @@ public class WorldDisplayService
                         
                         // also prepare collision geometry for lod0
                         Vector3[] collisionGeometryData = null;
+                        
                         if (task.lodLevel == LodLevel.LOD0)
                         {
                             chunkGeometry = collisionGeometry.chunks[y];
-                            int totalLength = chunkGeometry.hasGeometry ? chunkGeometry.indices.Length : 0;
-                            totalLength += chunkGeometry.hasWaterGeometry ? chunkGeometry.waterIndices.Length : 0;
+                            int indicesLength = chunkGeometry.hasGeometry ? chunkGeometry.indices.Length : 0;
+                            int waterIndicesLength = chunkGeometry.hasWaterGeometry ? chunkGeometry.waterIndices.Length : 0;
+                            int totalLength = indicesLength + waterIndicesLength;
 
                             if (totalLength > 0)
                             {
                                 collisionGeometryData = new Vector3[totalLength];
                                 if (chunkGeometry.hasGeometry)
                                 {
-                                    for (int i = 0; i < chunkGeometry.indices.Length; i++)
+                                    for (int i = 0; i < indicesLength; i++)
                                     {
                                         collisionGeometryData[i] = chunkGeometry.vertices[chunkGeometry.indices[i]];
                                     }
@@ -228,9 +230,9 @@ public class WorldDisplayService
 
                                 if (chunkGeometry.hasWaterGeometry)
                                 {
-                                    for (int i = 0; i < chunkGeometry.waterIndices.Length; i++)
+                                    for (int i = 0; i < waterIndicesLength; i++)
                                     {
-                                        collisionGeometryData[i + chunkGeometry.indices.Length] = chunkGeometry.waterVertices[chunkGeometry.waterIndices[i]];
+                                        collisionGeometryData[i + indicesLength] = chunkGeometry.waterVertices[chunkGeometry.waterIndices[i]];
                                     }
                                 }
                             }
