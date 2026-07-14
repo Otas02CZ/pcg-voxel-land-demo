@@ -47,6 +47,9 @@ public class WorldDisplayTask(WorldDisplayTaskType type, int chunkX, uint chunkY
     public readonly LodLevel lodLevel = lodLevel;
 }
 
+/**
+ * Stores pre-processed data for a single chunk. These data are then quickly applied on the main thread.
+ */
 public class PreProcessedChunk(ArrayMesh arrayMesh, Vector3[] collisionGeometry, Vector3Int worldPosition)
 {
     public readonly ArrayMesh arrayMesh = arrayMesh;
@@ -54,6 +57,9 @@ public class PreProcessedChunk(ArrayMesh arrayMesh, Vector3[] collisionGeometry,
     public readonly Vector3Int worldPosition = worldPosition;
 }
 
+/**
+ * Stores pre-processed data of a chunk column. These data are then quickly applied on the main thread
+ */
 public class PreProcessedChunkColumn(PreProcessedChunk[] chunks, WorldDisplayTask task)
 {
     public readonly PreProcessedChunk[] chunks = chunks;
@@ -65,11 +71,10 @@ public class PreProcessedChunkColumn(PreProcessedChunk[] chunks, WorldDisplayTas
  * Includes support for LOD changes.
  * Controlled by a task system. Display (includes LOD changes) and changes due to user voxel editing are run on a single task basis.
  * Complete unloading of columns is done in batches when all unload operations are done at once.
- * Does not process tasks on its own via threading as other services do. But exposes the jobs to be done from outside by main thread
- * from root so that mesh changes in Godot scene happen correctly on the main thread.
+ * Its work is split into two parts. Firstly the required tasks are pre-processed asynchronously on the main thread.
+ * This includes geometry and collision unpacking and preparation, ArrayMesh assembly, etc.
+ * Secondly, these pre-processed tasks are applied to the engine from the main thread. Reducing the load on the main thread and stuttering.
  * Supports repositioning of column geometry to engine world center to eliminate floating point errors during rendering and physics.
- * TODO: try rework with async processing
- * TODO rewrite
  */
 public class WorldDisplayService
 {
@@ -127,7 +132,9 @@ public class WorldDisplayService
     }
 
     /**
-     * TODO description
+     * Pre-processes supplied display/update tasks asynchronously on the engine main thread.
+     * Pre-processing includes geometry and collision unpacking and preparation, ArrayMesh assembly, etc.
+     * Fills a buffer of pre-processed tasks.
      */
     private void PreProcessingWorkThread()
     {
@@ -682,13 +689,12 @@ public class WorldDisplayService
     }
 
     /**
-     * TODO update description
-     * Processes single scheduled display / update task.
-     * Creates engine mesh instances and places the into the godot scene.
+     * Finishes a single pre-processed display / update task.
+     * Creates engine mesh instances and places them into the godot scene.
      * All mesh instances are placed to shifted engine scene positions defined by origin shift offset.
      * DISPLAY tasks include LOD transitions - unload of old LOD geometry and display of new one.
      * UPDATE_EDIT tasks only replace single chunk of the column with the updated geometry.
-     * For columns currently displayed at LOD0 is also placed a collision body build from their LOD1 version. 
+     * For columns currently displayed at LOD0 is also placed a collision body build from their LOD2 version.
      */
     public bool ProcessDisplayUpdateTask()
     {
@@ -761,7 +767,7 @@ public class WorldDisplayService
                 {
                     if (preProcessedColumn.chunks[y] == null)
                     {
-                        continue; // todo check correct
+                        continue;
                     }
 
                     ArrayMesh arrayMesh = preProcessedColumn.chunks[y].arrayMesh;
@@ -892,6 +898,7 @@ public class WorldDisplayService
      */
     public void Dispose()
     {
+        // thread cleanup
         stopThread = true;
         processingThread.Join();
         processingThread = null;
