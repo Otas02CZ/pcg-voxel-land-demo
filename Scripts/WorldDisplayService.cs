@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using Godot;
 
@@ -463,11 +462,39 @@ public class WorldDisplayService
      */
     public void AddTask(WorldDisplayTask task)
     {
+        List<WorldDisplayTask> tasksToRemove = [];
+        
         lock (taskAccessLock)
         {
             switch (task.type)
             {
                 case WorldDisplayTaskType.DISPLAY:
+                    // existing tasks for this column must be removed, both not ready and ready
+                    foreach (WorldDisplayTask t in notReadyTasks) // not ready
+                    {
+                        if (t.chunkX == task.chunkX && t.chunkZ == task.chunkZ && t.type == WorldDisplayTaskType.DISPLAY)
+                        {
+                            tasksToRemove.Add(t);
+                        }
+                    }
+                    foreach (WorldDisplayTask t in tasksToRemove)
+                    {
+                        notReadyTasks.Remove(t);
+                    }
+                    tasksToRemove.Clear();
+                    foreach (WorldDisplayTask t in taskList) // ready
+                    {
+                        if (t.chunkX == task.chunkX && t.chunkZ == task.chunkZ && t.type == WorldDisplayTaskType.DISPLAY)
+                        {
+                            tasksToRemove.Add(t);
+                        }
+                    }
+
+                    foreach (WorldDisplayTask t in tasksToRemove)
+                    {
+                        taskList.Remove(t);
+                    }
+                    
                     // if column is ready add it to tasks that can be processed, otherwise it must wait
                     // for lod0 - lod0 and lod2 must be ready, otherwise only the lod specified
                     ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
@@ -495,7 +522,6 @@ public class WorldDisplayService
                     break;
                 case WorldDisplayTaskType.HIDE:
                     // remove from notReadyTasks if it is present
-                    List<WorldDisplayTask> tasksToRemove = [];
                     foreach (WorldDisplayTask t in notReadyTasks)
                     {
                         if (t.chunkX == task.chunkX && t.chunkZ == task.chunkZ && t.type == WorldDisplayTaskType.DISPLAY)
@@ -508,6 +534,7 @@ public class WorldDisplayService
                         notReadyTasks.Remove(t);
                     }
                     // remove from taskList if it is present there
+                    tasksToRemove.Clear();
                     foreach (WorldDisplayTask t in taskList)
                     {
                         if (t.chunkX == task.chunkX && t.chunkZ == task.chunkZ && t.type == WorldDisplayTaskType.DISPLAY)
