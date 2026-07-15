@@ -81,28 +81,28 @@ size_flags_horizontal = 3
 
 [node name="VeryLow" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1449630362]
 layout_mode = 2
-tooltip_text = "For systems with 8 GB RAM"
+tooltip_text = "For systems with 6 GB RAM"
 text = "Very Low"
 
 [node name="Low" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1115839882]
 layout_mode = 2
-tooltip_text = "For systems with 12 GB RAM"
+tooltip_text = "For systems with 8 GB RAM"
 text = "Low
 "
 
 [node name="Medium" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=143740486]
 layout_mode = 2
-tooltip_text = "For systems with 16 GB RAM"
+tooltip_text = "For systems with 12 GB RAM"
 text = "Medium"
 
 [node name="High" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1361857140]
 layout_mode = 2
-tooltip_text = "For systems with 32 GB RAM"
+tooltip_text = "For systems with 16 GB RAM"
 text = "High"
 
 [node name="Ultra" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=572960508]
 layout_mode = 2
-tooltip_text = "For systems with 48 GB RAM"
+tooltip_text = "For systems with 32 GB RAM"
 text = "Ultra"
 
 [node name="VisibilityRangeLod0" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1536820649]
