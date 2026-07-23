@@ -34,6 +34,7 @@ public class DisplayedColumn(int chunkX, int chunkZ, LodLevel currentLod, int ch
     public readonly Vector3Int[] realPositions = new Vector3Int[chunkCountY];
     public readonly MeshInstance3D[] chunkInstances = new MeshInstance3D[chunkCountY];
     public readonly StaticBody3D[] chunkCollisions = new StaticBody3D[chunkCountY];
+    public readonly OccluderInstance3D[] occluderInstances = new OccluderInstance3D[chunkCountY];
 }
 
 /**
@@ -199,8 +200,10 @@ public class WorldDisplayService
 
                     lock (columnGeometry.lodLock)
                     {
+                        LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
                         // check that necessary lods are present, lod0 must have lod2 for collision
                         if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
+                            columnGeometry.lods[(int)nextLodLevel] == null || !columnGeometry.lods[(int)nextLodLevel].ready ||
                             (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
                            )
                         {
@@ -289,9 +292,11 @@ public class WorldDisplayService
 
                     lock (columnGeometry.lodLock)
                     {
+                        LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
                         // check that necessary lods are present, lod0 must have lod2 for collision
-                        if (columnGeometry.lods[(int)lod] == null || !columnGeometry.lods[(int)lod].ready ||
-                            (lod == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
+                        if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
+                            columnGeometry.lods[(int)nextLodLevel] == null || !columnGeometry.lods[(int)nextLodLevel].ready ||
+                            (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
                            )
                         {
                             GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null required lod");
@@ -366,8 +371,10 @@ public class WorldDisplayService
                 {
                     lock (chunkColumnGeometry.lodLock)
                     {
-                        // need to check that required lods are present, lod0 also requires lod2 for collisions
-                        if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready || 
+                        LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
+                        // check that necessary lods are present, lod0 must have lod2 for collision
+                        if (chunkColumnGeometry.lods[(int)task.lodLevel] == null || !chunkColumnGeometry.lods[(int)task.lodLevel].ready ||
+                            chunkColumnGeometry.lods[(int)nextLodLevel] == null || !chunkColumnGeometry.lods[(int)nextLodLevel].ready ||
                             (task.lodLevel == LodLevel.LOD0 && (chunkColumnGeometry.lods[(int)LodLevel.LOD2] == null || !chunkColumnGeometry.lods[(int)LodLevel.LOD2].ready))
                            )
                         {
@@ -618,7 +625,10 @@ public class WorldDisplayService
                     // check lods ready
                     lock (columnGeometry.lodLock)
                     {
+                        LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
+                        // check that necessary lods are present, lod0 must have lod2 for collision
                         if (columnGeometry.lods[(int)task.lodLevel] == null || !columnGeometry.lods[(int)task.lodLevel].ready ||
+                            columnGeometry.lods[(int)nextLodLevel] == null || !columnGeometry.lods[(int)nextLodLevel].ready ||
                             (task.lodLevel == LodLevel.LOD0 && (columnGeometry.lods[(int)LodLevel.LOD2] == null || !columnGeometry.lods[(int)LodLevel.LOD2].ready))
                            )
                         {
@@ -699,6 +709,13 @@ public class WorldDisplayService
                             instance.QueueFree();
                             displayedColumn.chunkInstances[y] = null;
                         }
+                        
+                        OccluderInstance3D occluderInstance = displayedColumn.occluderInstances[y];
+                        if (occluderInstance != null)
+                        {
+                            occluderInstance.QueueFree();
+                            displayedColumn.occluderInstances[y] = null;
+                        }
                     }
                     displayedColumns.Remove(column);
                 }
@@ -763,6 +780,13 @@ public class WorldDisplayService
                 
                 displayedColumn.currentLod = task.lodLevel;
                 
+                ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
+                if (columnGeometry == null)
+                {
+                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry");
+                    return true;
+                }
+                
                 // queue-free existing
                 for (int y = 0; y < chunkCountY; y++)
                 {
@@ -778,6 +802,12 @@ public class WorldDisplayService
                     {
                         displayedColumn.chunkInstances[y].QueueFree();
                         displayedColumn.chunkInstances[y] = null;
+                    }
+
+                    if (displayedColumn.occluderInstances[y] != null)
+                    {
+                        displayedColumn.occluderInstances[y].QueueFree();
+                        displayedColumn.occluderInstances[y] = null;
                     }
                 }
 
@@ -803,6 +833,14 @@ public class WorldDisplayService
                     worldPositionOffset = preProcessedColumn.chunks[y].worldPosition + originShiftOffsetXZ;
                     instance.Position = worldPositionOffset.ToGodotVector3();
                     voxelWorld.AddChild(instance);
+                    
+                    // occlusion
+                    OccluderInstance3D occluderInstance = new OccluderInstance3D();
+                    ArrayOccluder3D  arrayOccluder = new ArrayOccluder3D();
+                    LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
+                    arrayOccluder.SetArrays(columnGeometry.lods[(int)nextLodLevel].chunks[y].vertices, columnGeometry.lods[(int)nextLodLevel].chunks[y].indices);
+                    occluderInstance.SetOccluder(arrayOccluder);
+                    instance.AddChild(occluderInstance);
                     
                     // add collision if current LOD is LOD0 (use LOD2 for collision)
                     if (task.lodLevel == LodLevel.LOD0)
@@ -834,6 +872,13 @@ public class WorldDisplayService
                     return true;
                 }
                 
+                ChunkColumnGeometry columnGeometry = geometryGeneratorService.GetColumn(task.chunkX, task.chunkZ);
+                if (columnGeometry == null)
+                {
+                    GD.PrintErr($"Column {task.chunkX}, {task.chunkZ} has null geometry");
+                    return true;
+                }
+                
                 // queue-free existing
                 // unload old chunk collision if updating
                 if (displayedColumn.chunkCollisions[task.chunkY] != null)
@@ -847,6 +892,12 @@ public class WorldDisplayService
                 {
                     displayedColumn.chunkInstances[task.chunkY].QueueFree();
                     displayedColumn.chunkInstances[task.chunkY] = null;
+                }
+                
+                if (displayedColumn.occluderInstances[task.chunkY] != null)
+                {
+                    displayedColumn.occluderInstances[task.chunkY].QueueFree();
+                    displayedColumn.occluderInstances[task.chunkY] = null;
                 }
                 
                 // process a single chunk
@@ -870,6 +921,14 @@ public class WorldDisplayService
                 worldPositionOffset = preProcessedColumn.chunks[0].worldPosition + originShiftOffsetXZ;
                 instance.Position = worldPositionOffset.ToGodotVector3();
                 voxelWorld.AddChild(instance);
+                
+                // occlusion
+                OccluderInstance3D occluderInstance = new OccluderInstance3D();
+                ArrayOccluder3D  arrayOccluder = new ArrayOccluder3D();
+                LodLevel nextLodLevel = ((int)task.lodLevel + 1) > (int)LodLevel.LOD3 ? LodLevel.LOD3 : task.lodLevel + 1;
+                arrayOccluder.SetArrays(columnGeometry.lods[(int)nextLodLevel].chunks[task.chunkY].vertices, columnGeometry.lods[(int)nextLodLevel].chunks[task.chunkY].indices);
+                occluderInstance.SetOccluder(arrayOccluder);
+                instance.AddChild(occluderInstance);
                 
                 // add collision if current LOD is LOD0 (use LOD2 for collision)
                 if (displayedColumn.currentLod == LodLevel.LOD0)
@@ -938,6 +997,14 @@ public class WorldDisplayService
                 if (chunkInstance != null)
                 {
                     chunkInstance.QueueFree();
+                }
+            }
+            
+            foreach (OccluderInstance3D occluderInstances in displayedColumn.occluderInstances)
+            {
+                if (occluderInstances != null)
+                {
+                    occluderInstances.QueueFree();
                 }
             }
         }
