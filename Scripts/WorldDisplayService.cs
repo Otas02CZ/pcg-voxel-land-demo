@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Godot;
 
@@ -48,11 +49,21 @@ public class WorldDisplayTask(WorldDisplayTaskType type, int chunkX, uint chunkY
 }
 
 /**
+ * Structure holding surface data of a chunk, that is required to assemble ArrayMesh later on.
+ */
+public class SurfaceData(Godot.Collections.Array geometry, Mesh.ArrayFormat format, Material material)
+{
+    public readonly Godot.Collections.Array geometry = geometry;
+    public readonly Mesh.ArrayFormat format = format;
+    public readonly Material material = material;
+}
+
+/**
  * Stores pre-processed data for a single chunk. These data are then quickly applied on the main thread.
  */
-public class PreProcessedChunk(ArrayMesh arrayMesh, Vector3[] collisionGeometry, Vector3Int worldPosition)
+public class PreProcessedChunk(SurfaceData[] surfaceData, Vector3[] collisionGeometry, Vector3Int worldPosition)
 {
-    public readonly ArrayMesh arrayMesh = arrayMesh;
+    public readonly SurfaceData[] surfaceData = surfaceData;
     public readonly Vector3[] collisionGeometry = collisionGeometry;
     public readonly Vector3Int worldPosition = worldPosition;
 }
@@ -72,7 +83,7 @@ public class PreProcessedChunkColumn(PreProcessedChunk[] chunks, WorldDisplayTas
  * Controlled by a task system. Display (includes LOD changes) and changes due to user voxel editing are run on a single task basis.
  * Complete unloading of columns is done in batches when all unload operations are done at once.
  * Its work is split into two parts. Firstly the required tasks are pre-processed asynchronously on the main thread.
- * This includes geometry and collision unpacking and preparation, ArrayMesh assembly, etc.
+ * This includes geometry and collision unpacking and preparation, etc.
  * Secondly, these pre-processed tasks are applied to the engine from the main thread. Reducing the load on the main thread and stuttering.
  * Supports repositioning of column geometry to engine world center to eliminate floating point errors during rendering and physics.
  */
@@ -213,7 +224,7 @@ public class WorldDisplayService
 
                         ChunkGeometry chunkGeometry = geometry.chunks[y];
                         bool voxelVariance = task.lodLevel == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
-                        ArrayMesh arrayMesh = CreateChunkArrayMesh(chunkGeometry, voxelVariance);
+                        SurfaceData[] surfaceData = CreateChunkSurfaceData(chunkGeometry, voxelVariance);
                         
                         // also prepare collision geometry for lod0
                         Vector3[] collisionGeometryData = null;
@@ -246,7 +257,7 @@ public class WorldDisplayService
                             }
                         }
                         
-                        preProcessedChunks[y] = new PreProcessedChunk(arrayMesh, collisionGeometryData, chunkGeometry.worldPosition);
+                        preProcessedChunks[y] = new PreProcessedChunk(surfaceData, collisionGeometryData, chunkGeometry.worldPosition);
                     }
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
@@ -290,16 +301,10 @@ public class WorldDisplayService
                         geometry = columnGeometry.lods[(int)lod];
                         collisionGeometry = columnGeometry.lods[(int)LodLevel.LOD2];
                     }
-                    /*
-                    if (!geometry.chunks[task.chunkY].hasGeometry)
-                    {
-                        continue; // might not have any geometry
-                    }
-                    */
 
                     ChunkGeometry chunkGeometry = geometry.chunks[task.chunkY];
                     bool voxelVariance = lod == LodLevel.LOD0; // only LOD0 has variance shader for non water blocks
-                    ArrayMesh arrayMesh = CreateChunkArrayMesh(chunkGeometry, voxelVariance);
+                    SurfaceData[] surfaceData = CreateChunkSurfaceData(chunkGeometry, voxelVariance);
 
                     // also prepare collision geometry for lod0
                     Vector3[] collisionGeometryData = null;
@@ -334,7 +339,7 @@ public class WorldDisplayService
 
                     // only a single chunk is being updated
                     PreProcessedChunk[] preProcessedChunks = new PreProcessedChunk[1];
-                    preProcessedChunks[0] = new PreProcessedChunk(arrayMesh, collisionGeometryData, chunkGeometry.worldPosition);
+                    preProcessedChunks[0] = new PreProcessedChunk(surfaceData, collisionGeometryData, chunkGeometry.worldPosition);
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
                     preProcessedColumns.Add(preProcessedColumn);
@@ -403,20 +408,18 @@ public class WorldDisplayService
     }
     
     /**
-     * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
+     * Creates SurfaceData structure with information required to assemble ArrayMesh of given ChunkGeometry later.
      */
-    private ArrayMesh CreateChunkArrayMesh(ChunkGeometry geometryData, bool enableVoxelVariance)
+    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+    private SurfaceData[] CreateChunkSurfaceData(ChunkGeometry geometryData, bool enableVoxelVariance)
     {
         try
         {
-            ArrayMesh arrayMesh = new();
-            bool hasAnySurface = false;
+            List<SurfaceData> surfaceDataList = new List<SurfaceData>();
 
             // surface 0 - solid blocks
             if (geometryData.hasGeometry && geometryData.vertices?.Length > 0)
             {
-                hasAnySurface = true;
-
                 // extend compacted normals and uv arrays
                 int baseIndex;
                 Vector3[] extendedNormals = new Vector3[geometryData.vertices.Length];
@@ -449,25 +452,14 @@ public class WorldDisplayService
 
                 Mesh.ArrayFormat arrayFormat = Mesh.ArrayFormat.FormatVertex | Mesh.ArrayFormat.FormatNormal | Mesh.ArrayFormat.FormatTexUV | Mesh.ArrayFormat.FormatIndex;
 
-                // add the created block surface
-                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, solidArrays, flags:arrayFormat);
-                
-                // assign the block material
-                if (enableVoxelVariance)
-                {
-                    arrayMesh.SurfaceSetMaterial(0, blockMaterialVariance);
-                }
-                else
-                {
-                    arrayMesh.SurfaceSetMaterial(0, blockMaterialBasic);
-                }
+                Material surfaceMaterial = enableVoxelVariance ? blockMaterialVariance : blockMaterialBasic;
+                SurfaceData solidSurface = new SurfaceData(solidArrays, arrayFormat, surfaceMaterial);
+                surfaceDataList.Add(solidSurface);
             }
 
             // surface 1 - water
             if (geometryData.hasWaterGeometry && geometryData.waterVertices?.Length > 0)
             {
-                hasAnySurface = true;
-
                 // extend compacted array of normals
                 int baseIndex;
                 Vector3[] extendedNormals = new Vector3[geometryData.waterVertices.Length];
@@ -488,25 +480,52 @@ public class WorldDisplayService
                 waterArrays[(int)Mesh.ArrayType.Index] = geometryData.waterIndices;
 
                 Mesh.ArrayFormat arrayFormat = Mesh.ArrayFormat.FormatVertex | Mesh.ArrayFormat.FormatNormal | Mesh.ArrayFormat.FormatIndex;
-                // add water surface
-                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, waterArrays, flags:arrayFormat);
 
-                // assign it water shader material
-                int waterSurfaceIndex = arrayMesh.GetSurfaceCount() - 1;
-                arrayMesh.SurfaceSetMaterial(waterSurfaceIndex, waterMaterial);
+                SurfaceData waterSurface = new SurfaceData(waterArrays, arrayFormat, waterMaterial);
+                surfaceDataList.Add(waterSurface);
             }
 
-            if (!hasAnySurface)
+            if (surfaceDataList.Count == 0)
             {
-                // no geometry to render
                 return null;
             }
 
+            SurfaceData[] surfaceData = surfaceDataList.ToArray();
+            return surfaceData;
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Failed to create surface data for chunk {geometryData.chunkX},{geometryData.chunkY},{geometryData.chunkZ}: {ex.Message}");
+            return null;
+        }
+    }
+    
+    /**
+     * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
+     */
+    private ArrayMesh CreateChunkArrayMesh(SurfaceData[] surfaceData)
+    {
+        try
+        {
+            ArrayMesh arrayMesh = new();
+
+            if (surfaceData == null || surfaceData.Length == 0)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < surfaceData.Length; i++)
+            {
+                SurfaceData surface = surfaceData[i];
+                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface.geometry, flags: surface.format);
+                arrayMesh.SurfaceSetMaterial(i,  surface.material);
+            }
+            
             return arrayMesh;
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"Failed to create combined mesh for chunk {geometryData.chunkX},{geometryData.chunkY},{geometryData.chunkZ}: {ex.Message}");
+            GD.PrintErr($"Failed to create combined mesh: {ex.Message}");
             return null;
         }
     }
@@ -770,7 +789,7 @@ public class WorldDisplayService
                         continue;
                     }
 
-                    ArrayMesh arrayMesh = preProcessedColumn.chunks[y].arrayMesh;
+                    ArrayMesh arrayMesh = CreateChunkArrayMesh(preProcessedColumn.chunks[y].surfaceData);
                     if (arrayMesh == null)
                     {
                         continue;
@@ -837,7 +856,7 @@ public class WorldDisplayService
                     return true;
                 }
                 
-                ArrayMesh arrayMesh = preProcessedColumn.chunks[0].arrayMesh;
+                ArrayMesh arrayMesh = CreateChunkArrayMesh(preProcessedColumn.chunks[0].surfaceData);
                 if (arrayMesh == null)
                 {
                     return true;
