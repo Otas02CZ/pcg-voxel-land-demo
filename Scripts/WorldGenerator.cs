@@ -239,7 +239,7 @@ public class WorldGenerator
         
         ageNoise = new FastNoiseLite();
         ageNoise.SetSeed(seed + 20000);
-        ageNoise.SetFrequency(0.002f);
+        ageNoise.SetFrequency(0.00075f);
         ageNoise.SetFractalLacunarity(2.0f);
         ageNoise.SetFractalGain(0.5f);
         ageNoise.SetFractalOctaves(0);
