@@ -503,6 +503,7 @@ public class WorldDisplayService
     /**
      * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
      */
+    [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     private ArrayMesh CreateChunkArrayMesh(SurfaceData[] surfaceData)
     {
         try
