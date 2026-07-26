@@ -189,12 +189,15 @@ public static class VoxelModelDefinitions
 			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2.6f));
 		
 		// grass
-		modelService.AddGrassDefinition(new GrassDefinition(2, 9, 3, 10, 4, 4, VoxelType.PLANT));
-		modelService.AddGrassDefinition(new GrassDefinition(3, 10, 4, 12, 4, 4, VoxelType.PLANT));
-		modelService.AddGrassDefinition(new GrassDefinition(4, 12, 2, 8, 4, 4, VoxelType.PLANT));
-		modelService.AddGrassDefinition(new GrassDefinition(2, 9, 4, 12, 4, 4, VoxelType.PLANT));
-		modelService.AddGrassDefinition(new GrassDefinition(3, 10, 3, 10, 4, 4, VoxelType.PLANT));
-		modelService.AddGrassDefinition(new GrassDefinition(4, 12, 2, 8, 4, 4, VoxelType.PLANT));
+		modelService.AddGrassDefinition(new GrassDefinition(4, 12, 8, 20, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 12, 8, 20, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 12, 8, 20, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 10, 6, 18, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 10, 6, 18, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 10, 6, 18, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 12, 10, 16, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 12, 10, 16, 2, 2, VoxelType.PLANT));
+        modelService.AddGrassDefinition(new GrassDefinition(4, 12, 10, 16, 2, 2, VoxelType.PLANT));
 		
 		// plants
 		modelService.AddPlantDefinition(new PlantDefinition(PLANT_TYPE.POPPY, 2, 4));

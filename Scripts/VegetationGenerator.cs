@@ -21,9 +21,9 @@ public struct GrassDefinition(
     ushort areaZ,
     VoxelType voxelType,
     int seed = 5000,
-    float dxMin = -0.4f,
-    float dxMax = 0.4f,
-    float dyMin = 0.6f,
+    float dxMin = -0.75f,
+    float dxMax = 0.75f,
+    float dyMin = 0.4f,
     float dyMax = 1.0f,
     int id = 0)
 {
