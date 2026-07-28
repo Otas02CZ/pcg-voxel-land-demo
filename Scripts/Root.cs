@@ -17,9 +17,9 @@ WORLD GENERATION - DISPLAY SYSTEM
 		- for geometry that is generated from voxels
 		- for storing edited voxel data to disk
 - Root manages which of these regions and columns of chunks should be currently loaded or displayed
-	- uses current player/camera position around which centered rectangular regions are computed for each level
+	- uses current player/camera position around which centered circular areas are computed for each level
 	of the hierarchical system based on configured distances
-	- these rectangular areas are mapped to a 2D grid of regions and columns
+	- these circular areas are mapped to a 2D grid of regions and columns
 	- differences from the previous state to the new mapping result in creation of tasks for each level
 	of the hierarchical system - generate, update, unload and display tasks
 - these tasks are then processed by services at their level in the system. Tasks at higher levels are waiting
@@ -115,7 +115,8 @@ public partial class Root : Node3D
 
 	// iterative generation system configuration
 	// LOD system configuration, maximal distance of given lod level
-    private int[] lodDistances = new int[lodCount] {10, 30, 50, 90};
+	private int[] lodDistances = new int[lodCount] {10, 30, 50, 90};
+	private int[] lodDistSquared = new int[lodCount];
     
 	// margins and distance additions for related voxelization and region generation distances
 	private int lodDistanceMax;
@@ -131,15 +132,21 @@ public partial class Root : Node3D
 	private const int lodCount = 4;
 	
 	// distances for region, voxel and geometry generation and unloading
+	// squared values are for circular chunk system recalculations
 	private int regionTerrainTriggerDistance; // distance where regions need to have generated terrain
 	private int regionFeaturesTriggerDistance; // distance where regions need to be fully generated
 	private int columnPreparationDistance; // distance for columns to be readied in voxel storage
+	private int columnPrepDistSquared;
 	private int columnVoxelizationDistance; // distance for columns to be voxelized
-    private int[] columnMeshingLodDistances = new int[lodCount]; // meshing distances for lods
+	private int columnVoxDistSquared; 
+	private int[] columnMeshingLodDistances = new int[lodCount]; // meshing distances for lods
+	private int[] columnMeshingLodDistSquared = new int[lodCount];
 
 	private int regionTriggerDistanceUnload; // regions beyond this distance need to be unloaded
 	private int columnDistanceUnload; // columns beyond this distance need to be unloaded at the voxel level
-    private int[] columnMeshingLodUnloadDistances = new int[lodCount]; // mesh unloading distances for lods
+	private int columnDistUnloadSquared;
+	private int[] columnMeshingLodUnloadDistances = new int[lodCount]; // mesh unloading distances for lods
+	private int[] columnMeshingLodUnloadDistSquared = new int[lodCount];
     
 	// collections for tracking currently active / loaded regions and columns on all levels
 	private HashSet<(int x, int z)> loadedRegions;
@@ -566,6 +573,7 @@ public partial class Root : Node3D
 
 	/**
 	 * Recalculates distances for the iterative generation system region - chunk calculation step.
+	 * Includes calculation of squared values of chunk system distances for later circular chunk system checks.
 	 */
 	private void CalculateRegionChunksDistances()
 	{
@@ -574,19 +582,22 @@ public partial class Root : Node3D
 		regionFeaturesTriggerDistance = regionFeaturesMin + lodDistanceMax;
 		columnPreparationDistance = lodDistanceMax + columnPreparationDistanceAddition;
 		columnVoxelizationDistance = lodDistanceMax + columnVoxelizationDistanceAddition;
-
-        for (int lod = 0; lod < lodCount; lod++)
-        {
-            columnMeshingLodDistances[lod] = lodDistances[lod] + columnMeshingDistanceAddition;
-        }
-        
 		regionTriggerDistanceUnload = regionTerrainTriggerDistance + regionUnloadMargin;
 		columnDistanceUnload = columnPreparationDistance + columnUnloadMargin;
-
-        for (int lod = 0; lod < lodCount; lod++)
-        {
-            columnMeshingLodUnloadDistances[lod] = columnMeshingLodDistances[lod] + columnGeometryUnloadMargin;
-        }
+		// squared distances in chunk units for circular chunk system recalculation
+		columnPrepDistSquared = (int)Math.Pow(columnPreparationDistance/(double)metersPerChunk, 2);
+		columnDistUnloadSquared = (int)Math.Pow(columnDistanceUnload/(double)metersPerChunk, 2);
+		columnVoxDistSquared = (int)Math.Pow(columnVoxelizationDistance/(double)metersPerChunk, 2);
+		
+		for (int lod = 0; lod < lodCount; lod++)
+		{
+			lodDistSquared[lod] = (int)Math.Pow(lodDistances[lod]/(double)metersPerChunk, 2);
+			columnMeshingLodDistances[lod] = lodDistances[lod] + columnMeshingDistanceAddition;
+			columnMeshingLodDistSquared[lod] = (int)Math.Pow(columnMeshingLodDistances[lod]/(double)metersPerChunk, 2);
+			// unload
+			columnMeshingLodUnloadDistances[lod] = columnMeshingLodDistances[lod] + columnGeometryUnloadMargin;
+			columnMeshingLodUnloadDistSquared[lod] = (int)Math.Pow(columnMeshingLodUnloadDistances[lod]/(double)metersPerChunk, 2);
+		}
 	}
 
 	/**
@@ -602,11 +613,13 @@ public partial class Root : Node3D
 	}
 
 	/**
-	 * Calculates regions and columns that on all levels of the hierarchical system that should be now displayed.
+	 * Calculates regions and columns that on all levels of the hierarchical system should be now displayed.
 	 * And supplies tasks to all levels of the system to change its state to the new one.
+	 * Works with centered circular areas (apart from terrain which still uses rectangles).
 	 */
 	private void CalculateRegionsChunks(Vector3Double cameraPosition)
 	{
+		// terrain still rectangular
 		// regions loading - terrain
 		var (camRegionX, camRegionZ) = worldGeneratorService.WorldPosToRegionCoords(cameraPosition.x, cameraPosition.z);
 		Vector3Double minPos = cameraPosition - new Vector3Double(regionTerrainTriggerDistance, 0, regionTerrainTriggerDistance);
@@ -671,6 +684,7 @@ public partial class Root : Node3D
 		regionsToUnload.Clear();
 		
 		// chunk columns loading
+		var (camChunkX, camChunkZ) = voxelStorage.WorldPosToChunkCoords(cameraPosition.x, cameraPosition.z);
 		minPos = cameraPosition - new Vector3Double(columnPreparationDistance, 0, columnPreparationDistance);
 		maxPos = cameraPosition + new Vector3Double(columnPreparationDistance, 0, columnPreparationDistance);
 		var (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
@@ -680,7 +694,8 @@ public partial class Root : Node3D
 		{
 			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
 			{
-				if (!loadedColumns.Contains((chunkX, chunkZ)))
+				if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) <= columnPrepDistSquared &&
+				    !loadedColumns.Contains((chunkX, chunkZ)))
 				{
 					loadedColumns.Add((chunkX, chunkZ));
 					voxelStorage.CreateChunkColumn(chunkX, chunkZ);
@@ -688,15 +703,11 @@ public partial class Root : Node3D
 			}
 		}
 		// chunk columns unloading
-		minPos = cameraPosition - new Vector3Double(columnDistanceUnload, 0, columnDistanceUnload);
-		maxPos = cameraPosition + new Vector3Double(columnDistanceUnload, 0, columnDistanceUnload);
-		(minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
-		(maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
 		HashSet<(int x, int z)> columnsToUnload = [];
 		// for loaded columns with cleanup of voxel storage
 		foreach (var (chunkX, chunkZ) in loadedColumns)
 		{
-			if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
+			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnDistUnloadSquared)
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
@@ -712,7 +723,7 @@ public partial class Root : Node3D
 		columnsToUnload.Clear();
 		foreach (var (chunkX, chunkZ) in generatedColumns)
 		{
-			if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
+			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnDistUnloadSquared)
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
@@ -727,7 +738,6 @@ public partial class Root : Node3D
 		columnsToUnload.Clear();
 		
 		// voxelization loading
-		var (camChunkX, camChunkZ) = voxelStorage.WorldPosToChunkCoords(cameraPosition.x, cameraPosition.z);
 		minPos = cameraPosition - new Vector3Double(columnVoxelizationDistance, 0, columnVoxelizationDistance);
 		maxPos = cameraPosition + new Vector3Double(columnVoxelizationDistance, 0, columnVoxelizationDistance);
 		(minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
@@ -737,7 +747,8 @@ public partial class Root : Node3D
 		{
 			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
 			{
-				if (!generatedColumns.Contains((chunkX, chunkZ)))
+				if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) <= columnVoxDistSquared &&
+				    !generatedColumns.Contains((chunkX, chunkZ)))
 				{
 					generatedColumns.Add((chunkX, chunkZ));
 					// calculate priority with manhattan distance
@@ -750,13 +761,9 @@ public partial class Root : Node3D
         // geometry unloading
         for (int lod = 0; lod < lodCount; lod++)
         {
-            minPos = cameraPosition - new Vector3Double(columnMeshingLodUnloadDistances[lod], 0, columnMeshingLodUnloadDistances[lod]);
-            maxPos = cameraPosition + new Vector3Double(columnMeshingLodUnloadDistances[lod], 0, columnMeshingLodUnloadDistances[lod]);
-            (minChunkX, minChunkZ) = voxelStorage.WorldPosToChunkCoords(minPos.x, minPos.z);
-            (maxChunkX, maxChunkZ) = voxelStorage.WorldPosToChunkCoords(maxPos.x, maxPos.z);
             foreach (var (chunkX, chunkZ) in meshedColumnLods[lod])
             {
-                if (chunkX < minChunkX || chunkX > maxChunkX || chunkZ < minChunkZ || chunkZ > maxChunkZ)
+	            if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnMeshingLodUnloadDistSquared[lod])
                 {
                     columnsToUnload.Add((chunkX, chunkZ));
                 }
@@ -783,7 +790,8 @@ public partial class Root : Node3D
             {
                 for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
                 {
-                    if (!meshedColumnLods[lod].Contains((chunkX, chunkZ)))
+	                if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) <= columnMeshingLodDistSquared[lod] &&
+	                    !meshedColumnLods[lod].Contains((chunkX, chunkZ)))
                     {
                         meshedColumnLods[lod].Add((chunkX, chunkZ));
                         // calculate priority with manhattan distance
@@ -799,18 +807,6 @@ public partial class Root : Node3D
         Vector3Double maxPosLod3 = cameraPosition + new Vector3Double(lodDistances[3], 0, lodDistances[3]);
         var (minChunkXLod3, minChunkZLod3) = voxelStorage.WorldPosToChunkCoords(minPosLod3.x, minPosLod3.z);
         var (maxChunkXLod3, maxChunkZLod3) = voxelStorage.WorldPosToChunkCoords(maxPosLod3.x, maxPosLod3.z);
-		Vector3Double minPosLod2 = cameraPosition - new Vector3Double(lodDistances[2], 0, lodDistances[2]);
-		Vector3Double maxPosLod2 = cameraPosition + new Vector3Double(lodDistances[2], 0, lodDistances[2]);
-		var (minChunkXLod2, minChunkZLod2) = voxelStorage.WorldPosToChunkCoords(minPosLod2.x, minPosLod2.z);
-		var (maxChunkXLod2, maxChunkZLod2) = voxelStorage.WorldPosToChunkCoords(maxPosLod2.x, maxPosLod2.z);
-		Vector3Double minPosLod1 = cameraPosition - new Vector3Double(lodDistances[1], 0, lodDistances[1]);
-		Vector3Double maxPosLod1 = cameraPosition + new Vector3Double(lodDistances[1], 0, lodDistances[1]);
-		var (minChunkXLod1, minChunkZLod1) = voxelStorage.WorldPosToChunkCoords(minPosLod1.x, minPosLod1.z);
-		var (maxChunkXLod1, maxChunkZLod1) = voxelStorage.WorldPosToChunkCoords(maxPosLod1.x, maxPosLod1.z);
-		Vector3Double minPosLod0 = cameraPosition - new Vector3Double(lodDistances[0], 0, lodDistances[0]);
-		Vector3Double maxPosLod0 = cameraPosition + new Vector3Double(lodDistances[0], 0, lodDistances[0]);
-		var (minChunkXLod0, minChunkZLod0) = voxelStorage.WorldPosToChunkCoords(minPosLod0.x, minPosLod0.z);
-		var (maxChunkXLod0, maxChunkZLod0) = voxelStorage.WorldPosToChunkCoords(maxPosLod0.x, maxPosLod0.z);
 		// recalculate the lods for chunk columns
 		for (int chunkX = minChunkXLod3; chunkX <= maxChunkXLod3; chunkX++)
 		{
@@ -818,25 +814,32 @@ public partial class Root : Node3D
 			{
 				// switch to correct lod
 				LodLevel correctLod = LodLevel.UNLOADED;
-				if (chunkX >= minChunkXLod0 && chunkX <= maxChunkXLod0 && chunkZ >= minChunkZLod0 && chunkZ <= maxChunkZLod0)
+				double totalDistSquared = Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2);
+				// is in circular area
+				if (totalDistSquared > lodDistSquared[3])
+				{
+					continue;
+				}
+				
+				if (totalDistSquared <= lodDistSquared[0])
 				{
 					correctLod = LodLevel.LOD0;
 				}
 				else
-				if (chunkX >= minChunkXLod1 && chunkX <= maxChunkXLod1 && chunkZ >= minChunkZLod1 && chunkZ <= maxChunkZLod1)
+				if (totalDistSquared <= lodDistSquared[1])
 				{
 					correctLod = LodLevel.LOD1;
 				}
-				else 
-				if (chunkX >= minChunkXLod2 && chunkX <= maxChunkXLod2 && chunkZ >= minChunkZLod2 && chunkZ <= maxChunkZLod2)
+				else
+				if (totalDistSquared <= lodDistSquared[2])
 				{
 					correctLod = LodLevel.LOD2;
 				}
-                else
-                if (chunkX >= minChunkXLod3 && chunkX <= maxChunkXLod3 && chunkZ >= minChunkZLod3 && chunkZ <= maxChunkZLod3)
-                {
-                    correctLod = LodLevel.LOD3;
-                }
+				else
+				if (totalDistSquared <= lodDistSquared[3])
+				{
+					correctLod = LodLevel.LOD3;
+				}
 
 				// new column to display
 				if (!columnLods.ContainsKey((chunkX, chunkZ)))
@@ -859,7 +862,7 @@ public partial class Root : Node3D
 		// displayed columns unloading
 		foreach (var (chunkX, chunkZ) in columnLods.Keys)
 		{
-			if (chunkX < minChunkXLod3 || chunkX > maxChunkXLod3 || chunkZ < minChunkZLod3 || chunkZ > maxChunkZLod3)
+			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > lodDistSquared[3])
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
