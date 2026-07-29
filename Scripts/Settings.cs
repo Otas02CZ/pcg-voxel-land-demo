@@ -22,6 +22,15 @@ public enum MSAA_SETTINGS : byte
 }
 
 /**
+ * Display mode configuration enum
+ */
+public enum DISPLAY_MODE : byte
+{
+    WINDOWED,
+    FULLSCREEN
+}
+
+/**
  * Scaling technology enum
  */
 public enum SCALING_TECH : byte
@@ -42,6 +51,7 @@ public class ApplicationSettings
     public bool ssaoEnabled { get; set; } = true;
     public bool ssilEnabled { get; set; } = true;
     public MSAA_SETTINGS msaaSettings { get; set; } = MSAA_SETTINGS.OFF;
+    public DISPLAY_MODE displayMode { get; set; } = DISPLAY_MODE.WINDOWED;
     public SCALING_TECH scalingTech { get; set; } = SCALING_TECH.FSR_2;
     public float renderScale { get; set; } = 0.75f;
     public float fsrSharpness { get; set; } = 0.25f;
@@ -62,6 +72,7 @@ public class ApplicationSettings
         copy.ssaoEnabled = this.ssaoEnabled;
         copy.ssilEnabled = this.ssilEnabled;
         copy.msaaSettings = this.msaaSettings;
+        copy.displayMode = this.displayMode;
         copy.scalingTech = this.scalingTech;
         copy.renderScale = this.renderScale;
         copy.fsrSharpness = this.fsrSharpness;
@@ -132,6 +143,9 @@ public partial class Settings : CenterContainer
     private Button msaa2xButton;
     private Button msaa4xButton;
     private Button msaa8xButton;
+
+    private Button windowedButton;
+    private Button fullscreenButton;
     
     private Button scalingBilinearButton;
     private Button scalingFSR1Button;
@@ -175,52 +189,55 @@ public partial class Settings : CenterContainer
      */
     private void PreloadUINodes()
     {
-        lod0Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0/Lod0Slider");
-        lod0SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0/Lod0SpinBox");
-        lod1Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1Slider");
-        lod1SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox");
-        lod2Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2Slider");
-        lod2SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox");
-        lod3Slider = GetNode<HSlider>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3Slider");
-        lod3SpinBox = GetNode<SpinBox>("PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox");
+        lod0Slider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0/Lod0Slider");
+        lod0SpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0/Lod0SpinBox");
+        lod1Slider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1/Lod1Slider");
+        lod1SpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox");
+        lod2Slider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2/Lod2Slider");
+        lod2SpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox");
+        lod3Slider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3/Lod3Slider");
+        lod3SpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox");
         
-        shadowsOffButton = GetNode<Button>("PanelContainer/Main/Shadows/HBoxContainer/ShadowsOffButton");
-        shadowsOnButton = GetNode<Button>("PanelContainer/Main/Shadows/HBoxContainer/ShadowsOnButton");
+        shadowsOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOffButton");
+        shadowsOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOnButton");
         
-        giOffButton = GetNode<Button>("PanelContainer/Main/GlobalIllumination/HBoxContainer/GIOffButton");
-        giOnButton = GetNode<Button>("PanelContainer/Main/GlobalIllumination/HBoxContainer/GIOnButton");
+        giOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOffButton");
+        giOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOnButton");
         
-        fogOffButton = GetNode<Button>("PanelContainer/Main/Fog/HBoxContainer/FogOffButton");
-        fogOnButton = GetNode<Button>("PanelContainer/Main/Fog/HBoxContainer/FogOnButton");
+        fogOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOffButton");
+        fogOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOnButton");
         
-        ssaoOffButton = GetNode<Button>("PanelContainer/Main/SSAO/HBoxContainer/SSAOOffButton");
-        ssaoOnButton = GetNode<Button>("PanelContainer/Main/SSAO/HBoxContainer/SSAOOnButton");
+        ssaoOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOffButton");
+        ssaoOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOnButton");
         
-        ssilOffButton = GetNode<Button>("PanelContainer/Main/SSIL/HBoxContainer/SSILOffButton");
-        ssilOnButton = GetNode<Button>("PanelContainer/Main/SSIL/HBoxContainer/SSILOnButton");
+        ssilOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer/SSILOffButton");
+        ssilOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer/SSILOnButton");
         
-        msaaOffButton = GetNode<Button>("PanelContainer/Main/MSAA/HBoxContainer/MSAAOffButton");
-        msaa2xButton = GetNode<Button>("PanelContainer/Main/MSAA/HBoxContainer/MSAA2XButton");
-        msaa4xButton = GetNode<Button>("PanelContainer/Main/MSAA/HBoxContainer/MSAA4XButton");
-        msaa8xButton = GetNode<Button>("PanelContainer/Main/MSAA/HBoxContainer/MSAA8XButton");
+        msaaOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAAOffButton");
+        msaa2xButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA2XButton");
+        msaa4xButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA4XButton");
+        msaa8xButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA8XButton");
         
-        scalingBilinearButton = GetNode<Button>("PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/BilinearButton");
-        scalingFSR1Button = GetNode<Button>("PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/FSR1Button");
-        scalingFSR2Button = GetNode<Button>("PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/FSR2Button");
+        windowedButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer/WindowedButton");
+        fullscreenButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer/FullscreenButton");
         
-        scaleSlider = GetNode<HSlider>("PanelContainer/Main/ScalingOptions/Scale/ScaleSlider");
-        scaleSpinBox = GetNode<SpinBox>("PanelContainer/Main/ScalingOptions/Scale/ScaleSpinBox");
+        scalingBilinearButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/BilinearButton");
+        scalingFSR1Button = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/FSR1Button");
+        scalingFSR2Button = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/FSR2Button");
         
-        fsrSharpnessSlider = GetNode<HSlider>("PanelContainer/Main/ScalingOptions/FSRSharpness/SharpnessSlider");
-        fsrSharpnessSpinBox = GetNode<SpinBox>("PanelContainer/Main/ScalingOptions/FSRSharpness/SharpnessSpinBox");
+        scaleSlider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale/ScaleSlider");
+        scaleSpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale/ScaleSpinBox");
         
-        vsyncOffButton = GetNode<Button>("PanelContainer/Main/VSync/HBoxContainer/VSyncOffButton");
-        vsyncOnButton = GetNode<Button>("PanelContainer/Main/VSync/HBoxContainer/VSyncOnButton");
+        fsrSharpnessSlider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness/SharpnessSlider");
+        fsrSharpnessSpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness/SharpnessSpinBox");
         
-        maxFPSSlider = GetNode<HSlider>("PanelContainer/Main/MaxFPS/MaxFPSSlider");
-        maxFPSSpinBox = GetNode<SpinBox>("PanelContainer/Main/MaxFPS/MaxFPSSpinBox");
+        vsyncOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer/VSyncOffButton");
+        vsyncOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer/VSyncOnButton");
+        
+        maxFPSSlider = GetNode<HSlider>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS/MaxFPSSlider");
+        maxFPSSpinBox = GetNode<SpinBox>("PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS/MaxFPSSpinBox");
 
-        inGameRenderDistWarning = GetNode<Label>("PanelContainer/Main/VisibilityRanges/RenderDistanceInGameWarning");
+        inGameRenderDistWarning = GetNode<Label>("PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/RenderDistanceInGameWarning");
     }
     
     /**
@@ -342,6 +359,7 @@ public partial class Settings : CenterContainer
         DistributeSSAO(newSettings.ssaoEnabled);
         DistributeSSIL(newSettings.ssilEnabled);
         DistributeMSAA(newSettings.msaaSettings);
+        DistributeDisplayMode(newSettings.displayMode);
         DistributeScalingTech(newSettings.scalingTech);
         DistributeRenderScale(newSettings.renderScale);
         DistributeFSRSharpness(newSettings.fsrSharpness);
@@ -394,6 +412,7 @@ public partial class Settings : CenterContainer
         ApplySSAOSettings();
         ApplySSILSettings();
         ApplyMSAASettings();
+        ApplyDisplayModeSettings();
         ApplyScalingTechSettings();
         ApplyRenderScaleSettings();
         ApplyFSRSharpnessSettings();
@@ -462,6 +481,19 @@ public partial class Settings : CenterContainer
                 break;
             case MSAA_SETTINGS.MSAA_8X:
                 viewport.SetMsaa3D(Viewport.Msaa.Msaa8X);
+                break;
+        }
+    }
+
+    private void ApplyDisplayModeSettings()
+    {
+        switch (currentSettings.displayMode)
+        {
+            case DISPLAY_MODE.WINDOWED:
+                DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
+                break;
+            case DISPLAY_MODE.FULLSCREEN:
+                DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
                 break;
         }
     }
@@ -781,6 +813,26 @@ public partial class Settings : CenterContainer
         changedSettings.scalingTech = SCALING_TECH.FSR_2;
         settingsChanged = true;
         DistributeScalingTech(changedSettings.scalingTech);
+    }
+
+    private void _on_windowed_button_button_up()
+    {
+        changedSettings.displayMode = DISPLAY_MODE.WINDOWED;
+        settingsChanged = true;
+        DistributeDisplayMode(changedSettings.displayMode);
+    }
+
+    private void _on_fullscreen_button_button_up()
+    {
+        changedSettings.displayMode = DISPLAY_MODE.FULLSCREEN;
+        settingsChanged = true;
+        DistributeDisplayMode(changedSettings.displayMode);
+    }
+
+    private void DistributeDisplayMode(DISPLAY_MODE mode)
+    {
+        windowedButton.SetPressed(mode == DISPLAY_MODE.WINDOWED);
+        fullscreenButton.SetPressed(mode == DISPLAY_MODE.FULLSCREEN);
     }
     
     private void DistributeScalingTech(SCALING_TECH tech)

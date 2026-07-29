@@ -1413,7 +1413,7 @@ size_flags_vertical = 3
 [node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer11" unique_id=778833562]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Debug Menu"
+text = "Debug Overlay"
 
 [node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer11" unique_id=143367431]
 layout_mode = 2
@@ -1431,7 +1431,7 @@ size_flags_vertical = 3
 [node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer12" unique_id=562434892]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Performance Menu"
+text = "Performance Overlay"
 
 [node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer12" unique_id=760145234]
 layout_mode = 2
