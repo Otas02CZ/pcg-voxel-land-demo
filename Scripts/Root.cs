@@ -548,6 +548,8 @@ public partial class Root : Node3D
         meshedColumnLods[2] = null;
         meshedColumnLods[3] = null;
 		columnLods = null;
+		
+		GC.Collect();
 	}
 	
 	/**
