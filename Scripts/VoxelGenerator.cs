@@ -74,6 +74,10 @@ public class VoxelGenerator
     private readonly ushort caveStartYLevelTerrainUnits; // height at which caves begin generation
     private readonly ushort cavesWaterHeightTerrainUnits; // predefined height of water in the caves
     
+    private readonly ushort terrainGrassLayerBlocks = 4;
+    private readonly ushort terrainDirtLayerBlocks = 4;
+    private readonly ushort terrainStoneLayerBlocksUp  = 8;
+    
     // stalactite / stalagmite models
     private readonly List<Stalactite> stalactitesUp = [];
     private readonly List<Stalactite> stalactitesDown = [];
@@ -225,9 +229,9 @@ public class VoxelGenerator
                 }
 
                 // obtain count of grassy blocks on top, dirt blocks below it and the rest stone blocks
-                ushort grassLayerBlocks = 2;
-                ushort dirtLayerBlocks = 2;
-                ushort stoneLayerBlocksUp = 8;
+                ushort grassLayerBlocks = terrainGrassLayerBlocks;
+                ushort dirtLayerBlocks = terrainDirtLayerBlocks;
+                ushort stoneLayerBlocksUp = terrainStoneLayerBlocksUp;
                 ushort stoneLayerBlocksDown = caveStartYLevelTerrainUnits;
 
                 uint y;
