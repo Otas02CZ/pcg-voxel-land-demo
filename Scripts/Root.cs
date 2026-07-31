@@ -158,6 +158,7 @@ public partial class Root : Node3D
 
 	private const double lodUpdateInterval = 0.5; // update LOD every 0.5 seconds
 	private double lastLodUpdateTime;
+	private const int chunkUpdatesDeltaDivider = 2; // divider of current frame delta, higher values decrease number of chunk updates per frame
 
 	// godot scene nodes
 	private Player player;
@@ -887,7 +888,7 @@ public partial class Root : Node3D
         while (true)
         {
             if (!worldDisplayService.ProcessDisplayUpdateTask() ||
-                stopwatch.ElapsedMilliseconds >= delta)
+                stopwatch.ElapsedMilliseconds >= delta * 1000 / chunkUpdatesDeltaDivider)
             {
                 break;
             }
