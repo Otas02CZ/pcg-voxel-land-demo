@@ -111,6 +111,11 @@ public class WorldGenerator
     private const int waterLilyDistance = 24; // minimum distance in voxels between water lilies
     private const int waterLilyDistanceSquared = waterLilyDistance * waterLilyDistance;
     
+    // snow parameters
+    private const byte voxelsPerSnowUnit = 2; // add snow in multiples of two voxels
+    private const byte snowHeightMin = 2;
+    private const byte snowHeightMax = 14;
+    
     private readonly WaterGeneratorParams waterGeneratorParams;
     // voxel model collections
     private readonly Dictionary<TreeType, Dictionary<TreeSize, Dictionary<TreeState, List<Vegetation>>>> availableTrees;
@@ -896,7 +901,10 @@ public class WorldGenerator
                     float snowNoiseValue = (float)(snowNoise.GetNoise2D(xScaled + regionOriginX, zScaled + regionOriginZ) * 0.5 + 0.5f); // scale to 0 - 1
                     if (snowNoiseValue >= snowOccurenceThreshold)
                     {
-                        region.SetSnowAtLocalCoords(x, z);
+                        // calculate snow height
+                        byte snowHeight = (byte)(Math.Floor((snowNoiseValue - snowOccurenceThreshold + 0.1) * 10) * voxelsPerSnowUnit);
+                        snowHeight = Math.Clamp(snowHeight, snowHeightMin, snowHeightMax);
+                        region.SetSnowAtLocalCoords(x, z, snowHeight);
                     }
                     
                     // water

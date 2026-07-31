@@ -578,7 +578,7 @@ public class VoxelGenerator
      * Applies snow to this column.
      * Quickly traverses the voxel structure until it finds first non-air chunk. Then it processes the column in small
      * voxel sized sub columns in the XZ plane and if that given XZ position has planned snow placement it finds the actual
-     * height at which to place it.
+     * height at which to start placing snow voxels.
      */
     private void ApplySnow(ChunkColumn chunkColumn)
     {
@@ -629,9 +629,10 @@ public class VoxelGenerator
                 // calculate region-local terrain coordinates
                 uint inRegionTerrainX = (uint)((chunkColumn.chunkX - regionOffsetX) * chunkTerrainUnits + localTerrainX);
                 uint inRegionTerrainZ = (uint)((chunkColumn.chunkZ - regionOffsetZ) * chunkTerrainUnits + localTerrainZ);
-                
+
+                byte snowHeight = region.GetSnowAtLocalCoords((ushort)inRegionTerrainX, (ushort)inRegionTerrainZ);
                 // check if snow should be placed at this position
-                if (!region.HasSnowAtLocalCoords((ushort)inRegionTerrainX, (ushort)inRegionTerrainZ))
+                if (snowHeight == 0)
                     continue;
                 
                 // find the highest non-air voxel in this sub-column
@@ -657,11 +658,22 @@ public class VoxelGenerator
                         break;
                     }
                 }
-                
-                // place snow voxel on top of the highest non-air voxel
-                if (shouldPlace)
+
+                if (!shouldPlace)
                 {
-                    chunkColumn.SetVoxel(worldX, highestY + 1, worldZ, VoxelType.SNOW, 1);
+                    continue;
+                }
+                
+                // place snow voxels on top of the highest non-air voxel
+                for (uint i = 0; i < snowHeight; i++)
+                {
+                    uint actualY = highestY + 1 + i;
+                    if (highestY >= chunkColumn.totalVoxelsY)
+                    {
+                        break;
+                    }
+                    
+                    chunkColumn.SetVoxel(worldX, actualY, worldZ, VoxelType.SNOW, 1);
                 }
             }
         }

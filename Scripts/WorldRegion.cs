@@ -119,7 +119,7 @@ public class WorldRegion
     // SECOND GENERATION STEP
     // complete waterAvailabilityMap, snowMap, groundVoxelTypeMap and featuresInColumns placements
     private readonly byte[,] waterAvailabilityMap; // includes effects from neighboring regions after generation is finished
-    private readonly HashSet<(ushort x, ushort z)> snowMap;
+    private readonly Dictionary<(ushort x, ushort z), byte> snowMap; // stores snow height levels for ground positions
     private readonly VoxelType[,] groundVoxelTypeMap;
     private readonly List<FeaturePlacement>[,] featuresInColumns; // array of lists for feature placement in each column
     
@@ -238,19 +238,32 @@ public class WorldRegion
     }
     
     /**
-     * Returns true if given ground position should be covered with snow.
+     * Returns height of snow on given ground position (0 means no snow).
+     */
+    public byte GetSnowAtLocalCoords(ushort localX, ushort localZ)
+    {
+        if (snowMap.ContainsKey((localX, localZ)))
+        {
+            return snowMap[(localX, localZ)];
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns whether this position is covered by snow.
      */
     public bool HasSnowAtLocalCoords(ushort localX, ushort localZ)
     {
-        return snowMap.Contains((localX, localZ));
+        return snowMap.ContainsKey((localX, localZ));
     }
     
     /**
-     * Sets ground position to be covered with snow.
+     * Sets ground position to be covered with snow of given height.
      */
-    public void SetSnowAtLocalCoords(ushort localX, ushort localZ)
+    public void SetSnowAtLocalCoords(ushort localX, ushort localZ, byte height)
     {
-        snowMap.Add((localX, localZ));
+        snowMap[(localX, localZ)] = height;
     }
     
     /**
