@@ -17,11 +17,15 @@ corner_radius_bottom_left = 10
 [sub_resource type="LabelSettings" id="LabelSettings_4hxq3"]
 font_size = 40
 
-[sub_resource type="LabelSettings" id="LabelSettings_flfri"]
-font_size = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jn6m1"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.26666668, 0.26666668, 0.26666668, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_yrknh"]
-font_size = 20
+[sub_resource type="LabelSettings" id="LabelSettings_flfri"]
+font_size = 24
 
 [node name="Settings" type="CenterContainer" unique_id=1681448782]
 anchors_preset = 15
@@ -50,142 +54,155 @@ custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VisibilityRanges" type="VBoxContainer" parent="PanelContainer/Main" unique_id=209674359]
+[node name="Scroll" type="ScrollContainer" parent="PanelContainer/Main" unique_id=29764681]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Panel" type="PanelContainer" parent="PanelContainer/Main/Scroll" unique_id=817180560]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jn6m1")
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer/Main/Scroll/Panel" unique_id=1837857236]
+custom_minimum_size = Vector2(0, 600)
+layout_mode = 2
+
+[node name="VisibilityRanges" type="VBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox" unique_id=209674359]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="RenderDistanceLabel" type="Label" parent="PanelContainer/Main/VisibilityRanges" unique_id=925855731]
+[node name="RenderDistanceLabel" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=925855731]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Render Distance"
 label_settings = SubResource("LabelSettings_flfri")
 
-[node name="RenderDistanceInGameWarning" type="Label" parent="PanelContainer/Main/VisibilityRanges" unique_id=82508516]
+[node name="RenderDistanceInGameWarning" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=82508516]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "!!! Changing when in-game can cause errors, missing chunks, etc. !!!"
 horizontal_alignment = 1
 
-[node name="ViewDistancePreset" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1441830379]
+[node name="ViewDistancePreset" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=1441830379]
 layout_mode = 2
 
-[node name="PresetLabel" type="Label" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset" unique_id=841006433]
+[node name="PresetLabel" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset" unique_id=841006433]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Preset"
 
-[node name="ProfileButtons" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset" unique_id=912985359]
+[node name="ProfileButtons" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset" unique_id=912985359]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VeryLow" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1449630362]
+[node name="VeryLow" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1449630362]
 layout_mode = 2
 tooltip_text = "For systems with 6 GB RAM"
 text = "Very Low"
 
-[node name="Low" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1115839882]
+[node name="Low" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1115839882]
 layout_mode = 2
 tooltip_text = "For systems with 8 GB RAM"
 text = "Low
 "
 
-[node name="Medium" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=143740486]
+[node name="Medium" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=143740486]
 layout_mode = 2
 tooltip_text = "For systems with 12 GB RAM"
 text = "Medium"
 
-[node name="High" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1361857140]
+[node name="High" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=1361857140]
 layout_mode = 2
 tooltip_text = "For systems with 16 GB RAM"
 text = "High"
 
-[node name="Ultra" type="Button" parent="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=572960508]
+[node name="Ultra" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons" unique_id=572960508]
 layout_mode = 2
 tooltip_text = "For systems with 32 GB RAM"
 text = "Ultra"
 
-[node name="VisibilityRangeLod0" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1536820649]
+[node name="VisibilityRangeLod0" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=1536820649]
 layout_mode = 2
 
-[node name="Lod0Label" type="Label" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0" unique_id=94226382]
+[node name="Lod0Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0" unique_id=94226382]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "LOD0 distance"
 
-[node name="Lod0Slider" type="HSlider" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0" unique_id=1902730651]
+[node name="Lod0Slider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0" unique_id=1902730651]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 rounded = true
 
-[node name="Lod0SpinBox" type="SpinBox" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0" unique_id=457108860]
+[node name="Lod0SpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0" unique_id=457108860]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 rounded = true
 
-[node name="VisibilityRangeLod1" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=2029333967]
+[node name="VisibilityRangeLod1" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=2029333967]
 layout_mode = 2
 
-[node name="Lod1Label" type="Label" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1" unique_id=296022777]
+[node name="Lod1Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1" unique_id=296022777]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "LOD1 distance"
 
-[node name="Lod1Slider" type="HSlider" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1" unique_id=1739827516]
+[node name="Lod1Slider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1" unique_id=1739827516]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 rounded = true
 
-[node name="Lod1SpinBox" type="SpinBox" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1" unique_id=2093225636]
+[node name="Lod1SpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1" unique_id=2093225636]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 rounded = true
 
-[node name="VisibilityRangeLod2" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=2121068145]
+[node name="VisibilityRangeLod2" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=2121068145]
 layout_mode = 2
 
-[node name="Lod2Label" type="Label" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2" unique_id=204184238]
+[node name="Lod2Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2" unique_id=204184238]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "LOD2 distance"
 
-[node name="Lod2Slider" type="HSlider" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2" unique_id=914978203]
+[node name="Lod2Slider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2" unique_id=914978203]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 rounded = true
 
-[node name="Lod2SpinBox" type="SpinBox" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2" unique_id=1884565479]
+[node name="Lod2SpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2" unique_id=1884565479]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 rounded = true
 
-[node name="VisibilityRangeLod3" type="HBoxContainer" parent="PanelContainer/Main/VisibilityRanges" unique_id=1865751776]
+[node name="VisibilityRangeLod3" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=1865751776]
 layout_mode = 2
 
-[node name="Lod3Label" type="Label" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=2030126695]
+[node name="Lod3Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3" unique_id=2030126695]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "LOD3 distance"
 
-[node name="Lod3Slider" type="HSlider" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=841102970]
+[node name="Lod3Slider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3" unique_id=841102970]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 rounded = true
 
-[node name="Lod3SpinBox" type="SpinBox" parent="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3" unique_id=1484984830]
+[node name="Lod3SpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3" unique_id=1484984830]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 rounded = true
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/Main/VisibilityRanges" unique_id=1039664680]
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges" unique_id=1039664680]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 14
 theme_override_font_sizes/bold_font_size = 14
@@ -197,268 +214,295 @@ text = "[b]6		GB[/b] RAM,	[b]4[/b]c		[b]CPU[/b] 		- [b]Very Low[/b]
 [b]32	GB[/b] RAM,	[b]12[/b]c		[b]CPU[/b]			- [b]Ultra[/b]"
 fit_content = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main" unique_id=715373217]
-layout_mode = 2
-
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/Main" unique_id=547380986]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/Main/Scroll/Panel/VBox" unique_id=547380986]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Shadows" type="HBoxContainer" parent="PanelContainer/Main" unique_id=693196206]
+[node name="GraphicsSettings" type="VBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox" unique_id=959137451]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/Shadows" unique_id=1390465852]
+[node name="RenderDistanceLabel" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=1501189384]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Shadows"
+text = "Graphics"
+label_settings = SubResource("LabelSettings_flfri")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Shadows" unique_id=80298676]
+[node name="GlobalIllumination" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=355174793]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
 
-[node name="ShadowsOffButton" type="Button" parent="PanelContainer/Main/Shadows/HBoxContainer" unique_id=919517436]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination" unique_id=852688942]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Global Illumination"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination" unique_id=233403843]
+layout_mode = 2
+
+[node name="GIOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer" unique_id=1384934301]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="ShadowsOnButton" type="Button" parent="PanelContainer/Main/Shadows/HBoxContainer" unique_id=1004221294]
+[node name="GIOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer" unique_id=289938889]
+layout_mode = 2
+toggle_mode = true
+text = "ON"
+
+[node name="Shadows" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=693196206]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows" unique_id=1390465852]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shadows"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows" unique_id=80298676]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ShadowsOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer" unique_id=919517436]
+layout_mode = 2
+toggle_mode = true
+text = "OFF"
+
+[node name="ShadowsOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer" unique_id=1004221294]
 layout_mode = 2
 toggle_mode = true
 text = "ON
 "
 
-[node name="GlobalIllumination" type="HBoxContainer" parent="PanelContainer/Main" unique_id=355174793]
+[node name="Fog" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=1064781379]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/GlobalIllumination" unique_id=852688942]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Global Illumination"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/GlobalIllumination" unique_id=233403843]
-layout_mode = 2
-
-[node name="GIOffButton" type="Button" parent="PanelContainer/Main/GlobalIllumination/HBoxContainer" unique_id=1384934301]
-layout_mode = 2
-toggle_mode = true
-text = "OFF"
-
-[node name="GIOnButton" type="Button" parent="PanelContainer/Main/GlobalIllumination/HBoxContainer" unique_id=289938889]
-layout_mode = 2
-toggle_mode = true
-text = "ON"
-
-[node name="Fog" type="HBoxContainer" parent="PanelContainer/Main" unique_id=1064781379]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer/Main/Fog" unique_id=1812382499]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog" unique_id=1812382499]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Fog"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Fog" unique_id=909264736]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog" unique_id=909264736]
 layout_mode = 2
 
-[node name="FogOffButton" type="Button" parent="PanelContainer/Main/Fog/HBoxContainer" unique_id=568969826]
+[node name="FogOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer" unique_id=568969826]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="FogOnButton" type="Button" parent="PanelContainer/Main/Fog/HBoxContainer" unique_id=1009172063]
+[node name="FogOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer" unique_id=1009172063]
 layout_mode = 2
 toggle_mode = true
 text = "ON"
 
-[node name="SSAO" type="HBoxContainer" parent="PanelContainer/Main" unique_id=98724555]
+[node name="SSAO" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=98724555]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/SSAO" unique_id=1828479364]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO" unique_id=1828479364]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "SSAO"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/SSAO" unique_id=383315659]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO" unique_id=383315659]
 layout_mode = 2
 
-[node name="SSAOOffButton" type="Button" parent="PanelContainer/Main/SSAO/HBoxContainer" unique_id=568964819]
+[node name="SSAOOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer" unique_id=568964819]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="SSAOOnButton" type="Button" parent="PanelContainer/Main/SSAO/HBoxContainer" unique_id=1244129143]
+[node name="SSAOOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer" unique_id=1244129143]
 layout_mode = 2
 toggle_mode = true
 text = "ON"
 
-[node name="SSIL" type="HBoxContainer" parent="PanelContainer/Main" unique_id=890864719]
+[node name="SSIL" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=890864719]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/SSIL" unique_id=823730685]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL" unique_id=823730685]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "SSIL"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/SSIL" unique_id=1243692132]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL" unique_id=1243692132]
 layout_mode = 2
 
-[node name="SSILOffButton" type="Button" parent="PanelContainer/Main/SSIL/HBoxContainer" unique_id=433935020]
+[node name="SSILOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer" unique_id=433935020]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="SSILOnButton" type="Button" parent="PanelContainer/Main/SSIL/HBoxContainer" unique_id=78437857]
+[node name="SSILOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer" unique_id=78437857]
 layout_mode = 2
 toggle_mode = true
 text = "ON"
 
-[node name="MSAA" type="HBoxContainer" parent="PanelContainer/Main" unique_id=1134426324]
+[node name="MSAA" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=1134426324]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/MSAA" unique_id=1360449450]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA" unique_id=1360449450]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "MSAA"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/MSAA" unique_id=2068151862]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA" unique_id=2068151862]
 layout_mode = 2
 
-[node name="MSAAOffButton" type="Button" parent="PanelContainer/Main/MSAA/HBoxContainer" unique_id=27320247]
+[node name="MSAAOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer" unique_id=27320247]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="MSAA2XButton" type="Button" parent="PanelContainer/Main/MSAA/HBoxContainer" unique_id=1047128267]
+[node name="MSAA2XButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer" unique_id=1047128267]
 layout_mode = 2
 toggle_mode = true
 text = "2X"
 
-[node name="MSAA4XButton" type="Button" parent="PanelContainer/Main/MSAA/HBoxContainer" unique_id=1692193818]
+[node name="MSAA4XButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer" unique_id=1692193818]
 layout_mode = 2
 toggle_mode = true
 text = "4X"
 
-[node name="MSAA8XButton" type="Button" parent="PanelContainer/Main/MSAA/HBoxContainer" unique_id=930642594]
+[node name="MSAA8XButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer" unique_id=930642594]
 layout_mode = 2
 toggle_mode = true
 text = "8X"
 
-[node name="HSeparator3" type="HSeparator" parent="PanelContainer/Main" unique_id=250153860]
+[node name="HSeparator3" type="HSeparator" parent="PanelContainer/Main/Scroll/Panel/VBox" unique_id=250153860]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScalingOptions" type="VBoxContainer" parent="PanelContainer/Main" unique_id=1646040192]
+[node name="DisplayScalingOptions" type="VBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox" unique_id=1646040192]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/ScalingOptions" unique_id=1894937407]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=1894937407]
 layout_mode = 2
-text = "Scaling"
-label_settings = SubResource("LabelSettings_yrknh")
+text = "Display and Scaling"
+label_settings = SubResource("LabelSettings_flfri")
 
-[node name="Technology" type="HBoxContainer" parent="PanelContainer/Main/ScalingOptions" unique_id=1254910198]
+[node name="DisplayMode" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=149955173]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/ScalingOptions/Technology" unique_id=360974532]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode" unique_id=1824592171]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Technology"
+text = "Display Mode"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/ScalingOptions/Technology" unique_id=1781739182]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode" unique_id=1631481909]
 layout_mode = 2
 
-[node name="BilinearButton" type="Button" parent="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer" unique_id=857918561]
+[node name="WindowedButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer" unique_id=1889251214]
+layout_mode = 2
+toggle_mode = true
+text = "Windowed"
+
+[node name="FullscreenButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer" unique_id=776130405]
+layout_mode = 2
+toggle_mode = true
+text = "Fullscreen"
+
+[node name="Technology" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=1254910198]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology" unique_id=360974532]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Scaling Technology"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology" unique_id=1781739182]
+layout_mode = 2
+
+[node name="BilinearButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer" unique_id=857918561]
 layout_mode = 2
 toggle_mode = true
 text = "Bilinear"
 
-[node name="FSR1Button" type="Button" parent="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer" unique_id=505234600]
+[node name="FSR1Button" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer" unique_id=505234600]
 layout_mode = 2
 toggle_mode = true
 text = "FSR 1.0"
 
-[node name="FSR2Button" type="Button" parent="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer" unique_id=484639818]
+[node name="FSR2Button" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer" unique_id=484639818]
 layout_mode = 2
 toggle_mode = true
 text = "FSR 2.2"
 
-[node name="Scale" type="HBoxContainer" parent="PanelContainer/Main/ScalingOptions" unique_id=1020007954]
+[node name="Scale" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=1020007954]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/ScalingOptions/Scale" unique_id=264235915]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale" unique_id=264235915]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Scale"
+text = "Resolution Scale"
 
-[node name="ScaleSlider" type="HSlider" parent="PanelContainer/Main/ScalingOptions/Scale" unique_id=282852737]
+[node name="ScaleSlider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale" unique_id=282852737]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 step = 0.01
 
-[node name="ScaleSpinBox" type="SpinBox" parent="PanelContainer/Main/ScalingOptions/Scale" unique_id=37298581]
+[node name="ScaleSpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale" unique_id=37298581]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 step = 0.01
 
-[node name="FSRSharpness" type="HBoxContainer" parent="PanelContainer/Main/ScalingOptions" unique_id=773412919]
+[node name="FSRSharpness" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=773412919]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/ScalingOptions/FSRSharpness" unique_id=1591162685]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness" unique_id=1591162685]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "FSR Sharpness"
 
-[node name="SharpnessSlider" type="HSlider" parent="PanelContainer/Main/ScalingOptions/FSRSharpness" unique_id=1125227840]
+[node name="SharpnessSlider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness" unique_id=1125227840]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 step = 0.01
 
-[node name="SharpnessSpinBox" type="SpinBox" parent="PanelContainer/Main/ScalingOptions/FSRSharpness" unique_id=304896145]
+[node name="SharpnessSpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness" unique_id=304896145]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 step = 0.01
 
-[node name="VSync" type="HBoxContainer" parent="PanelContainer/Main" unique_id=2136179436]
+[node name="VSync" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=2136179436]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/VSync" unique_id=2011619519]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync" unique_id=2011619519]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "VSync"
+text = "Vertical Synchronization"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/VSync" unique_id=1913881549]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync" unique_id=1913881549]
 layout_mode = 2
 
-[node name="VSyncOffButton" type="Button" parent="PanelContainer/Main/VSync/HBoxContainer" unique_id=264884018]
+[node name="VSyncOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer" unique_id=264884018]
 layout_mode = 2
 toggle_mode = true
 text = "OFF"
 
-[node name="VSyncOnButton" type="Button" parent="PanelContainer/Main/VSync/HBoxContainer" unique_id=496622171]
+[node name="VSyncOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer" unique_id=496622171]
 layout_mode = 2
 toggle_mode = true
 text = "ON"
 
-[node name="MaxFPS" type="HBoxContainer" parent="PanelContainer/Main" unique_id=109893169]
+[node name="MaxFPS" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions" unique_id=109893169]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/Main/MaxFPS" unique_id=1055208079]
+[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS" unique_id=1055208079]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "MAX FPS"
+text = "Maximum FPS"
 
-[node name="MaxFPSSlider" type="HSlider" parent="PanelContainer/Main/MaxFPS" unique_id=763354188]
+[node name="MaxFPSSlider" type="HSlider" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS" unique_id=763354188]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 rounded = true
 
-[node name="MaxFPSSpinBox" type="SpinBox" parent="PanelContainer/Main/MaxFPS" unique_id=1604651228]
+[node name="MaxFPSSpinBox" type="SpinBox" parent="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS" unique_id=1604651228]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -485,43 +529,45 @@ theme_override_font_sizes/font_size = 20
 text = "Apply
 "
 
-[connection signal="button_up" from="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons/VeryLow" to="." method="_on_very_low_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons/Low" to="." method="_on_low_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons/Medium" to="." method="_on_medium_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons/High" to="." method="_on_high_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/VisibilityRanges/ViewDistancePreset/ProfileButtons/Ultra" to="." method="_on_ultra_button_up"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0/Lod0Slider" to="." method="_on_lod_0_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod0/Lod0SpinBox" to="." method="_on_lod_0_spin_box_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1Slider" to="." method="_on_lod_1_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox" to="." method="_on_lod_1_spin_box_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2Slider" to="." method="_on_lod_2_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox" to="." method="_on_lod_2_spin_box_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3Slider" to="." method="_on_lod_3_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox" to="." method="_on_lod_3_spin_box_value_changed"]
-[connection signal="button_up" from="PanelContainer/Main/Shadows/HBoxContainer/ShadowsOffButton" to="." method="_on_shadows_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/Shadows/HBoxContainer/ShadowsOnButton" to="." method="_on_shadows_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/GlobalIllumination/HBoxContainer/GIOffButton" to="." method="_on_gi_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/GlobalIllumination/HBoxContainer/GIOnButton" to="." method="_on_gi_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/Fog/HBoxContainer/FogOffButton" to="." method="_on_fog_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/Fog/HBoxContainer/FogOnButton" to="." method="_on_fog_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/SSAO/HBoxContainer/SSAOOffButton" to="." method="_on_ssao_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/SSAO/HBoxContainer/SSAOOnButton" to="." method="_on_ssao_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/SSIL/HBoxContainer/SSILOffButton" to="." method="_on_ssil_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/SSIL/HBoxContainer/SSILOnButton" to="." method="_on_ssil_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/MSAA/HBoxContainer/MSAAOffButton" to="." method="_on_msaa_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/MSAA/HBoxContainer/MSAA2XButton" to="." method="_on_msaa_2x_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/MSAA/HBoxContainer/MSAA4XButton" to="." method="_on_msaa_4x_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/MSAA/HBoxContainer/MSAA8XButton" to="." method="_on_msaa_8x_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/BilinearButton" to="." method="_on_bilinear_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/FSR1Button" to="." method="_on_fsr_1_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/ScalingOptions/Technology/HBoxContainer/FSR2Button" to="." method="_on_fsr_2_button_button_up"]
-[connection signal="value_changed" from="PanelContainer/Main/ScalingOptions/Scale/ScaleSlider" to="." method="_on_scale_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/ScalingOptions/Scale/ScaleSpinBox" to="." method="_on_scale_spin_box_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/ScalingOptions/FSRSharpness/SharpnessSlider" to="." method="_on_sharpness_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/ScalingOptions/FSRSharpness/SharpnessSpinBox" to="." method="_on_sharpness_spin_box_value_changed"]
-[connection signal="button_up" from="PanelContainer/Main/VSync/HBoxContainer/VSyncOffButton" to="." method="_on_v_sync_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/VSync/HBoxContainer/VSyncOnButton" to="." method="_on_v_sync_on_button_button_up"]
-[connection signal="value_changed" from="PanelContainer/Main/MaxFPS/MaxFPSSlider" to="." method="_on_max_fps_slider_value_changed"]
-[connection signal="value_changed" from="PanelContainer/Main/MaxFPS/MaxFPSSpinBox" to="." method="_on_max_fps_spin_box_value_changed"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons/VeryLow" to="." method="_on_very_low_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons/Low" to="." method="_on_low_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons/Medium" to="." method="_on_medium_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons/High" to="." method="_on_high_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/ViewDistancePreset/ProfileButtons/Ultra" to="." method="_on_ultra_button_up"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0/Lod0Slider" to="." method="_on_lod_0_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod0/Lod0SpinBox" to="." method="_on_lod_0_spin_box_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1/Lod1Slider" to="." method="_on_lod_1_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod1/Lod1SpinBox" to="." method="_on_lod_1_spin_box_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2/Lod2Slider" to="." method="_on_lod_2_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod2/Lod2SpinBox" to="." method="_on_lod_2_spin_box_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3/Lod3Slider" to="." method="_on_lod_3_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/VisibilityRanges/VisibilityRangeLod3/Lod3SpinBox" to="." method="_on_lod_3_spin_box_value_changed"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOffButton" to="." method="_on_gi_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOnButton" to="." method="_on_gi_on_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOffButton" to="." method="_on_shadows_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOnButton" to="." method="_on_shadows_on_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOffButton" to="." method="_on_fog_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOnButton" to="." method="_on_fog_on_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOffButton" to="." method="_on_ssao_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOnButton" to="." method="_on_ssao_on_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer/SSILOffButton" to="." method="_on_ssil_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer/SSILOnButton" to="." method="_on_ssil_on_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAAOffButton" to="." method="_on_msaa_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA2XButton" to="." method="_on_msaa_2x_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA4XButton" to="." method="_on_msaa_4x_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/MSAA/HBoxContainer/MSAA8XButton" to="." method="_on_msaa_8x_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer/WindowedButton" to="." method="_on_windowed_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/DisplayMode/HBoxContainer/FullscreenButton" to="." method="_on_fullscreen_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/BilinearButton" to="." method="_on_bilinear_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/FSR1Button" to="." method="_on_fsr_1_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Technology/HBoxContainer/FSR2Button" to="." method="_on_fsr_2_button_button_up"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale/ScaleSlider" to="." method="_on_scale_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/Scale/ScaleSpinBox" to="." method="_on_scale_spin_box_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness/SharpnessSlider" to="." method="_on_sharpness_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/FSRSharpness/SharpnessSpinBox" to="." method="_on_sharpness_spin_box_value_changed"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer/VSyncOffButton" to="." method="_on_v_sync_off_button_button_up"]
+[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/VSync/HBoxContainer/VSyncOnButton" to="." method="_on_v_sync_on_button_button_up"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS/MaxFPSSlider" to="." method="_on_max_fps_slider_value_changed"]
+[connection signal="value_changed" from="PanelContainer/Main/Scroll/Panel/VBox/DisplayScalingOptions/MaxFPS/MaxFPSSpinBox" to="." method="_on_max_fps_spin_box_value_changed"]
 [connection signal="button_up" from="PanelContainer/Main/Buttons/Back" to="." method="_on_back_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Buttons/Apply" to="." method="_on_apply_button_up"]

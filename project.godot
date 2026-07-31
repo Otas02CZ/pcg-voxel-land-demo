@@ -29,8 +29,9 @@ DebugMenu="*uid://cggqb75a8w8r"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/initial_position_type=3
 window/vsync/vsync_mode=0
+window/energy_saving/keep_screen_on=false
+window/stretch/aspect="expand"
 
 [dotnet]
 
