@@ -22,6 +22,7 @@ public enum VegetationType : byte
     BUSH,
     GRASS,
     PLANT,
+    PLANT_BUSH,
     REED,
     WATER_LILLY
 }
@@ -95,8 +96,10 @@ public class ModelService : IDisposable
     public ConcurrentBag<Vegetation> grassModels { get; }
     
     private readonly List<PlantDefinition> plantDefinitions;
+    public ConcurrentBag<Vegetation> plantModels { get; } // contains generated land plants (no trees, bushes and plant bushes)
+    
     private readonly List<PlantBushDefinition> plantBushDefinitions;
-    public ConcurrentBag<Vegetation> plantModels { get; } // contains all generated land plants (no trees and bushes)
+    public ConcurrentBag<Vegetation> plantBushModels { get; }
     
     private readonly List<ReedDefinition> reedDefinitions;
     public ConcurrentBag<Vegetation> reedModels { get; }
@@ -117,8 +120,6 @@ public class ModelService : IDisposable
     private readonly List<Thread> workerThreads;
     private int activeThreads;
     private readonly Lock threadLock;
-
-    private int plantBushIdOffset = 100; // plants and plant bushes are mixed later on, makes sure that ids do not collide
     
     
     public ModelService(int seed, int maxThreads)
@@ -146,6 +147,7 @@ public class ModelService : IDisposable
         rockModels = [];
         grassModels = [];
         plantModels = [];
+        plantBushModels = [];
         trunkModels = [];
         stalactiteModels = [];
         reedModels = [];
@@ -198,7 +200,7 @@ public class ModelService : IDisposable
     public void AddPlantBushDefinition(PlantBushDefinition plantBushDefinition)
     {
         plantBushDefinition.seed = seed + currentSeedOffset++;
-        plantBushDefinition.id = plantBushDefinitions.Count + plantBushIdOffset;
+        plantBushDefinition.id = plantBushDefinitions.Count;
         plantBushDefinitions.Add(plantBushDefinition);
     }
     
@@ -313,11 +315,11 @@ public class ModelService : IDisposable
     {
         VoxelItem[] plantVoxels = VegetationGenerator.GenerateBush(plantBushDefinition);
         Vegetation veg = new Vegetation(
-            VegetationType.PLANT,
+            VegetationType.PLANT_BUSH,
             plantVoxels,
             id:plantBushDefinition.id
         );
-        plantModels.Add(veg);
+        plantBushModels.Add(veg);
     }
     
     /**

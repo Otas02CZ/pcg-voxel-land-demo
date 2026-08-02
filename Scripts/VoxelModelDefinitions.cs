@@ -326,12 +326,12 @@ public static class VoxelModelDefinitions
 		modelService.AddWaterLilyDefinition(new WaterLilyDefinition(VoxelType.PLANT, VoxelType.PLANT_DARK, VoxelType.RED, VoxelType.WHITE, 1, 6, 3, 8));
 		
 		// plant bushes
-		modelService.AddPlantBushDefinition(new PlantBushDefinition());
-		modelService.AddPlantBushDefinition(new PlantBushDefinition());
-		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.WHITE));
-		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.WHITE));
-		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.BLUE));
-		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.BLUE));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(maxHeight: 26));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(maxHeight: 25));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.WHITE, maxHeight: 24));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.WHITE, maxHeight: 23));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.BLUE, maxHeight: 27));
+		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.BLUE, maxHeight: 25));
 		
 		// rocks
 		modelService.AddRockDefinition(new RockDefinition(50, 50, 50, 25));

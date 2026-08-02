@@ -20,6 +20,7 @@ public struct WorldGeneratorModels
     public ConcurrentBag<Vegetation> treeBushModels { get; init; }
     public ConcurrentBag<Vegetation> grassModels { get; init; }
     public ConcurrentBag<Vegetation> plantModels { get; init; }
+    public ConcurrentBag<Vegetation> plantBushModels { get; init; }
     public ConcurrentBag<Vegetation> reedModels { get; init; }
     public ConcurrentBag<Vegetation> waterLilyModels { get; init; }
     public ConcurrentBag<Rock> rockModels { get; init; }

@@ -89,7 +89,7 @@ public struct PlantDefinition(
  * Parameters for generation of flower plant bushes
  */
 public struct PlantBushDefinition(
-    VoxelType trunkVoxelType = VoxelType.WOOD,
+    VoxelType trunkVoxelType = VoxelType.PLANT_DARK,
     VoxelType leafVoxelType = VoxelType.PLANT,
     VoxelType flowerVoxelType = VoxelType.RED,
     float stemDxMin = -0.75f,

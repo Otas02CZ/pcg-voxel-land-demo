@@ -122,6 +122,7 @@ public class WorldGenerator
     private readonly Dictionary<TreeType, List<Vegetation>> availableBushes;
     private readonly List<Vegetation> availableGrasses;
     private readonly List<Vegetation> availablePlants;
+    private readonly List<Vegetation> availablePlantBushes;
     private readonly List<Vegetation> availableReeds;
     private readonly List<Vegetation> availableWaterLilies;
     private readonly List<Rock> availableRocks;
@@ -212,6 +213,7 @@ public class WorldGenerator
         availableBushes[TreeType.DECIDUOUS] = [];
         availableGrasses = [];
         availablePlants = [];
+        availablePlantBushes = [];
         availableReeds = [];
         availableWaterLilies = [];
         availableRocks = [];
@@ -270,6 +272,7 @@ public class WorldGenerator
         allVegetationModels.AddRange(worldGenModels.treeBushModels);
         allVegetationModels.AddRange(worldGenModels.grassModels);
         allVegetationModels.AddRange(worldGenModels.plantModels);
+        allVegetationModels.AddRange(worldGenModels.plantBushModels);
         allVegetationModels.AddRange(worldGenModels.reedModels);
         allVegetationModels.AddRange(worldGenModels.waterLilyModels);
 
@@ -309,6 +312,9 @@ public class WorldGenerator
                 break;
             case VegetationType.PLANT:
                 availablePlants.Add(vegetation);
+                break;
+            case VegetationType.PLANT_BUSH:
+                availablePlantBushes.Add(vegetation);
                 break;
             case VegetationType.REED:
                 availableReeds.Add(vegetation);
@@ -1104,6 +1110,7 @@ public class WorldGenerator
                 int bushChance = 2;
                 int grassChance = 174;
                 int plantChance = 39;
+                int plantBushChance = 0;
                 int rockChance = 2;
                 int trunkChance = 4;
                 // chances for tree size types
@@ -1129,6 +1136,7 @@ public class WorldGenerator
                     bushChance = 0;
                     grassChance = 120;
                     plantChance = 36;
+                    plantBushChance = 3;
                     trunkChance = 1;
                 } else if (ageNoiseValue < ageThresholds[2])
                 {
@@ -1137,6 +1145,7 @@ public class WorldGenerator
                     bushChance = 1;
                     grassChance = 105;
                     plantChance = 33;
+                    plantBushChance = 2;
                     trunkChance = 1;
                     //smallTreeChance = 100;
                 } else if (ageNoiseValue < ageThresholds[3])
@@ -1146,6 +1155,7 @@ public class WorldGenerator
                     bushChance = 2;
                     grassChance = 105;
                     plantChance = 28;
+                    plantBushChance = 2;
                     trunkChance = 1;
                     //smallTreeChance = 70;
                     mediumTreeChance = 30;
@@ -1156,6 +1166,7 @@ public class WorldGenerator
                     bushChance = 2;
                     grassChance = 95;
                     plantChance = 25;
+                    plantBushChance = 1;
                     trunkChance = 2;
                     //smallTreeChance = 35;
                     mediumTreeChance = 65;
@@ -1296,7 +1307,22 @@ public class WorldGenerator
                     // place the plant
                     region.AddFeature(new FeaturePlacement((ushort)x, (ushort)z, plantToPlace), colX, colZ);
                 }
-                else if (randValue < treeChance + bushChance + grassChance + plantChance + rockChance)
+                else if (randValue < treeChance + bushChance + grassChance + plantChance + plantBushChance)
+                {
+                    // place plant bush
+                    if (hasSnow || availablePlantBushes.Count == 0)
+                        continue;
+                    
+                    // do not place plant bushes in arid areas or areas with low moisture
+                    if (treeState == TreeState.DEAD || noPlants)
+                        continue;
+                    
+                    int plantIndex = random.Next(availablePlantBushes.Count);
+                    Vegetation plantToPlace = availablePlantBushes[plantIndex];
+                    // place the plant bush
+                    region.AddFeature(new FeaturePlacement((ushort)x, (ushort)z, plantToPlace), colX, colZ);
+                }
+                else if (randValue < treeChance + bushChance + grassChance + plantChance + plantBushChance + rockChance)
                 {
                     // place rock
                     if (availableRocks.Count == 0)
@@ -1306,7 +1332,7 @@ public class WorldGenerator
                     Rock rockToPlace = availableRocks[rockIndex];
                     region.AddFeature(new FeaturePlacement((ushort)x, (ushort)z, rockToPlace), colX, colZ);
                 }
-                else if (randValue < treeChance + bushChance + grassChance + plantChance + rockChance + trunkChance)
+                else if (randValue < treeChance + bushChance + grassChance + plantChance + plantBushChance + rockChance + trunkChance)
                 {
                     // place trunk
                     if (availableTrunks.Count == 0)

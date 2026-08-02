@@ -338,6 +338,7 @@ public partial class Root : Node3D
 			treeBushModels = modelService.treeBushModels,
 			grassModels = modelService.grassModels,
 			plantModels =  modelService.plantModels,
+            plantBushModels = modelService.plantBushModels,
 			reedModels =  modelService.reedModels,
 			waterLilyModels =  modelService.waterLilyModels,
 			rockModels =  modelService.rockModels,
