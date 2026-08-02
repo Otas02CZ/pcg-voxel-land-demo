@@ -1051,6 +1051,7 @@ public class WorldGenerator
                 {
                     // mountains, only conifer trees
                     chanceConifer = 100;
+                    isMountains = true;
                 }
                 
                 // water availability effect step
