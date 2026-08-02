@@ -974,7 +974,7 @@ public class WorldGenerator
                 {
                     int randValueWater = random.Next(10000); // random number for reed / water lilies
                     
-                    if (waterLevel == 1) //place reeds in shallow water
+                    if (waterLevel == 1) // place reeds in shallow water
                     {
                         if (randValueWater < waterReedsChance)
                         {
@@ -1024,7 +1024,8 @@ public class WorldGenerator
                 
                 byte waterAvailability = region.GetWaterAvailabilityAtLocalCoords(xTerrainUnits, zTerrainUnits);
 
-                bool canBeDeadTree = false;
+                bool canBeDeadTree = true; // dead trees can be anywhere apart from mountain arid areas
+                bool isMountains = false;
                 int chanceConifer = 0;
                 int chanceDeciduous = 0;
                 // terrain height effect step
@@ -1033,24 +1034,24 @@ public class WorldGenerator
                 {
                     // lowland, only deciduous trees, can spawn dead trees
                     chanceDeciduous = 100;
-                    canBeDeadTree = true;
                 }
                 else if (heightAtPos < areaHeightThresholds[1])
                 {
                     // hills, conifer and deciduous trees, can spawn dead trees
                     chanceConifer = 50;
                     chanceDeciduous = 50;
-                    canBeDeadTree = true;
                 }
                 else
                 {
                     // mountains, only conifer trees
                     chanceConifer = 100;
-                    // dead trees can not be here as deserts are turned into rocky areas without any vegetation whatsoever
                 }
                 
                 // water availability effect step
                 // effects overall vegetation amount, health state of trees
+                int chanceTreeDead = 100;
+                int chanceTreeWeak = 0;
+                int chanceTreeHealthy = 0;
                 int vegetationRandomMax = 15000;
                 TreeState treeState = TreeState.HEALTHY;
                 bool noPlants = false;
@@ -1058,27 +1059,45 @@ public class WorldGenerator
                 {
                     // arid, low chance of vegetation and only dead trees
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxArid;
-                    treeState = TreeState.DEAD;
+                    if (isMountains)
+                        canBeDeadTree = false;
+                    //treeState = TreeState.DEAD;
                 }
                 else if (waterAvailability < areaWaterAvailabilityThresholds[1])
                 {
                     // low moisture, low chance of vegetation and only weak trees
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxLowWater;
-                    treeState = TreeState.WEAK;
+                    chanceTreeDead = 10;
+                    chanceTreeWeak = 80;
+                    chanceTreeHealthy = 10;
+                    //treeState = TreeState.WEAK;
                     noPlants = true;
                 }
                 else if (waterAvailability < areaWaterAvailabilityThresholds[2])
                 {
                     // medium moisture, medium chance of vegetation and 75% healthy, 25% weak trees
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxMediumWater;
-                    if (random.Next(100) < 25)
-                        treeState = TreeState.WEAK;
+                    chanceTreeDead = 10;
+                    chanceTreeWeak = 35;
+                    chanceTreeHealthy = 55;
                 } 
                 else
                 {
                     // high moisture, higher chance of vegetation and only healthy trees
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxHighWater;
+                    chanceTreeDead = 10;
+                    chanceTreeWeak = 10;
+                    chanceTreeHealthy = 80;
                 }
+                
+                // roll tree state based on current chances
+                int randValue = random.Next(100);
+                if (randValue <= chanceTreeDead)
+                    treeState = TreeState.DEAD;
+                else if (randValue <= chanceTreeWeak)
+                    treeState = TreeState.WEAK;
+                else if (randValue <= chanceTreeHealthy)
+                    treeState = TreeState.HEALTHY;
 
                 // chances for vegetation types and decoration
                 int treeChance = 4;
@@ -1178,7 +1197,7 @@ public class WorldGenerator
                 
                 // actual placement code that uses the parameters assembled above
                 
-                int randValue = random.Next(vegetationRandomMax); // random value for vegetation and decoration placement
+                randValue = random.Next(vegetationRandomMax); // random value for vegetation and decoration placement
                 
                 // decide what to place
                 if (randValue < treeChance)

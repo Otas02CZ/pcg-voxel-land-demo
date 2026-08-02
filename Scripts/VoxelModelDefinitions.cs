@@ -18,8 +18,8 @@ public static class VoxelModelDefinitions
 	 */
     public static void InsertVoxelModelDefinitions(ModelService modelService)
     {
-        const float maxLeafRadius = 0.4f;
-		const float leafRadiusScale = 3.4f;
+        const float maxLeafRadius = 0.39f;
+		const float leafRadiusScale = 3.2f;
 
 		const float maxLeafRadiusWeak = 0.38f;
 		const float leafRadiusScaleWeak = 0.8f;
@@ -28,143 +28,226 @@ public static class VoxelModelDefinitions
 		// SMALL HEALTHY
 		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 280, 90, 80f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 15+8, EnvelopeType.SPHERE, 20f, 40f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 300, 75, 20f, 0.4f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 5+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 280, 75, 25f, 0.4f, 0.50f, new Vector3(-0.2f, -0.2f, -0.2f), 10+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 280, 100, 50f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 13+8, EnvelopeType.CYLINDER, 16f, 50f, 
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 280, 90, 50f, 0.9f, 0.5f, new Vector3(0.2f, 0.2f, 0.2f), 13+8, EnvelopeType.CYLINDER, 16f, 50f, 
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 300, 80, 40f, 0.25f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 11+8, EnvelopeType.OVAL, 16f, 45f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 280, 80, 40f, 0.25f, 0.75f, new Vector3(0.2f, -0.2f, 0.2f), 11+8, EnvelopeType.OVAL, 16f, 45f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.HEALTHY, 240, 50, 35f, 0.6f, 0.85f, new Vector3(0.2f, 0.2f, -0.2f), 11+8, EnvelopeType.SPHERE, 16f, 32f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
 		
 		// SMALL WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 240, 70, 80f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.SPHERE, 20f, 40f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 240, 70, 80f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 15+8, EnvelopeType.SPHERE, 20f, 40f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 240, 75, 20f, 0.8f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 0+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 260, 80, 30f, 0.6f, 0.60f, new Vector3(-0.2f, -0.2f, -0.2f), 10+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 240, 80, 50f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 8+8, EnvelopeType.CYLINDER, 16f, 50f, 
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 240, 75, 50f, 1f, 0.65f, new Vector3(0.2f, 0.2f, 0.2f), 11+8, EnvelopeType.CYLINDER, 16f, 50f, 
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 180, 60, 40f, 0.7f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 6+8, EnvelopeType.OVAL, 16f, 45f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.WEAK, 220, 80, 40f, 0.7f, 0.8f, new Vector3(0.2f, -0.2f, 0.2f), 11+8, EnvelopeType.OVAL, 12f, 45f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
 		
 		// SMALL DEAD
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 190, 40, 80f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 12+8, EnvelopeType.SPHERE, 20f, 40f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 240, 40, 35f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 6+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 240, 40, 50f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CYLINDER, 16f, 50f, 
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 180, 45, 40f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 8+8, EnvelopeType.OVAL, 16f, 45f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 160, 35, 80f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 13+8, EnvelopeType.SPHERE, 20f, 40f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 200, 35, 40f, 2f, 1f, new Vector3(-0.2f, -0.2f, -0.2f), 8+8, EnvelopeType.PARABOLOID_CUP, 20f, 65f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 180, 35, 50f, 2f, 1f, new Vector3(0.2f, 0.2f, 0.2f), 10+8, EnvelopeType.CYLINDER, 16f, 50f, 
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.SMALL, TreeState.DEAD, 180, 30, 40f, 2f, 1f, new Vector3(0.2f, -0.2f, 0.2f), 8+8, EnvelopeType.OVAL, 16f, 45f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
 		
 		// MEDIUM HEALTHY
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 650, 120, 40f, 0.25f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.OVAL, 20f, 100f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 650, 160, 45f, 0.25f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 20f, 100f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 520, 200, 60f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.OVAL, 30f, 100f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 520, 200, 60f, 2f, 1f, new Vector3(-0.2f, -0.2f, -0.2f), 15+8, EnvelopeType.OVAL, 30f, 100f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 500, 250, 90f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.SPHERE, 40f, 80f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 600, 210, 90f, 2f, 1f, new Vector3(0.2f, 0.2f, 0.2f), 20+8, EnvelopeType.SPHERE, 40f, 80f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 200, 50, 30f, 0.50f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 38, EnvelopeType.OVAL, 25f, 50f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 500, 180, 55f, 1.4f, 1f, new Vector3(0.2f, -0.2f, -0.2f), 15+8, EnvelopeType.OVAL, 25f, 50f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 500, 160, 50f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CYLINDER, 24f, 100f, 
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 500, 200, 50f, 0.8f, 0.5f, new Vector3(-0.2f, -0.2f, 0.2f), 18+8, EnvelopeType.CYLINDER, 26f, 80f, 
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 600, 200, 60f, 0.50f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 35f, 65f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 600, 200, 60f, 0.50f, 0.50f, new Vector3(0.2f, -0.2f, 0.2f), 18+8, EnvelopeType.OVAL, 35f, 65f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 600, 190, 60f, 0.50f, 0.50f, new Vector3(0.2f, -0.2f, 0.2f), 20+8, EnvelopeType.PARABOLOID_CAP, 35f, 65f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
+        
 		// MEDIUM WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 650, 120, 40f, 0.25f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.OVAL, 20f, 100f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 650, 160, 45f, 0.25f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 20f, 100f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 520, 200, 60f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.OVAL, 30f, 100f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 520, 200, 60f, 2f, 1f, new Vector3(-0.2f, -0.2f, -0.2f), 15+8, EnvelopeType.OVAL, 30f, 100f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 500, 250, 90f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.SPHERE, 40f, 80f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 500, 200, 90f, 2f, 1f, new Vector3(0.2f, 0.2f, 0.2f), 20+8, EnvelopeType.SPHERE, 40f, 80f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 200, 50, 30f, 0.50f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 3+8, EnvelopeType.OVAL, 25f, 50f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 500, 180, 55f, 1.4f, 1f, new Vector3(0.2f, -0.2f, -0.2f), 15+8, EnvelopeType.OVAL, 25f, 50f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 500, 160, 50f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CYLINDER, 24f, 100f, 
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 500, 200, 50f, 0.8f, 0.5f, new Vector3(-0.2f, -0.2f, 0.2f), 18+8, EnvelopeType.CYLINDER, 26f, 80f, 
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 600, 200, 60f, 0.50f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 35f, 65f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 600, 200, 60f, 0.50f, 0.50f, new Vector3(0.2f, -0.2f, 0.2f), 18+8, EnvelopeType.OVAL, 35f, 65f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.WEAK, 600, 190, 60f, 0.50f, 0.50f, new Vector3(0.2f, -0.2f, 0.2f), 18+8, EnvelopeType.PARABOLOID_CAP, 35f, 65f,
+		   trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
 		
 		// MEDIUM DEAD
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 500, 70, 40f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 14+8, EnvelopeType.OVAL, 20f, 100f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 450, 80, 60f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 14+8, EnvelopeType.OVAL, 30f, 100f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 400, 90, 90f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 14+8, EnvelopeType.SPHERE, 40f, 80f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 200, 40, 30f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 6+8, EnvelopeType.OVAL, 25f, 50f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 500, 90, 50f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 14+8, EnvelopeType.CYLINDER, 24f, 100f, 
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 400, 65, 60f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 19+8, EnvelopeType.OVAL, 35f, 65f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 400, 35, 40f, 2f, 1f, new Vector3(-0.2f, -0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 20f, 100f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.65f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 350, 40, 60f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 16+8, EnvelopeType.OVAL, 30f, 100f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.75f, radiusExponent: 2.8f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 400, 45, 90f, 2f, 1f, new Vector3(0.2f, -0.2f, -0.2f), 16+8, EnvelopeType.SPHERE, 40f, 80f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.75f, radiusExponent: 2.8f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 300, 35, 45f, 2f, 1f, new Vector3(0.2f, 0.2f, 0.2f), 15+8, EnvelopeType.OVAL, 25f, 50f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.75f, radiusExponent: 2.8f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 500, 55, 50f, 2f, 1f, new Vector3(0.2f, -0.2f, 0.2f), 16+8, EnvelopeType.CYLINDER, 24f, 100f, 
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.65f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.DEAD, 400, 55, 60f, 2f, 1f, new Vector3(-0.2f, -0.2f, 0.2f), 21+8, EnvelopeType.OVAL, 35f, 65f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.75f, radiusExponent: 2.8f));
 		
 		// LARGE HEALTHY
-		
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1350, 260, 45f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 15+8, EnvelopeType.SPHERE, 55f, 110f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1500, 310, 45f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 27+8, EnvelopeType.SPHERE, 55f, 110f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1200, 240, 40f, 1f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 3+8, EnvelopeType.OVAL, 35f, 150f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1300, 280, 45f, 1f, 0.5f, new Vector3(0.2f, 0.2f, 0.2f), 25+8, EnvelopeType.OVAL, 35f, 150f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1200, 240, 50f, 1f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CYLINDER, 50f, 110f, 
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1300, 330, 50f, 1f, 0.5f, new Vector3(-0.2f, -0.2f, -0.2f), 27+8, EnvelopeType.CYLINDER, 45f, 110f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.HEALTHY, 1650, 275, 50f, 1f, 0.5f, new Vector3(0.1f, -0.1f, 0.1f), 27+8, EnvelopeType.PARABOLOID_CAP, 57f, 105f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
 		
 		// LARGE WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1200, 220, 45f, 2f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 15+8, EnvelopeType.SPHERE, 55f, 110f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1100, 210, 40f, 2f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 3+8, EnvelopeType.OVAL, 35f, 150f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1100, 210, 50f, 2f, 0.5f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CYLINDER, 50f, 110f, 
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1200, 235, 50f, 2f, 0.75f, new Vector3(-0.2f, 0.2f, -0.2f), 24+8, EnvelopeType.SPHERE, 55f, 110f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1100, 210, 50f, 2f, 0.75f, new Vector3(0.2f, 0.2f, 0.2f), 23+8, EnvelopeType.OVAL, 35f, 150f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1100, 230, 50f, 2f, 0.75f, new Vector3(-0.2f, -0.2f, -0.2f), 24+8, EnvelopeType.CYLINDER, 45f, 110f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.WEAK, 1250, 215, 50f, 2f, 0.75f, new Vector3(0.1f, -0.1f, 0.1f), 24+8, EnvelopeType.PARABOLOID_CAP, 57f, 105f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
 		
 		// LARGE DEAD
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.DEAD, 600, 90, 45f, 2f, 1.2f, new Vector3(0.2f, 0.2f, -0.2f), 24+8, EnvelopeType.SPHERE, 55f, 110f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
-		
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.DEAD, 650, 100, 60f, 2f, 0.75f, new Vector3(0.1f, 0.1f, -0.1f), 30+8, EnvelopeType.SPHERE, 55f, 110f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 1.4f, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.DEAD, 650, 80, 60f, 2f, 0.75f, new Vector3(0.1f, -0.1f, 0.1f), 30+8, EnvelopeType.SPHERE, 55f, 110f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 1.3f, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.DEAD, 700, 125, 60f, 2f, 0.6f, new Vector3(-0.1f, -0.1f, -0.1f), 30+8, EnvelopeType.SPHERE, 55f, 110f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 1.1f, radiusExponent: 2.7f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.LARGE, TreeState.DEAD, 800, 160, 60f, 2f, 0.6f, new Vector3(-0.1f, -0.1f, 0.1f), 30+8, EnvelopeType.SPHERE, 55f, 110f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 1.0f, radiusExponent: 2.7f));
 		
 		// Trees coniferous
 		// LARGE HEALTHY
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1700, 280, 6f, 0.7f, 0.50f, new Vector3(0.4f, -0.2f, -0.3f), 60+8, EnvelopeType.CONIFER_WEDGE, 40f, 200f, kTop:0.8f, kBottom:0.8f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1600, 250, 6f, 0.8f, 0.6f, new Vector3(0.4f, -0.2f, -0.3f), 60+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:0.8f, kBottom:0.8f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1000, 225, 6f, 0.9f, 0.75f, new Vector3(0.2f, 0.2f, 0.4f), 15+8, EnvelopeType.CONIFER_WEDGE, 40f, 200f, kTop:-0.5f, kBottom:-0.5f,
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1500, 250, 6f, 0.85f, 0.65f, new Vector3(-0.4f, 0.2f, 0.3f), 70+8, EnvelopeType.CONIFER_WEDGE, 40f, 180f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1050, 215, 6f, 0.9f, 0.75f, new Vector3(0.2f, 0.2f, 0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:-0.5f, kBottom:-0.5f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 900, 195, 75f, 2.1f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CONE, 30f, 180f,
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1100, 220, 6f, 0.9f, 0.75f, new Vector3(-0.2f, -0.2f, -0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 180f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 900, 195, 75f, 2.1f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 25+8, EnvelopeType.CONE, 30f, 175f,
 		   trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.HEALTHY, 1000, 195, 75f, 2.1f, 1f, new Vector3(0.2f, -0.2f, 0.2f), 25+8, EnvelopeType.CONE, 35f, 160f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
 		
 		// LARGE WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 1700, 225, 6f, 0.7f, 0.50f, new Vector3(0.4f, -0.2f, -0.3f), 60+8, EnvelopeType.CONIFER_WEDGE, 40f, 200f, kTop:0.8f, kBottom:0.8f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 1000, 225, 6f, 0.9f, 0.75f, new Vector3(0.2f, 0.2f, 0.4f), 15+8, EnvelopeType.CONIFER_WEDGE, 40f, 200f, kTop:-0.5f, kBottom:-0.5f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 800, 180, 70f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 25+8, EnvelopeType.CONE, 30f, 180f,
-		   trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));	
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 1450, 205, 6f, 0.9f, 0.7f, new Vector3(0.4f, -0.2f, -0.3f), 60+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:0.8f, kBottom:0.8f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 1450, 205, 6f, 0.9f, 0.725f, new Vector3(-0.4f, 0.2f, 0.3f), 70+8, EnvelopeType.CONIFER_WEDGE, 40f, 180f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 975, 170, 6f, 1f, 0.8f, new Vector3(0.2f, 0.2f, 0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:-0.5f, kBottom:-0.5f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 1020, 175, 6f, 1f, 0.8f, new Vector3(-0.2f, -0.2f, -0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 180f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 875, 180, 75f, 2.1f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 25+8, EnvelopeType.CONE, 30f, 175f,
+		   trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.WEAK, 950, 180, 75f, 2.1f, 1f, new Vector3(0.2f, -0.2f, 0.2f), 25+8, EnvelopeType.CONE, 35f, 160f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
+        
+        // LARGE DEAD
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.DEAD, 1200, 140, 6f, 2f, 1f, new Vector3(0.4f, -0.2f, -0.3f), 60+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:0.8f, kBottom:0.8f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.DEAD, 1300, 140, 6f, 2f, 1f, new Vector3(-0.4f, 0.2f, 0.3f), 70+8, EnvelopeType.CONIFER_WEDGE, 40f, 165f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.DEAD, 900, 120, 6f, 2f, 1f, new Vector3(0.2f, 0.2f, 0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 170f, kTop:-0.5f, kBottom:-0.5f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.LARGE, TreeState.DEAD, 900, 120, 6f, 2f, 1f, new Vector3(-0.2f, -0.2f, -0.4f), 23+8, EnvelopeType.CONIFER_WEDGE, 40f, 165f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8, basicRadius: 0.55f, radiusExponent: 2.9f));
+		
 		// MEDIUM HEALTHY
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 1200, 130, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 35+8, EnvelopeType.CONIFER_WEDGE, 30, 90f, kTop:0.8f, kBottom:0.8f,
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 850, 150, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 45+8, EnvelopeType.CONIFER_WEDGE, 30f, 125f, kTop:0.8f, kBottom:0.8f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 800, 130, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 25, 90f, kTop:-0.5f, kBottom:-0.5f,
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 800, 155, 8f, 0.9f, 0.7f, new Vector3(-0.4f, 0.2f, 0.3f), 43+8, EnvelopeType.CONIFER_WEDGE, 30f, 120f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 550, 150, 8f, 1f, 0.75f, new Vector3(-0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 30f, 125f, kTop:-0.5f, kBottom:-0.5f,
 			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 450, 120, 70f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CONE, 25f, 100f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 500, 155, 8f, 0.9f, 0.7f, new Vector3(0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 30f, 120f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 420, 160, 70f, 2f, 1f, new Vector3(-0.2f, -0.2f, 0.2f), 20+8, EnvelopeType.CONE, 25f, 90f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.HEALTHY, 390, 150, 70f, 2f, 1f, new Vector3(0.2f, 0.2f, -0.2f), 18+8, EnvelopeType.CONE, 25f, 85f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8, radiusExponent: 2.6f));
+        
 		// MEDIUM WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 800, 120, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 35+8, EnvelopeType.CONIFER_WEDGE, 30, 90f, kTop:0.8f, kBottom:0.8f,
-		   	trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 800, 120, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 25, 90f, kTop:-0.5f, kBottom:-0.5f,
-		   	trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 500, 110, 70f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 10+8, EnvelopeType.CONE, 25f, 100f,
-		   	trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 650, 135, 8f, 1.15f, 0.85f, new Vector3(0.4f, -0.2f, -0.3f), 45+8, EnvelopeType.CONIFER_WEDGE, 30f, 125f, kTop:0.8f, kBottom:0.8f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 600, 138, 8f, 1.1f, 0.8f, new Vector3(-0.4f, 0.2f, 0.3f), 43+8, EnvelopeType.CONIFER_WEDGE, 30f, 120f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 420, 130, 8f, 1.15f, 0.85f, new Vector3(-0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 30f, 125f, kTop:-0.5f, kBottom:-0.5f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 400, 132, 8f, 1.1f, 0.8f, new Vector3(0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 30f, 120f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 420, 160, 70f, 2f, 1f, new Vector3(-0.2f, -0.2f, 0.2f), 20+8, EnvelopeType.CONE, 25f, 90f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.WEAK, 390, 150, 70f, 2f, 1f, new Vector3(0.2f, 0.2f, -0.2f), 18+8, EnvelopeType.CONE, 25f, 85f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8, radiusExponent: 2.6f));
+        
+        // MEDIUM DEAD
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.DEAD, 290, 84, 8f, 2f, 1f, new Vector3(0.4f, -0.2f, -0.3f), 45+8, EnvelopeType.CONIFER_WEDGE, 25f, 125f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.DEAD, 280, 83, 8f, 2f, 1f, new Vector3(-0.4f, 0.2f, 0.3f), 43+8, EnvelopeType.CONIFER_WEDGE, 25f, 120f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.DEAD, 190, 71, 8f, 2f, 1f, new Vector3(-0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 25f, 125f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.MEDIUM, TreeState.DEAD, 170, 70, 8f, 2f, 1f, new Vector3(0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 25f, 120f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        
 		// SMALL HEALTHY
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 260, 90, 25f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 8+8, EnvelopeType.CONE, 20f, 60f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 300, 70, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 15f, 65f, kTop:0.8f, kBottom:0.8f,
-		   trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 320, 100, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:0.8f, kBottom:0.8f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 300, 95, 8f, 0.9f, 0.7f, new Vector3(-0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 260, 92, 8f, 1f, 0.75f, new Vector3(-0.4f, -0.2f, -0.3f), 12+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:-0.5f, kBottom:-0.5f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 245, 88, 8f, 0.9f, 0.7f, new Vector3(0.4f, 0.2f, 0.3f), 13+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 235, 90, 40f, 2f, 1f, new Vector3(-0.2f, -0.2f, 0.2f), 10+8, EnvelopeType.CONE, 20f, 60f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.HEALTHY, 190, 75, 40f, 2f, 1f, new Vector3(0.2f, 0.2f, -0.2f), 11+8, EnvelopeType.CONE, 20f, 60f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: leafRadiusScale, offsetY:-8, radiusExponent: 2.6f));
 		
 		// SMALL WEAK
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 260, 100, 25f, 2f, 1f, new Vector3(-0.2f, 0.2f, -0.2f), 8+8, EnvelopeType.CONE, 20f, 60f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 300, 70, 8f, 1f, 0.75f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 15f, 65f, kTop:0.8f, kBottom:0.8f,
-			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8));
-		
-		
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 250, 80, 8f, 1.15f, 0.85f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:0.8f, kBottom:0.8f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 230, 75, 8f, 1f, 0.8f, new Vector3(-0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 210, 75, 8f, 1.15f, 0.85f, new Vector3(-0.4f, -0.2f, -0.3f), 12+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:-0.5f, kBottom:-0.5f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 195, 73, 8f, 1f, 0.8f, new Vector3(0.4f, 0.2f, 0.3f), 13+8, EnvelopeType.CONIFER_WEDGE, 20f, 80f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: 0.25f, offsetY:-8));
+		modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 235, 90, 40f, 2f, 1f, new Vector3(-0.2f, -0.2f, 0.2f), 10+8, EnvelopeType.CONE, 20f, 60f,
+			trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8, radiusExponent: 2.6f));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.WEAK, 190, 75, 40f, 2f, 1f, new Vector3(0.2f, 0.2f, -0.2f), 11+8, EnvelopeType.CONE, 20f, 60f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: maxLeafRadiusWeak, leafRadiusScale: leafRadiusScaleWeak, offsetY:-8, radiusExponent: 2.6f));
+        
+		// SMALL DEAD
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.DEAD, 105, 50, 8f, 2f, 1f, new Vector3(0.4f, -0.2f, -0.3f), 25+8, EnvelopeType.CONIFER_WEDGE, 15f, 80f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.DEAD, 97, 45, 8f, 2f, 1f, new Vector3(-0.4f, 0.2f, 0.3f), 22+8, EnvelopeType.CONIFER_WEDGE, 15f, 80f, kTop:0.8f, kBottom:0.8f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.DEAD, 75, 40, 8f, 2f, 1f, new Vector3(-0.4f, -0.2f, -0.3f), 12+8, EnvelopeType.CONIFER_WEDGE, 15f, 80f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        modelService.AddTreeDefinition(new TreeDefinition(TreeType.CONIFER, TreeSize.SMALL, TreeState.DEAD, 70, 38, 8f, 2f, 1f, new Vector3(0.4f, 0.2f, 0.3f), 13+8, EnvelopeType.CONIFER_WEDGE, 15f, 80f, kTop:-0.5f, kBottom:-0.5f,
+            trunk: VoxelType.WOOD, leaves: VoxelType.CONIFEROUS_LEAVES, maxLeafRadius: 0, leafRadiusScale: 0, offsetY:-8));
+        
 		// Bushes
 		modelService.AddBushDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 250, 70, 20, 2, 1, new Vector3(-0.1f, 0.1f, -0.1f), 1f, EnvelopeType.SPHERE, 15, 30, radialBias:1, verticalBias:1, interiorMin:1,
 			trunk: VoxelType.WOOD, leaves: VoxelType.DECIDUOUS_LEAVES, maxLeafRadius: maxLeafRadius, leafRadiusScale: 2.6f));
