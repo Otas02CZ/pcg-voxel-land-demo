@@ -1068,7 +1068,7 @@ public class WorldGenerator
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxArid;
                     if (isMountains)
                         canBeDeadTree = false;
-                    //treeState = TreeState.DEAD;
+                    }
                 }
                 else if (waterAvailability < areaWaterAvailabilityThresholds[1])
                 {
@@ -1077,7 +1077,6 @@ public class WorldGenerator
                     chanceTreeDead = 10;
                     chanceTreeWeak = 80;
                     chanceTreeHealthy = 10;
-                    //treeState = TreeState.WEAK;
                     noPlants = true;
                 }
                 else if (waterAvailability < areaWaterAvailabilityThresholds[2])
