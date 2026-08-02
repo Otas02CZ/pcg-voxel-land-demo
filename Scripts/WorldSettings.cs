@@ -198,12 +198,12 @@ public struct VegetationChance(int high = 12000, int medium = 14250, int low = 1
     {
         return chanceType switch
         {
-            VegChanceType.VERY_LOW => new VegetationChance(20000, 23000, 26000, 40000),
-            VegChanceType.LOW => new VegetationChance(16000, 19000, 22000, 35000),
-            VegChanceType.MEDIUM => new VegetationChance(14000, 16500, 20000, 30000),
-            VegChanceType.HIGH => new VegetationChance(12000, 14250, 16500, 25000),
-            VegChanceType.VERY_HIGH => new VegetationChance(10000, 11500, 13000, 21000),
-            _ => new VegetationChance(12000, 14250, 16500, 25000)
+            VegChanceType.VERY_LOW => new VegetationChance(33000, 44000, 52000, 65000),
+            VegChanceType.LOW => new VegetationChance(26000, 36000, 44000, 57000),
+            VegChanceType.MEDIUM => new VegetationChance(21000, 30000, 37000, 47000),
+            VegChanceType.HIGH => new VegetationChance(17000, 24000, 30000, 38000),
+            VegChanceType.VERY_HIGH => new VegetationChance(14000, 17000, 23000, 33000),
+            _ => new VegetationChance(17000, 24000, 30000, 38000)
         };
     }
     

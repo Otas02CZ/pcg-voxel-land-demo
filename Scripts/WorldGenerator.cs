@@ -1129,7 +1129,7 @@ public class WorldGenerator
                     // very young areas, mostly grass and some plants, no trees and bushes
                     treeChance = 0;
                     bushChance = 0;
-                    grassChance = 140;
+                    grassChance = 135;
                     plantChance = 15;
                     trunkChance = 0;
                 } else if (ageNoiseValue < ageThresholds[1])
@@ -1137,7 +1137,7 @@ public class WorldGenerator
                     // young areas, only grass and plants, still no trees and bushes, but more plants
                     treeChance = 0;
                     bushChance = 0;
-                    grassChance = 120;
+                    grassChance = 115;
                     plantChance = 36;
                     plantBushChance = 3;
                     trunkChance = 1;
@@ -1146,7 +1146,7 @@ public class WorldGenerator
                     // young-medium areas, grass, plants and small chance for trees and bushes, only small trees
                     treeChance = 1;
                     bushChance = 1;
-                    grassChance = 105;
+                    grassChance = 110;
                     plantChance = 33;
                     plantBushChance = 2;
                     trunkChance = 1;
@@ -1178,7 +1178,7 @@ public class WorldGenerator
                 {
                     // old areas, grass and plants, very high chance for trees and bushes, all tree sizes
                     treeChance = 5;
-                    bushChance = 3;
+                    bushChance = 2;
                     grassChance = 80;
                     plantChance = 20;
                     trunkChance = 3;
@@ -1189,7 +1189,7 @@ public class WorldGenerator
                 {
                     // very old areas, grass and plants, extremely high chance for trees and bushes, all tree sizes with higher chance for large trees
                     treeChance = 5;
-                    bushChance = 3;
+                    bushChance = 2;
                     grassChance = 70;
                     plantChance = 15;
                     trunkChance = 4;
@@ -1199,8 +1199,8 @@ public class WorldGenerator
                 } else
                 {
                     // ancient areas, grass and plants, almost only trees and bushes, only medium and large trees
-                    treeChance = 6;
-                    bushChance = 4;
+                    treeChance = 5;
+                    bushChance = 2;
                     grassChance = 40;
                     plantChance = 10;
                     trunkChance = 4;
