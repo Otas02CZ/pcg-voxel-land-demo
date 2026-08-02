@@ -1059,6 +1059,7 @@ public class WorldGenerator
                 int chanceTreeDead = 100;
                 int chanceTreeWeak = 0;
                 int chanceTreeHealthy = 0;
+                int rockChance = 2; // rock chance for model roll (others are below)
                 int vegetationRandomMax = 15000;
                 TreeState treeState = TreeState.HEALTHY;
                 bool noPlants = false;
@@ -1066,7 +1067,9 @@ public class WorldGenerator
                 {
                     // arid, low chance of vegetation and only dead trees
                     vegetationRandomMax = vegetationChance.vegetationRandomMaxArid;
+                    rockChance = 20;
                     if (isMountains)
+                    {
                         canBeDeadTree = false;
                     }
                 }
@@ -1111,7 +1114,7 @@ public class WorldGenerator
                 int grassChance = 174;
                 int plantChance = 39;
                 int plantBushChance = 0;
-                int rockChance = 2;
+                // rock chacne is above, as arid areas influence it directly
                 int trunkChance = 4;
                 // chances for tree size types
                 int largeTreeChance = 0;

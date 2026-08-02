@@ -9,14 +9,25 @@ using Godot;
 namespace PCGVoxelLandscapes.Scripts;
 
 /**
+ * Rock type enum
+ */
+public enum RockType : byte
+{
+    STONE,
+    SAND
+}
+
+/**
  * Structure holding parameters for RockGenerator
  */ 
-public struct RockDefinition(ushort sizeX, ushort sizeY, ushort sizeZ, ushort radiusMax, int id = 0, int seed = 5000)
+public struct RockDefinition(ushort sizeX, ushort sizeY, ushort sizeZ, ushort radiusMax, RockType rockType, VoxelType voxelType, int id = 0, int seed = 5000)
 {
     public readonly ushort sizeX = sizeX;
     public readonly ushort sizeY = sizeY;
     public readonly ushort sizeZ = sizeZ;
     public readonly ushort radiusMax = radiusMax;
+    public readonly RockType rockType = rockType;
+    public readonly VoxelType voxelType = voxelType;
     public int seed = seed;
     public int id = id;
 }
@@ -24,9 +35,10 @@ public struct RockDefinition(ushort sizeX, ushort sizeY, ushort sizeZ, ushort ra
 /**
  * Generated Rock model.
  */
-public class Rock(VoxelItem[] voxels, short offsetY, int id)
+public class Rock(VoxelItem[] voxels, RockType rockType, short offsetY, int id)
 {
     public readonly int id = id;
+    public readonly RockType rockType = rockType;
     public readonly VoxelItem[] voxels = voxels;
     public readonly short offsetY = offsetY;
 }
@@ -43,7 +55,7 @@ public static class RockGenerator
     {
         FastNoiseLite noise = new FastNoiseLite();
         noise.SetSeed(seed);
-        noise.SetFrequency(0.033f);
+        noise.SetFrequency(0.028f);
         noise.SetFractalLacunarity(1.55f);
         noise.SetFractalGain(0.7f);
         noise.SetFractalOctaves(4);
@@ -57,7 +69,7 @@ public static class RockGenerator
      * Generates a rock model with given parameters.
      * Rock is generated as 3D noise limited in spreading from the center by outwards increasing spherical gradient.
      */
-    public static (VoxelItem[], short offsetY) Generate(int seed, ushort sizeX, ushort sizeY, ushort sizeZ, ushort radiusMax)
+    public static (VoxelItem[], short offsetY) Generate(int seed, ushort sizeX, ushort sizeY, ushort sizeZ, ushort radiusMax, VoxelType voxelType)
     {
         FastNoiseLite noise = InitializeNoise(seed);
         
@@ -86,7 +98,7 @@ public static class RockGenerator
                     // chance reduces with distance from the center of the rock model
                     if (noiseValue > gradient)
                     {
-                        rockModel.SetVoxel(x, (short)(y + centerY), z, VoxelType.STONE);
+                        rockModel.SetVoxel(x, (short)(y + centerY), z, voxelType);
                     }
                 }
             }

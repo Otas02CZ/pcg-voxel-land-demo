@@ -426,9 +426,10 @@ public class ModelService : IDisposable
             rockDef.sizeX,
             rockDef.sizeY,
             rockDef.sizeZ,
-            rockDef.radiusMax
+            rockDef.radiusMax,
+            rockDef.voxelType
         );
-        Rock rock = new Rock(rockVoxels, offsetY, rockDef.id);
+        Rock rock = new Rock(rockVoxels, rockDef.rockType, offsetY, rockDef.id);
         rockModels.Add(rock);
     }
 

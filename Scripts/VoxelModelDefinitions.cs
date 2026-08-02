@@ -334,10 +334,15 @@ public static class VoxelModelDefinitions
 		modelService.AddPlantBushDefinition(new PlantBushDefinition(flowerVoxelType:VoxelType.BLUE, maxHeight: 25));
 		
 		// rocks
-		modelService.AddRockDefinition(new RockDefinition(50, 50, 50, 25));
-		modelService.AddRockDefinition(new RockDefinition(30, 30, 30, 15));
-		modelService.AddRockDefinition(new RockDefinition(20, 20, 20, 10));
-		modelService.AddRockDefinition(new RockDefinition(16, 16, 16, 8));
+        modelService.AddRockDefinition(new RockDefinition(50, 50, 50, 25, RockType.STONE, VoxelType.STONE)); 
+        modelService.AddRockDefinition(new RockDefinition(30, 30, 30, 15, RockType.STONE, VoxelType.STONE)); 
+        modelService.AddRockDefinition(new RockDefinition(20, 20, 20, 10, RockType.STONE, VoxelType.STONE)); 
+        modelService.AddRockDefinition(new RockDefinition(16, 16, 16, 8, RockType.STONE, VoxelType.STONE));
+        
+        modelService.AddRockDefinition(new RockDefinition(50, 50, 50, 25, RockType.SAND, VoxelType.SAND));
+        modelService.AddRockDefinition(new RockDefinition(30, 30, 30, 15, RockType.SAND, VoxelType.SAND));
+        modelService.AddRockDefinition(new RockDefinition(20, 20, 20, 10, RockType.SAND, VoxelType.SAND));
+        modelService.AddRockDefinition(new RockDefinition(16, 16, 16, 8, RockType.SAND, VoxelType.SAND));
 		
 		// trunks and branches
 		modelService.AddTrunkDefinition(new TrunkDefinition(new TreeDefinition(TreeType.DECIDUOUS, TreeSize.MEDIUM, TreeState.HEALTHY, 250, 80, 60f, 2f, 0.50f, new Vector3(-0.2f, 0.2f, -0.2f), 20, EnvelopeType.OVAL, 36f, 65f,
