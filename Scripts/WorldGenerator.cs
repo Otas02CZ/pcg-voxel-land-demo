@@ -114,7 +114,7 @@ public class WorldGenerator
     // snow parameters
     private const byte voxelsPerSnowUnit = 2; // add snow in multiples of two voxels
     private const byte snowHeightMin = 2;
-    private const byte snowHeightMax = 14;
+    private const byte snowHeightMax = 10;
     
     private readonly WaterGeneratorParams waterGeneratorParams;
     // voxel model collections
@@ -246,7 +246,7 @@ public class WorldGenerator
         
         ageNoise = new FastNoiseLite();
         ageNoise.SetSeed(seed + 20000);
-        ageNoise.SetFrequency(0.00075f);
+        ageNoise.SetFrequency(0.0006f);
         ageNoise.SetFractalLacunarity(2.0f);
         ageNoise.SetFractalGain(0.5f);
         ageNoise.SetFractalOctaves(0);
@@ -1129,7 +1129,7 @@ public class WorldGenerator
                     // very young areas, mostly grass and some plants, no trees and bushes
                     treeChance = 0;
                     bushChance = 0;
-                    grassChance = 135;
+                    grassChance = 145;
                     plantChance = 15;
                     trunkChance = 0;
                 } else if (ageNoiseValue < ageThresholds[1])
@@ -1137,7 +1137,7 @@ public class WorldGenerator
                     // young areas, only grass and plants, still no trees and bushes, but more plants
                     treeChance = 0;
                     bushChance = 0;
-                    grassChance = 115;
+                    grassChance = 125;
                     plantChance = 36;
                     plantBushChance = 3;
                     trunkChance = 1;
@@ -1146,7 +1146,7 @@ public class WorldGenerator
                     // young-medium areas, grass, plants and small chance for trees and bushes, only small trees
                     treeChance = 1;
                     bushChance = 1;
-                    grassChance = 110;
+                    grassChance = 115;
                     plantChance = 33;
                     plantBushChance = 2;
                     trunkChance = 1;
@@ -1156,7 +1156,7 @@ public class WorldGenerator
                     // medium areas, grass and plants, higher chance for trees and bushes, small and medium trees
                     treeChance = 3;
                     bushChance = 2;
-                    grassChance = 105;
+                    grassChance = 110;
                     plantChance = 28;
                     plantBushChance = 2;
                     trunkChance = 1;
@@ -1167,7 +1167,7 @@ public class WorldGenerator
                     // medium-old areas, grass and plants, high chance for trees and bushes, small medium and some large trees
                     treeChance = 4;
                     bushChance = 2;
-                    grassChance = 95;
+                    grassChance = 100;
                     plantChance = 25;
                     plantBushChance = 1;
                     trunkChance = 2;
@@ -1179,7 +1179,7 @@ public class WorldGenerator
                     // old areas, grass and plants, very high chance for trees and bushes, all tree sizes
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 80;
+                    grassChance = 85;
                     plantChance = 20;
                     trunkChance = 3;
                     //smallTreeChance = 20;
@@ -1190,7 +1190,7 @@ public class WorldGenerator
                     // very old areas, grass and plants, extremely high chance for trees and bushes, all tree sizes with higher chance for large trees
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 70;
+                    grassChance = 75;
                     plantChance = 15;
                     trunkChance = 4;
                     //smallTreeChance = 5;
@@ -1201,8 +1201,8 @@ public class WorldGenerator
                     // ancient areas, grass and plants, almost only trees and bushes, only medium and large trees
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 40;
-                    plantChance = 10;
+                    grassChance = 50;
+                    plantChance = 11;
                     trunkChance = 4;
                     //smallTreeChance = 0;
                     mediumTreeChance = 10;

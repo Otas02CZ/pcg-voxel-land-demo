@@ -184,7 +184,7 @@ public enum HeightNoiseConfigType : byte
  * Structure holding rng ranges for placement chance of vegetation and decoration in areas of all water availability types.
  * Includes conversion method from enumeration types.
  */
-public struct VegetationChance(int high = 12000, int medium = 14250, int low = 16500, int arid = 25000)
+public struct VegetationChance(int high = 15500, int medium = 23000, int low = 28500, int arid = 37000)
 {
     public int vegetationRandomMaxHighWater { get; set; } = high;
     public int vegetationRandomMaxMediumWater { get; set; } = medium;
@@ -198,12 +198,12 @@ public struct VegetationChance(int high = 12000, int medium = 14250, int low = 1
     {
         return chanceType switch
         {
-            VegChanceType.VERY_LOW => new VegetationChance(33000, 44000, 52000, 65000),
-            VegChanceType.LOW => new VegetationChance(26000, 36000, 44000, 57000),
-            VegChanceType.MEDIUM => new VegetationChance(21000, 30000, 37000, 47000),
-            VegChanceType.HIGH => new VegetationChance(17000, 24000, 30000, 38000),
-            VegChanceType.VERY_HIGH => new VegetationChance(14000, 17000, 23000, 33000),
-            _ => new VegetationChance(17000, 24000, 30000, 38000)
+            VegChanceType.VERY_LOW => new VegetationChance(30000, 41000, 50000, 62000),
+            VegChanceType.LOW => new VegetationChance(24000, 32000, 42000, 54500),
+            VegChanceType.MEDIUM => new VegetationChance(19500, 28000, 36000, 45000),
+            VegChanceType.HIGH => new VegetationChance(15500, 23000, 28500, 37000),
+            VegChanceType.VERY_HIGH => new VegetationChance(13500, 16500, 22000, 29000),
+            _ => new VegetationChance(15500, 23000, 28500, 37000)
         };
     }
     

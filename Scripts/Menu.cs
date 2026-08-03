@@ -191,7 +191,7 @@ public partial class Menu : Control
         worldSettingsPresets[0] = new WorldSettingsPreset(
             "Default",
             new WorldSettings(),
-            [11,11,10,7,10,12,14,16],
+            [8,8,8,7,10,12,15,17],
             [30, 10, 40],
             [5, 5, 6, 8],
             0.125f,
@@ -220,7 +220,7 @@ public partial class Menu : Control
                 cavesStartTerrainHeightRatio = 0.05f,
                 cavesStalactitesChance = 200,
             },
-            [11,11,10,7,10,12,14,16],
+            [8,8,8,7,10,12,15,17],
             [30, 10, 40],
             [6, 3, 5, 11],
             1.0f,
@@ -241,19 +241,19 @@ public partial class Menu : Control
                 waterReedsChance = 40,
                 waterLilyChance = 4,
             },
-            [10,5,1,1,1,1,1,1],
+            [5,5,5,5,5,5,5,5],
             [30, 10, 40],
-            [20,15,10,5],
+            [9,22,12,7],
             0.4583f,
             0.35f,
             0.5f,
-            0.25f
+            0f
         );
         // snowy world
         worldSettingsPresets[4] = new WorldSettingsPreset(
             "Snowy World",
             new WorldSettings(),
-            [11,11,10,7,10,12,14,16],
+            [8,8,8,7,10,12,15,17],
             [0, 0, 10],
             [6, 3, 5, 11],
             0.4583f,
@@ -293,7 +293,7 @@ public partial class Menu : Control
                 explicitWaterLevelTerrainHeightRatio = 0.1f,
                 explicitWaterAvailabilityMaxEffect = 224,
             },
-            [11,11,10,7,10,12,14,16],
+            [8,8,8,7,10,12,15,17],
             [30, 10, 40],
             [2, 4, 7, 15],
             0.125f,
