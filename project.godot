@@ -138,7 +138,6 @@ debug_menu={
 
 [rendering]
 
-occlusion_culling/bvh_build_quality=1
 rendering_device/driver="d3d12"
 rendering_device/driver.windows="d3d12"
 textures/vram_compression/import_etc2_astc=true
@@ -165,6 +164,5 @@ global_illumination/sdfgi/probe_ray_count=3
 global_illumination/sdfgi/frames_to_converge=3
 lightmapping/denoising/denoiser=1
 anti_aliasing/quality/screen_space_aa=1
-occlusion_culling/use_occlusion_culling=true
 environment/screen_space_reflection/roughness_quality=2
 vrs/scale=0.8
