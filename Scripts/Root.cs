@@ -887,8 +887,8 @@ public partial class Root : Node3D
         Stopwatch stopwatch = Stopwatch.StartNew();
         while (true)
         {
-            if (!worldDisplayService.ProcessDisplayUpdateTask() ||
-                stopwatch.ElapsedMilliseconds >= delta * 1000 / chunkUpdatesDeltaDivider)
+            worldDisplayService.ProcessDisplayUpdateTask();
+            if (stopwatch.ElapsedMilliseconds >= delta * 1000 / chunkUpdatesDeltaDivider)
             {
                 break;
             }

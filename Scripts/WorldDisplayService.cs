@@ -78,13 +78,23 @@ public class PreProcessedChunkColumn(PreProcessedChunk[] chunks, WorldDisplayTas
 }
 
 /**
+ * Represents data associated with column, which chunks are currently being applied.
+ */
+public class CurrentWorkingColumn
+{
+    public PreProcessedChunkColumn data;
+    public uint nextChunkY;
+}
+
+/**
  * Chunk column geometry display, update and unload service for displaying world voxel geometry in the Godot Engine.
  * Includes support for LOD changes.
  * Controlled by a task system. Display (includes LOD changes) and changes due to user voxel editing are run on a single task basis.
  * Complete unloading of columns is done in batches when all unload operations are done at once.
- * Its work is split into two parts. Firstly the required tasks are pre-processed asynchronously on the main thread.
+ * Its work is split into two parts. Firstly the required tasks are pre-processed asynchronously on the main thread (both column display and chunk edit updates).
  * This includes geometry and collision unpacking and preparation, etc.
- * Secondly, these pre-processed tasks are applied to the engine from the main thread. Reducing the load on the main thread and stuttering.
+ * Secondly, these pre-processed tasks are applied to the engine from the main thread. The application is divided to chunks
+ * and their processing is distributed between invocations of ProcessDisplayUpdateTask function. Reducing the load on the main thread and stuttering.
  * Supports repositioning of column geometry to engine world center to eliminate floating point errors during rendering and physics.
  */
 public class WorldDisplayService
@@ -102,6 +112,7 @@ public class WorldDisplayService
     private Thread processingThread;
     private volatile bool stopThread = false;
     private const int threadSleepMs = 100;
+    private CurrentWorkingColumn workColumn = null;
     
     // dependencies
     private readonly GeometryGeneratorService geometryGeneratorService;
@@ -709,184 +720,128 @@ public class WorldDisplayService
     }
 
     /**
-     * Finishes a single pre-processed display / update task.
+     * Finalize (pre-processed) display chunk column updates,
+     * uses ApplyChunkUpdate to create and place the instances to the engine.
+     * UPDATE_EDIT tasks are applied immediately.
+     * DISPLAY task application is divided into chunks and their processing is distributed between
+     * the invocations of this function (workColumn) to minimize stuttering.
+     */
+    public void ProcessDisplayUpdateTask()
+    {
+        // take new column to work on if last was finished
+        if (workColumn == null)
+        {
+            // try to obtain first pre-processed task
+            PreProcessedChunkColumn preProcessedColumn = null;
+            lock (taskAccessLock) // maybe not needed
+            {
+                if (preProcessedColumns.Count > 0)
+                {
+                    preProcessedColumn = preProcessedColumns[0];
+                    preProcessedColumns.RemoveAt(0);
+                }
+            }
+
+            if (preProcessedColumn == null)
+            {
+                return;
+            }
+            
+            // UPDATE_EDIT task should be processed right away, no distributed work
+            if (preProcessedColumn.task.type == WorldDisplayTaskType.UPDATE_EDIT)
+            {
+                ApplyChunkUpdate(preProcessedColumn.task, preProcessedColumn.chunks[0], preProcessedColumn.task.chunkY);
+                return;
+            }
+            // otherwise DISPLAY task is present - load up new column for distributed work
+            workColumn = new CurrentWorkingColumn();
+            workColumn.data = preProcessedColumn;
+            workColumn.nextChunkY = 0;
+        }
+        // process single chunk of currently active working column
+        PreProcessedChunkColumn processedColumn = workColumn.data;
+        uint y = workColumn.nextChunkY;
+        
+        workColumn.nextChunkY++;
+        if (workColumn.nextChunkY == chunkCountY)
+        {
+            workColumn = null;
+        }
+        
+        ApplyChunkUpdate(processedColumn.task, processedColumn.chunks[y], y);
+    }
+
+    /*
+     * Applies a single chunk update (for both DISPLAY and UPDATE_EDIT tasks).
      * Creates engine mesh instances and places them into the godot scene.
      * All mesh instances are placed to shifted engine scene positions defined by origin shift offset.
      * DISPLAY tasks include LOD transitions - unload of old LOD geometry and display of new one.
      * UPDATE_EDIT tasks only replace single chunk of the column with the updated geometry.
      * For columns currently displayed at LOD0 is also placed a collision body build from their LOD2 version.
      */
-    public bool ProcessDisplayUpdateTask()
+    private void ApplyChunkUpdate(WorldDisplayTask task, PreProcessedChunk chunk, uint chunkY)
     {
-        // try to obtain first pre-processed task
-        PreProcessedChunkColumn preProcessedColumn = null;
-        lock (taskAccessLock) // maybe not needed
+        // displayed column should exist
+        DisplayedColumn displayedColumn;
+        if (displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
         {
-            if (preProcessedColumns.Count > 0)
-            {
-                preProcessedColumn = preProcessedColumns[0];
-                preProcessedColumns.RemoveAt(0);
-            }
+            displayedColumn = displayedColumns[(task.chunkX, task.chunkZ)];
+        }
+        else
+        {
+            // might have been already discarded, or error
+            return;
+        }
+        
+        if (task.type == WorldDisplayTaskType.DISPLAY)
+        {
+            displayedColumn.currentLod = task.lodLevel;
+        }
+        
+        // queue-free existing
+        // unload old chunk collision if updating
+        if (displayedColumn.chunkCollisions[chunkY] != null)
+        {
+            displayedColumn.chunkCollisions[chunkY].QueueFree();
+            displayedColumn.chunkCollisions[chunkY] = null;
         }
 
-        if (preProcessedColumn == null)
+        // cleanup old geometry instance if updating
+        if (displayedColumn.chunkInstances[chunkY] != null)
         {
-            return false;
+            displayedColumn.chunkInstances[chunkY].QueueFree();
+            displayedColumn.chunkInstances[chunkY] = null;
         }
-
-        MeshInstance3D instance;
-        Vector3Int worldPositionOffset;
-        WorldDisplayTask task = preProcessedColumn.task;
-
-        switch (task.type)
+        
+        if (chunk == null)
         {
-            // displaying a new column or updating an existing one to different LOD
-            case WorldDisplayTaskType.DISPLAY:
-            {
-                // firstly check and queue-free existing if needed
-                // displayed column was prepared during pre-process
-                DisplayedColumn displayedColumn;
-                if (displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
-                {
-                    displayedColumn = displayedColumns[(task.chunkX, task.chunkZ)];
-                }
-                else
-                {
-                    // might have been already discarded
-                    return true;
-                }
-                
-                // existing column might already be at correct lod level, should not really happen
-                if (displayedColumn.currentLod == task.lodLevel)
-                {
-                    return true;
-                }
-                
-                displayedColumn.currentLod = task.lodLevel;
-                
-                // queue-free existing
-                for (int y = 0; y < chunkCountY; y++)
-                {
-                    // unload old chunk collision if updating
-                    if (displayedColumn.chunkCollisions[y] != null)
-                    {
-                        displayedColumn.chunkCollisions[y].QueueFree();
-                        displayedColumn.chunkCollisions[y] = null;
-                    }
-
-                    // cleanup old geometry instance if updating
-                    if (displayedColumn.chunkInstances[y] != null)
-                    {
-                        displayedColumn.chunkInstances[y].QueueFree();
-                        displayedColumn.chunkInstances[y] = null;
-                    }
-                }
-
-                // process all its chunks
-                for (int y = 0; y < chunkCountY; y++)
-                {
-                    if (preProcessedColumn.chunks[y] == null)
-                    {
-                        continue;
-                    }
-
-                    ArrayMesh arrayMesh = CreateChunkArrayMesh(preProcessedColumn.chunks[y].surfaceData);
-                    if (arrayMesh == null)
-                    {
-                        continue;
-                    }
-
-                    instance = new MeshInstance3D();
-                    instance.Mesh = arrayMesh;
-                    // assign it and apply origin shift offset
-                    displayedColumn.chunkInstances[y] = instance;
-                    displayedColumn.realPositions[y] = preProcessedColumn.chunks[y].worldPosition;
-                    worldPositionOffset = preProcessedColumn.chunks[y].worldPosition + originShiftOffsetXZ;
-                    instance.Position = worldPositionOffset.ToGodotVector3();
-                    voxelWorld.AddChild(instance);
-                    
-                    // add collision if current LOD is LOD0 (use LOD2 for collision)
-                    if (task.lodLevel == LodLevel.LOD0)
-                    {
-                        StaticBody3D staticBodyNode = collisionScene.Instantiate<StaticBody3D>();
-                        ConcavePolygonShape3D shape = new ConcavePolygonShape3D();
-                        shape.SetFaces(preProcessedColumn.chunks[y].collisionGeometry);
-                        staticBodyNode.GetNode<CollisionShape3D>("CollisionShape").SetShape(shape);
-                        instance.AddChild(staticBodyNode);
-                    }
-                }
-                
-                break;
-            }
-            
-            // only updating a single chunk of a column to its new geometry
-            case WorldDisplayTaskType.UPDATE_EDIT:
-            {
-                // firstly check and queue-free existing if needed
-                // displayed column should exist
-                DisplayedColumn displayedColumn;
-                if (displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
-                {
-                    displayedColumn = displayedColumns[(task.chunkX, task.chunkZ)];
-                }
-                else
-                {
-                    // might have been already discarded, or error
-                    return true;
-                }
-                
-                // queue-free existing
-                // unload old chunk collision if updating
-                if (displayedColumn.chunkCollisions[task.chunkY] != null)
-                {
-                    displayedColumn.chunkCollisions[task.chunkY].QueueFree();
-                    displayedColumn.chunkCollisions[task.chunkY] = null;
-                }
-
-                // cleanup old geometry instance if updating
-                if (displayedColumn.chunkInstances[task.chunkY] != null)
-                {
-                    displayedColumn.chunkInstances[task.chunkY].QueueFree();
-                    displayedColumn.chunkInstances[task.chunkY] = null;
-                }
-                
-                // process a single chunk
-                // pre-processed column has only a single chunk prepared, stored on 0-th index
-                if (preProcessedColumn.chunks[0] == null)
-                {
-                    return true;
-                }
-                
-                ArrayMesh arrayMesh = CreateChunkArrayMesh(preProcessedColumn.chunks[0].surfaceData);
-                if (arrayMesh == null)
-                {
-                    return true;
-                }
-                
-                instance = new MeshInstance3D();
-                instance.Mesh = arrayMesh;
-                // assign it and apply origin shift offset
-                displayedColumn.chunkInstances[task.chunkY] = instance;
-                displayedColumn.realPositions[task.chunkY] = preProcessedColumn.chunks[0].worldPosition;
-                worldPositionOffset = preProcessedColumn.chunks[0].worldPosition + originShiftOffsetXZ;
-                instance.Position = worldPositionOffset.ToGodotVector3();
-                voxelWorld.AddChild(instance);
-                
-                // add collision if current LOD is LOD0 (use LOD2 for collision)
-                if (displayedColumn.currentLod == LodLevel.LOD0)
-                {
-                    StaticBody3D staticBodyNode = collisionScene.Instantiate<StaticBody3D>();
-                    ConcavePolygonShape3D shape = new ConcavePolygonShape3D();
-                    shape.SetFaces(preProcessedColumn.chunks[0].collisionGeometry);
-                    staticBodyNode.GetNode<CollisionShape3D>("CollisionShape").SetShape(shape);
-                    instance.AddChild(staticBodyNode);
-                }
-                
-                break;
-            }
+            return;
         }
-
-        return true;
+        
+        ArrayMesh arrayMesh = CreateChunkArrayMesh(chunk.surfaceData);
+        if (arrayMesh == null)
+        {
+            return;
+        }
+        // add mesh instance
+        MeshInstance3D instance = new MeshInstance3D();
+        instance.Mesh = arrayMesh;
+        // assign it and apply origin shift offset
+        displayedColumn.chunkInstances[chunkY] = instance;
+        displayedColumn.realPositions[chunkY] = chunk.worldPosition;
+        Vector3Int worldPositionOffset = chunk.worldPosition + originShiftOffsetXZ;
+        instance.Position = worldPositionOffset.ToGodotVector3();
+        voxelWorld.AddChild(instance);
+        
+        // add collision if current LOD is LOD0 (use LOD2 for collision)
+        if (displayedColumn.currentLod == LodLevel.LOD0)
+        {
+            StaticBody3D staticBodyNode = collisionScene.Instantiate<StaticBody3D>();
+            ConcavePolygonShape3D shape = new ConcavePolygonShape3D();
+            shape.SetFaces(chunk.collisionGeometry);
+            staticBodyNode.GetNode<CollisionShape3D>("CollisionShape").SetShape(shape);
+            instance.AddChild(staticBodyNode);
+        }
     }
     
     /**
