@@ -513,6 +513,10 @@ public class WorldDisplayService
     
     /**
      * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
+     * NOTE: After hours of debugging random crashes with segmentation faults, I found out that the AddSurfaceFromArrays function
+     * can sometimes internally cause seg fault while performing dictionary operations (stacktrace get_key_list, last entry Variant::reference)
+     * when lods dictionary is not supplied. Interestingly this seems to be fixed when an empty lod dictionary is supplied.
+     * TODO: Might need to investigate this weird behavior further, maybe some side effect? Esp. if the issues happen again.
      */
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     private ArrayMesh CreateChunkArrayMesh(SurfaceData[] surfaceData)
@@ -529,8 +533,9 @@ public class WorldDisplayService
             for (int i = 0; i < surfaceData.Length; i++)
             {
                 SurfaceData surface = surfaceData[i];
-                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface.geometry, flags: surface.format);
-                arrayMesh.SurfaceSetMaterial(i,  surface.material);
+                // assigning an empty Dictionary to lods seems to fix random crashes (seg faults) during calling this internal function
+                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface.geometry, lods: new Godot.Collections.Dictionary(), flags: surface.format);
+                arrayMesh.SurfaceSetMaterial(i, surface.material);
             }
             
             return arrayMesh;
