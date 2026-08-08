@@ -289,7 +289,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer" unique_id=768680857]
-custom_minimum_size = Vector2(400, 400)
+custom_minimum_size = Vector2(500, 400)
 layout_mode = 2
 
 [node name="Worlds" type="VBoxContainer" parent="Menu/Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer" unique_id=647301654]
@@ -343,7 +343,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_font_sizes/font_size = 14
 text = "Default"
-max_length = 20
+max_length = 30
 
 [node name="WorldProfile" type="VBoxContainer" parent="Menu/Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer" unique_id=351468024]
 layout_mode = 2

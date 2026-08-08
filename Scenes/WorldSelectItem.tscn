@@ -56,10 +56,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "World Name"
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=1421566476]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 80
 theme_override_styles/separator = SubResource("StyleBoxEmpty_cr58a")
 
