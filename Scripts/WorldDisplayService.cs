@@ -5,6 +5,7 @@
 // DESC: Contains Service class that displays and hides chunk geometry in the world in the engine. 
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -99,7 +100,7 @@ public class CurrentWorkingColumn
  */
 public class WorldDisplayService
 {
-    private readonly Dictionary<(int, int), DisplayedColumn> displayedColumns; // currently displayed columns
+    private readonly ConcurrentDictionary<(int, int), DisplayedColumn> displayedColumns; // currently displayed columns
     private readonly List<WorldDisplayTask> taskList; // remaining tasks, that can be processed in next invocations of ProcessDisplayUpdateTask
     private readonly List<WorldDisplayTask> notReadyTasks; // tasks scheduled by root, but waiting for geometry or lower steps of generation
     private readonly Lock taskAccessLock;
@@ -108,7 +109,7 @@ public class WorldDisplayService
     
     // pre-processing data and thread management
     private readonly int maxPreProcessedColumns = 100;
-    private readonly List<PreProcessedChunkColumn> preProcessedColumns;
+    private readonly ConcurrentQueue<PreProcessedChunkColumn> preProcessedColumns;
     private Thread processingThread;
     private volatile bool stopThread = false;
     private const int threadSleepMs = 100;
@@ -129,7 +130,7 @@ public class WorldDisplayService
     
     public WorldDisplayService(GeometryGeneratorService geometryGeneratorService, int chunkCountY, ShaderMaterial waterMaterial, StandardMaterial3D blockMaterialBasic, ShaderMaterial blockMaterialVariance, Node3D voxelWorld)
     {
-        displayedColumns = new Dictionary<(int, int), DisplayedColumn>();
+        displayedColumns = new ConcurrentDictionary<(int, int), DisplayedColumn>();
         taskList = [];
         columnsToHide = [];
         notReadyTasks = [];
@@ -182,7 +183,7 @@ public class WorldDisplayService
                 if (task != null && !displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
                     DisplayedColumn displayedColumn = new DisplayedColumn(task.chunkX, task.chunkZ, LodLevel.UNLOADED, chunkCountY);
-                    displayedColumns.Add((task.chunkX, task.chunkZ), displayedColumn);
+                    displayedColumns[(task.chunkX, task.chunkZ)] = displayedColumn;
                 }
             }
 
@@ -272,7 +273,7 @@ public class WorldDisplayService
                     }
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
-                    preProcessedColumns.Add(preProcessedColumn);
+                    preProcessedColumns.Enqueue(preProcessedColumn);
                     break;
                 }
                 
@@ -353,7 +354,7 @@ public class WorldDisplayService
                     preProcessedChunks[0] = new PreProcessedChunk(surfaceData, collisionGeometryData, chunkGeometry.worldPosition);
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
-                    preProcessedColumns.Add(preProcessedColumn);
+                    preProcessedColumns.Enqueue(preProcessedColumn);
                     break;
                 }
             }
@@ -513,6 +514,10 @@ public class WorldDisplayService
     
     /**
      * Creates ArrayMesh with assembled surfaces of given ChunkGeometry.
+     * NOTE: After hours of debugging random crashes with segmentation faults, I found out that the AddSurfaceFromArrays function
+     * can sometimes internally cause seg fault while performing dictionary operations (stacktrace get_key_list, last entry Variant::reference)
+     * when lods dictionary is not supplied. Interestingly this seems to be fixed when an empty lod dictionary is supplied.
+     * TODO: Might need to investigate this weird behavior further, maybe some side effect? Esp. if the issues happen again.
      */
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     private ArrayMesh CreateChunkArrayMesh(SurfaceData[] surfaceData)
@@ -529,8 +534,9 @@ public class WorldDisplayService
             for (int i = 0; i < surfaceData.Length; i++)
             {
                 SurfaceData surface = surfaceData[i];
-                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface.geometry, flags: surface.format);
-                arrayMesh.SurfaceSetMaterial(i,  surface.material);
+                // assigning an empty Dictionary to lods seems to fix random crashes (seg faults) during calling this internal function
+                arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface.geometry, lods: new Godot.Collections.Dictionary(), flags: surface.format);
+                arrayMesh.SurfaceSetMaterial(i, surface.material);
             }
             
             return arrayMesh;
@@ -712,7 +718,7 @@ public class WorldDisplayService
                             displayedColumn.chunkInstances[y] = null;
                         }
                     }
-                    displayedColumns.Remove(column);
+                    displayedColumns.TryRemove((column.chunkX, column.chunkZ), out _);
                 }
             }
             columnsToHide.Clear(); // reset
@@ -732,17 +738,7 @@ public class WorldDisplayService
         if (workColumn == null)
         {
             // try to obtain first pre-processed task
-            PreProcessedChunkColumn preProcessedColumn = null;
-            lock (taskAccessLock) // maybe not needed
-            {
-                if (preProcessedColumns.Count > 0)
-                {
-                    preProcessedColumn = preProcessedColumns[0];
-                    preProcessedColumns.RemoveAt(0);
-                }
-            }
-
-            if (preProcessedColumn == null)
+            if (!preProcessedColumns.TryDequeue(out var preProcessedColumn) || preProcessedColumn == null)
             {
                 return;
             }

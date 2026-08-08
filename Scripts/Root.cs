@@ -120,7 +120,8 @@ public partial class Root : Node3D
     
 	// margins and distance additions for related voxelization and region generation distances
 	private int lodDistanceMax;
-	private const int columnUnloadMargin = 5;
+	private const int columnStorageUnloadMargin = 10; // distance margin after which columns are unloaded from voxel storage
+    private const int columnGeneratorCancelMargin = 10; // dist margin after which column voxelization tasks are canceled
 	private const int regionTerrainMin = 320;
 	private const int regionFeaturesMin = 160;
 	private const int regionUnloadMargin = 80;
@@ -143,8 +144,10 @@ public partial class Root : Node3D
 	private int[] columnMeshingLodDistSquared = new int[lodCount];
 
 	private int regionTriggerDistanceUnload; // regions beyond this distance need to be unloaded
-	private int columnDistanceUnload; // columns beyond this distance need to be unloaded at the voxel level
-	private int columnDistUnloadSquared;
+	private int columnStorageDistanceUnload; // columns beyond this distance need to be unloaded at the voxel level
+	private int columnStorageDistUnloadSquared;
+    private int columnGeneratorDistCancel; // voxelization tasks (columns) are canceled beyond this distance
+    private int columnGeneratorDistCancelSquared;
 	private int[] columnMeshingLodUnloadDistances = new int[lodCount]; // mesh unloading distances for lods
 	private int[] columnMeshingLodUnloadDistSquared = new int[lodCount];
     
@@ -587,11 +590,13 @@ public partial class Root : Node3D
 		columnPreparationDistance = lodDistanceMax + columnPreparationDistanceAddition;
 		columnVoxelizationDistance = lodDistanceMax + columnVoxelizationDistanceAddition;
 		regionTriggerDistanceUnload = regionTerrainTriggerDistance + regionUnloadMargin;
-		columnDistanceUnload = columnPreparationDistance + columnUnloadMargin;
+		columnStorageDistanceUnload = columnPreparationDistance + columnStorageUnloadMargin;
+        columnGeneratorDistCancel = columnVoxelizationDistance + columnGeneratorCancelMargin;
 		// squared distances in chunk units for circular chunk system recalculation
 		columnPrepDistSquared = (int)Math.Pow(columnPreparationDistance/(double)metersPerChunk, 2);
-		columnDistUnloadSquared = (int)Math.Pow(columnDistanceUnload/(double)metersPerChunk, 2);
+		columnStorageDistUnloadSquared = (int)Math.Pow(columnStorageDistanceUnload/(double)metersPerChunk, 2);
 		columnVoxDistSquared = (int)Math.Pow(columnVoxelizationDistance/(double)metersPerChunk, 2);
+        columnGeneratorDistCancelSquared = (int)Math.Pow(columnGeneratorDistCancel/(double)metersPerChunk, 2);
 		
 		for (int lod = 0; lod < lodCount; lod++)
 		{
@@ -711,7 +716,7 @@ public partial class Root : Node3D
 		// for loaded columns with cleanup of voxel storage
 		foreach (var (chunkX, chunkZ) in loadedColumns)
 		{
-			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnDistUnloadSquared)
+			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnStorageDistUnloadSquared)
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
@@ -722,12 +727,14 @@ public partial class Root : Node3D
 			voxelStorage.RemoveChunkColumn(chunk.x, chunk.z);
 			GD.Print($"Unloaded chunk column at {chunk.x}, {chunk.z} from voxel storage");
 		}
+        
+        // voxelization unloading
 		// for generated active chunks in voxel generator, needs to be split, otherwise voxel storage would have
 		// a set of incorrect canceled tasks and some columns would never be generated
-		columnsToUnload.Clear();
+        columnsToUnload.Clear();
 		foreach (var (chunkX, chunkZ) in generatedColumns)
 		{
-			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnDistUnloadSquared)
+			if (Math.Pow(chunkX - camChunkX, 2) + Math.Pow(chunkZ - camChunkZ, 2) > columnGeneratorDistCancelSquared)
 			{
 				columnsToUnload.Add((chunkX, chunkZ));
 			}
@@ -737,7 +744,6 @@ public partial class Root : Node3D
 			// remove from generated columns
 			generatedColumns.Remove(chunk);
 		}
-		// voxelization unloading
 		voxelGeneratorService.UnloadColumns(columnsToUnload);
 		columnsToUnload.Clear();
 		
