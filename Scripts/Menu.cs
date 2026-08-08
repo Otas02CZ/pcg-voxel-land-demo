@@ -12,7 +12,7 @@ using System.Linq;
 namespace PCGVoxelLandscapes.Scripts;
 
 /**
- * Handles control of the in game Menu.
+ * Handles control of the demo Menu.
  * Switches between menus, controls other parts of the project based on user input.
  * Includes title menu, world selection, world creation and in-game pause menu. Also uses Settings menu component.
  */
@@ -25,8 +25,8 @@ public partial class Menu : Control
     // ui elements
     private TextureRect background;
     private Label centeredMessage;
-    private Node2D crosshair;
     private Settings settings;
+    private InGame inGameMenu;
     private PanelContainer titleMenu;
     private PanelContainer worldsSelection;
     private PanelContainer newWorld;
@@ -136,6 +136,8 @@ public partial class Menu : Control
         
         settings.Setup(worldEnvironment, sun, player.GetTorch(), storageService, this);
         settings.LoadApplySettings();
+        
+        inGameMenu.Setup(player);
         
         SpinBox voxelEditSizeSpinBox = GetNode<SpinBox>("Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize/VoxelSizeEdit");
         voxelEditSizeSpinBox.Value = Math.Log2(voxelEditSize) + 1;
@@ -334,8 +336,8 @@ public partial class Menu : Control
     {
         background = GetNode<TextureRect>("Background");
         centeredMessage = GetNode<Label>("Menu/CenteredMessage");
-        crosshair = GetNode<Node2D>("Menu/Crosshair");
         settings = GetNode<Settings>("Menu/Settings");
+        inGameMenu = GetNode<InGame>("InGame");
         titleMenu = GetNode<PanelContainer>("Menu/TitleMenu");
         worldsSelection = GetNode<PanelContainer>("Menu/WorldsSelection");
         newWorld = GetNode<PanelContainer>("Menu/NewWorld");
@@ -595,7 +597,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = false;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         inGame = false;
         menuOpen = true;
@@ -623,7 +626,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = true;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         menuOpen = true;
         player.DisableControls();
@@ -642,7 +646,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = true;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         inGame = false;
         menuOpen = true;
@@ -661,7 +666,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = false;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         inGame = false;
         menuOpen = true;
@@ -699,7 +705,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = false;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         inGame = false;
         menuOpen = true;
@@ -718,7 +725,8 @@ public partial class Menu : Control
         newWorld.Visible = true;
         pauseMenu.Visible = false;
         settings.Visible = false;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         inGame = false;
         menuOpen = true;
@@ -737,7 +745,8 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = true;
         settings.Visible = false;
-        crosshair.Visible = false;
+        inGameMenu.Visible = false;
+        inGameMenu.SetCrosshairVisibility(false);
         alertDialog.Visible = false;
         menuOpen = true;
         Input.MouseMode = Input.MouseModeEnum.Visible;
@@ -757,8 +766,9 @@ public partial class Menu : Control
         newWorld.Visible = false;
         pauseMenu.Visible = false;
         settings.Visible = false;
-        crosshair.Visible = true;
+        inGameMenu.SetCrosshairVisibility(true);
         alertDialog.Visible = false;
+        inGameMenu.Visible = true;
         inGame = true;
         menuOpen = false;
         Input.MouseMode = Input.MouseModeEnum.Captured;

@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://x5d1ldo8tqyh" path="res://Scripts/Menu.cs" id="3_is6ib"]
 [ext_resource type="Texture2D" uid="uid://cluo582413klw" path="res://background.jpg" id="4_b3i5h"]
 [ext_resource type="PackedScene" uid="uid://c64opv1sh4wjr" path="res://Scenes/Settings.tscn" id="5_tkdr5"]
+[ext_resource type="PackedScene" uid="uid://dlot2tj23enc6" path="res://Scenes/InGame.tscn" id="6_pl8e4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_8pvmw"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -158,18 +159,6 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="Crosshair" type="Node2D" parent="Menu/Menu" unique_id=1727444366]
-visible = false
-
-[node name="Vertical" type="Line2D" parent="Menu/Menu/Crosshair" unique_id=170240089]
-z_index = 5
-points = PackedVector2Array(0, -10, 0, 10)
-width = 2.5
-
-[node name="Horizontal" type="Line2D" parent="Menu/Menu/Crosshair" unique_id=1063811447]
-points = PackedVector2Array(-10, 0, 10, 0)
-width = 2.5
 
 [node name="CenteredMessage" type="Label" parent="Menu/Menu" unique_id=971998617]
 visible = false
@@ -1614,6 +1603,9 @@ text = "This is an error message"
 layout_mode = 2
 size_flags_horizontal = 4
 text = "OK"
+
+[node name="InGame" parent="Menu" unique_id=565659013 instance=ExtResource("6_pl8e4")]
+layout_mode = 1
 
 [connection signal="tree_exiting" from="Menu" to="Menu" method="_on_tree_exiting"]
 [connection signal="button_up" from="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer/WorldsButton" to="Menu" method="_on_worlds_button_button_up"]

@@ -27,12 +27,13 @@ public partial class Player : CharacterBody3D
 	[Export] private float mouseSensitivity { get; set; } = 0.003f;
 	[Export] private float sprintMultiplier { get; set; } = 4.0f;
 	[Export] private float jumpVelocity { get; set; } = 4.5f;
-	[Export] private MovementMode movementMode;
+    [Export] private MovementMode movementMode;
 
     [Export] private float minVerticalRotation { get; set; } = -1.5f;
     [Export] private float maxVerticalRotation { get; set; } = 1.5f;
 
     private Action OnPlayerPositionChanged;
+    private Action<MovementMode> OnMovementModeChanged;
 
 	private Camera3D camera;
     private OmniLight3D torch;
@@ -241,6 +242,7 @@ public partial class Player : CharacterBody3D
             velocity = Vector3.Zero;
             GD.Print("Movement mode: FLY");
         }
+        OnMovementModeChanged?.Invoke(movementMode);
     }
 
     /**
@@ -250,6 +252,14 @@ public partial class Player : CharacterBody3D
     {
         Vector3 forward = -Transform.Basis.Z;
         return forward.Normalized();
+    }
+
+    /**
+     * Returns current movement mode.
+     */
+    public MovementMode GetMovementMode()
+    {
+        return movementMode;
     }
     
     /**
@@ -392,5 +402,13 @@ public partial class Player : CharacterBody3D
     public void SubscribeOnPlayerPositionChanged(Action handler)
     {
         OnPlayerPositionChanged += handler;
+    }
+
+    /**
+     * Subscribes supplied function to movement mode changed signal.
+     */
+    public void SubscribeOnMovementModeChanged(Action<MovementMode> handler)
+    {
+        OnMovementModeChanged += handler;
     }
 }
