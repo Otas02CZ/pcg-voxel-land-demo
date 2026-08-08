@@ -1179,8 +1179,8 @@ public class WorldGenerator
                     // old areas, grass and plants, very high chance for trees and bushes, all tree sizes
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 85;
-                    plantChance = 20;
+                    grassChance = 90;
+                    plantChance = 22;
                     trunkChance = 3;
                     //smallTreeChance = 20;
                     mediumTreeChance = 50;
@@ -1190,8 +1190,8 @@ public class WorldGenerator
                     // very old areas, grass and plants, extremely high chance for trees and bushes, all tree sizes with higher chance for large trees
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 75;
-                    plantChance = 15;
+                    grassChance = 80;
+                    plantChance = 18;
                     trunkChance = 4;
                     //smallTreeChance = 5;
                     mediumTreeChance = 40;
@@ -1201,8 +1201,8 @@ public class WorldGenerator
                     // ancient areas, grass and plants, almost only trees and bushes, only medium and large trees
                     treeChance = 5;
                     bushChance = 2;
-                    grassChance = 50;
-                    plantChance = 11;
+                    grassChance = 65;
+                    plantChance = 16;
                     trunkChance = 4;
                     //smallTreeChance = 0;
                     mediumTreeChance = 10;
