@@ -5,6 +5,7 @@
 // DESC: Contains Service class that displays and hides chunk geometry in the world in the engine. 
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -99,7 +100,7 @@ public class CurrentWorkingColumn
  */
 public class WorldDisplayService
 {
-    private readonly Dictionary<(int, int), DisplayedColumn> displayedColumns; // currently displayed columns
+    private readonly ConcurrentDictionary<(int, int), DisplayedColumn> displayedColumns; // currently displayed columns
     private readonly List<WorldDisplayTask> taskList; // remaining tasks, that can be processed in next invocations of ProcessDisplayUpdateTask
     private readonly List<WorldDisplayTask> notReadyTasks; // tasks scheduled by root, but waiting for geometry or lower steps of generation
     private readonly Lock taskAccessLock;
@@ -129,7 +130,7 @@ public class WorldDisplayService
     
     public WorldDisplayService(GeometryGeneratorService geometryGeneratorService, int chunkCountY, ShaderMaterial waterMaterial, StandardMaterial3D blockMaterialBasic, ShaderMaterial blockMaterialVariance, Node3D voxelWorld)
     {
-        displayedColumns = new Dictionary<(int, int), DisplayedColumn>();
+        displayedColumns = new ConcurrentDictionary<(int, int), DisplayedColumn>();
         taskList = [];
         columnsToHide = [];
         notReadyTasks = [];
@@ -182,7 +183,7 @@ public class WorldDisplayService
                 if (task != null && !displayedColumns.ContainsKey((task.chunkX, task.chunkZ)))
                 {
                     DisplayedColumn displayedColumn = new DisplayedColumn(task.chunkX, task.chunkZ, LodLevel.UNLOADED, chunkCountY);
-                    displayedColumns.Add((task.chunkX, task.chunkZ), displayedColumn);
+                    displayedColumns[(task.chunkX, task.chunkZ)] = displayedColumn;
                 }
             }
 
@@ -717,7 +718,7 @@ public class WorldDisplayService
                             displayedColumn.chunkInstances[y] = null;
                         }
                     }
-                    displayedColumns.Remove(column);
+                    displayedColumns.TryRemove((column.chunkX, column.chunkZ), out _);
                 }
             }
             columnsToHide.Clear(); // reset
