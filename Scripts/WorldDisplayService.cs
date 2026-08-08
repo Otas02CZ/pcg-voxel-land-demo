@@ -109,7 +109,7 @@ public class WorldDisplayService
     
     // pre-processing data and thread management
     private readonly int maxPreProcessedColumns = 100;
-    private readonly List<PreProcessedChunkColumn> preProcessedColumns;
+    private readonly ConcurrentQueue<PreProcessedChunkColumn> preProcessedColumns;
     private Thread processingThread;
     private volatile bool stopThread = false;
     private const int threadSleepMs = 100;
@@ -273,7 +273,7 @@ public class WorldDisplayService
                     }
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
-                    preProcessedColumns.Add(preProcessedColumn);
+                    preProcessedColumns.Enqueue(preProcessedColumn);
                     break;
                 }
                 
@@ -354,7 +354,7 @@ public class WorldDisplayService
                     preProcessedChunks[0] = new PreProcessedChunk(surfaceData, collisionGeometryData, chunkGeometry.worldPosition);
                     
                     PreProcessedChunkColumn preProcessedColumn = new PreProcessedChunkColumn(preProcessedChunks, task);
-                    preProcessedColumns.Add(preProcessedColumn);
+                    preProcessedColumns.Enqueue(preProcessedColumn);
                     break;
                 }
             }
@@ -738,17 +738,7 @@ public class WorldDisplayService
         if (workColumn == null)
         {
             // try to obtain first pre-processed task
-            PreProcessedChunkColumn preProcessedColumn = null;
-            lock (taskAccessLock) // maybe not needed
-            {
-                if (preProcessedColumns.Count > 0)
-                {
-                    preProcessedColumn = preProcessedColumns[0];
-                    preProcessedColumns.RemoveAt(0);
-                }
-            }
-
-            if (preProcessedColumn == null)
+            if (!preProcessedColumns.TryDequeue(out var preProcessedColumn) || preProcessedColumn == null)
             {
                 return;
             }
