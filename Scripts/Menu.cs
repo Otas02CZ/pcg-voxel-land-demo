@@ -185,7 +185,7 @@ public partial class Menu : Control
      */
     private void InitializeWorldPresets()
     {
-        worldSettingsPresets = new WorldSettingsPreset[7];
+        worldSettingsPresets = new WorldSettingsPreset[8];
         
         // default normal preset
         worldSettingsPresets[0] = new WorldSettingsPreset(
@@ -200,8 +200,31 @@ public partial class Menu : Control
             0.25f
             );
         defaultPresetIndex = 0;
-        // no trees
+        // default low spec
         worldSettingsPresets[1] = new WorldSettingsPreset(
+            "Default Low Spec",
+            new WorldSettings()
+            {
+                terrainChunkCountY = 16,
+                overallVegetationChance = VegChanceType.VERY_LOW,
+                waterLilyChance = 11,
+                waterReedsChance = 115,
+                cavesStartTerrainHeightRatio = 0.25f,
+                cavesStalactitesChance = 55,
+                cavesWaterfallChance = 3,
+                lakeSize = LakeSizeType.MEDIUM,
+                explicitWaterAvailabilityMaxEffect = 175
+            },
+            [8,8,8,7,10,12,15,17],
+            [30, 10, 40],
+            [5, 5, 6, 8],
+            0.075f,
+            0.1111f,
+            0.6667f,
+            0.18f
+            );
+        // no trees
+        worldSettingsPresets[2] = new WorldSettingsPreset(
             "Without Trees",
             new WorldSettings(),
             [5,5,0,0,0,0,0,0],
@@ -213,7 +236,7 @@ public partial class Menu : Control
             0.25f
         );
         // deep caves
-        worldSettingsPresets[2] = new WorldSettingsPreset(
+        worldSettingsPresets[3] = new WorldSettingsPreset(
             "Deep Caves",
             new WorldSettings()
             {
@@ -229,7 +252,7 @@ public partial class Menu : Control
             0.25f
         );
         // dry land
-        worldSettingsPresets[3] = new WorldSettingsPreset(
+        worldSettingsPresets[4] = new WorldSettingsPreset(
             "Dry Land",
             new WorldSettings()
             {
@@ -250,7 +273,7 @@ public partial class Menu : Control
             0f
         );
         // snowy world
-        worldSettingsPresets[4] = new WorldSettingsPreset(
+        worldSettingsPresets[5] = new WorldSettingsPreset(
             "Snowy World",
             new WorldSettings(),
             [8,8,8,7,10,12,15,17],
@@ -262,7 +285,7 @@ public partial class Menu : Control
             1.0f
         );
         // desert world
-        worldSettingsPresets[5] = new WorldSettingsPreset(
+        worldSettingsPresets[6] = new WorldSettingsPreset(
             "Desert",
             new WorldSettings()
             {
@@ -283,7 +306,7 @@ public partial class Menu : Control
             0.25f
         );
         // lush vegetation
-        worldSettingsPresets[6] = new WorldSettingsPreset(
+        worldSettingsPresets[7] = new WorldSettingsPreset(
             "Lush Vegetation",
             new WorldSettings()
             {
