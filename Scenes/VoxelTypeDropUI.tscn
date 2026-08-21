@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://pu887mx0i8qy"]
+
+[ext_resource type="PackedScene" uid="uid://biyle7o5n6lsv" path="res://Scenes/VoxelTypeInnerUI.tscn" id="1_rxduu"]
+[ext_resource type="Script" uid="uid://pseqx65n4xen" path="res://Scripts/VoxelTypeDropUI.cs" id="1_sr2bf"]
+
+[sub_resource type="Gradient" id="Gradient_pw41v"]
+offsets = PackedFloat32Array(0.7114286)
+colors = PackedColorArray(0.15294118, 0.15294118, 0.15294118, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_tqqov"]
+gradient = SubResource("Gradient_pw41v")
+
+[sub_resource type="Gradient" id="Gradient_u2pnf"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_sr2bf"]
+gradient = SubResource("Gradient_u2pnf")
+
+[node name="VoxelTypeDropUI" type="TextureRect" unique_id=1894384395]
+custom_minimum_size = Vector2(40, 40)
+custom_maximum_size = Vector2(40, 40)
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("GradientTexture1D_tqqov")
+script = ExtResource("1_sr2bf")
+
+[node name="VoxelTypeInnerUI" parent="." unique_id=95840985 instance=ExtResource("1_rxduu")]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 36.0
+offset_bottom = 36.0
+texture = SubResource("GradientTexture1D_sr2bf")

@@ -12,6 +12,15 @@ using System.Linq;
 namespace PCGVoxelLandscapes.Scripts;
 
 /**
+ * Represents data needed for working with voxel types in the ui.
+ */
+public struct VoxelTypeUI(VoxelType type, string name)
+{
+    public VoxelType type { get; set; } = type;
+    public string name { get; set; } = name;
+}
+
+/**
  * Handles control of the demo Menu.
  * Switches between menus, controls other parts of the project based on user input.
  * Includes title menu, world selection, world creation and in-game pause menu. Also uses Settings menu component.
@@ -82,17 +91,26 @@ public partial class Menu : Control
 
     private VBoxContainer worldsContainer;
     
+    // ui components of available and selected voxel types for editing
     private GridContainer voxelEditTypeItemsContainer;
-    private VoxelTypeItem[] voxelEditTypeItems;
+    private GridContainer selectedEditTypeItemsContainer;
+    private VoxelTypeDragUI[] editableVoxelTypeUINodes;
+    private VoxelTypeDropUI[] selectedVoxelTypeUINodes;
     
     // current world configuration
     private WorldSaveConfig currentWorldSaveConfig;
     // preloaded scenes of dynamic GUI components
-    private static readonly PackedScene _voxelTypeItemScene = GD.Load<PackedScene>("res://Scenes/VoxelTypeItem.tscn");
+    private static readonly PackedScene _voxelTypeDragUIScene = GD.Load<PackedScene>("res://Scenes/VoxelTypeDragUI.tscn");
+    private static readonly PackedScene _voxelTypeDropUIScene = GD.Load<PackedScene>("res://Scenes/VoxelTypeDropUI.tscn");
     private static readonly PackedScene _worldNameItemScene = GD.Load<PackedScene>("res://Scenes/WorldSelectItem.tscn");
 
     private int defaultPresetIndex; // index of default world configuration preset
     private WorldSettingsPreset[] worldSettingsPresets;
+
+    private SpinBox editingVoxelSizeSpinBox;
+    // editable / selectable voxel types
+    private VoxelTypeUI[] editableVoxelTypes;
+    private VoxelTypeUI[] selectedVoxelTypes; // represents selected voxels that can be quickly used in-game
     
     // menu / game states
     private bool inGame;
@@ -111,15 +129,17 @@ public partial class Menu : Control
     public override void _Ready()
     {
         InitializeWorldPresets();
+        InitializeEditableVoxelTypes();
         InitializeUINodes();
         FillVoxelEditTypeItems();
         InitializeNewWorldUI();
+        InitializeSelectedVoxelTypes();
     }
 
     /**
      * Sets up the menu with dependencies and loads application settings from config file.
      */
-    public void Setup(Root root, Player player, WorldEnvironment worldEnvironment, DirectionalLight3D sun, StorageService storageService, int worldLimitMetersXMin, int worldLimitMetersXMax, int worldLimitMetersZMin, int worldLimitMetersZMax, VoxelType voxelEditType, byte voxelEditSize)
+    public void Setup(Root root, Player player, WorldEnvironment worldEnvironment, DirectionalLight3D sun, StorageService storageService, int worldLimitMetersXMin, int worldLimitMetersXMax, int worldLimitMetersZMin, int worldLimitMetersZMax)
     {
         this.root = root;
         this.player = player;
@@ -136,12 +156,9 @@ public partial class Menu : Control
         
         settings.Setup(worldEnvironment, sun, player.GetTorch(), storageService, this);
         settings.LoadApplySettings();
-        
-        inGameMenu.Setup(player);
-        
-        SpinBox voxelEditSizeSpinBox = GetNode<SpinBox>("Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize/VoxelSizeEdit");
-        voxelEditSizeSpinBox.Value = Math.Log2(voxelEditSize) + 1;
-        OnVoxelEditTypeItemSelected((int)voxelEditType, false);
+
+        inGameMenu.SubscribeOnVoxelTypeSelected(OnVoxelEditTypeItemSelected);
+        inGameMenu.SubscribeOnVoxelEditingSizeChanged(OnVoxelEditingSizeChanged);
     }
 
     /**
@@ -330,6 +347,56 @@ public partial class Menu : Control
     }
 
     /**
+     * Initializes definitions of editable voxel types for the use in ui.
+     * TODO: might move this elsewhere
+     */
+    private void InitializeEditableVoxelTypes()
+    {
+        List<VoxelTypeUI> types = [];
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS, "Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS_DARK, "Saturated Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS_DARKER, "Highly Saturated Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS_BROWN, "Mountain Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS_BROWN_DARK, "Saturated Mountain Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.GROUND_GRASS_BROWN_YELLOW, "Desaturated Mountain Grass"));
+        types.Add(new VoxelTypeUI(VoxelType.DIRT, "Dirt"));
+        types.Add(new VoxelTypeUI(VoxelType.WOOD, "Wood"));
+        types.Add(new VoxelTypeUI(VoxelType.DECIDUOUS_LEAVES, "Deciduous Leaves"));
+        types.Add(new VoxelTypeUI(VoxelType.CONIFEROUS_LEAVES, "Coniferous Leaves"));
+        types.Add(new VoxelTypeUI(VoxelType.SAND, "Sand"));
+        types.Add(new VoxelTypeUI(VoxelType.WATER, "Water"));
+        types.Add(new VoxelTypeUI(VoxelType.STONE, "Stone"));
+        types.Add(new VoxelTypeUI(VoxelType.STONE_DARK, "Dark Stone"));
+        types.Add(new VoxelTypeUI(VoxelType.STONE_DARKER, "Very Dark Stone"));
+        types.Add(new VoxelTypeUI(VoxelType.DRIPSTONE, "Dripstone"));
+        types.Add(new VoxelTypeUI(VoxelType.DRIPSTONE_DARK, "Dark Dripstone"));
+        types.Add(new VoxelTypeUI(VoxelType.STALACTITE, "Stalactite"));
+        types.Add(new VoxelTypeUI(VoxelType.SNOW, "Snow"));
+        types.Add(new VoxelTypeUI(VoxelType.PLANT, "Plant Green"));
+        types.Add(new VoxelTypeUI(VoxelType.PLANT_DARK, "Plant Dark Green"));
+        types.Add(new VoxelTypeUI(VoxelType.RED, "Plant Red"));
+        types.Add(new VoxelTypeUI(VoxelType.YELLOW, "Plant Yellow"));
+        types.Add(new VoxelTypeUI(VoxelType.BLUE, "Plant Blue"));
+        types.Add(new VoxelTypeUI(VoxelType.WHITE, "Plant White"));
+        types.Add(new VoxelTypeUI(VoxelType.BROWN, "Plant Brown"));
+
+        editableVoxelTypes = types.ToArray();
+    }
+
+    /**
+     * Initializes currently selected voxel types (visible in hotbar in-game menu).
+     * Indexes of selected types are taken from world config.
+     */
+    private void InitializeSelectedVoxelTypes()
+    {
+        selectedVoxelTypes = new VoxelTypeUI[7];
+        for (int index = 0; index < currentWorldSaveConfig.selectedVoxelTypeIndexes.Length; index++)
+        {
+            selectedVoxelTypes[index] = editableVoxelTypes[currentWorldSaveConfig.selectedVoxelTypeIndexes[index]];
+        }
+    }
+
+    /**
      * Obtain all important ui node objects for access later.
      */
     private void InitializeUINodes()
@@ -347,6 +414,8 @@ public partial class Menu : Control
 
         worldsContainer = GetNode<VBoxContainer>("Menu/WorldsSelection/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/Worlds");
         voxelEditTypeItemsContainer = GetNode<GridContainer>("Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType/VoxelTypeContainer");
+        selectedEditTypeItemsContainer = GetNode<GridContainer>("Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType/SelectedTypesContainer");
+        editingVoxelSizeSpinBox = GetNode<SpinBox>("Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize/VoxelSizeEdit");
         
         worldNameEdit = GetNode<LineEdit>("Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/WorldNameSetting/WorldNameEdit");
         worldCreationSeedSpinBox = GetNode<SpinBox>("Menu/NewWorld/VBoxContainer/PanelContainer/VBoxContainer/ScrollContainer/WorldSettings/SeedSetting/SeedSpinBox");
@@ -571,16 +640,44 @@ public partial class Menu : Control
      */
     private void FillVoxelEditTypeItems()
     {
-        VoxelType[] voxelTypes = (VoxelType[])Enum.GetValues(typeof(VoxelType));
-        voxelEditTypeItems = new VoxelTypeItem[voxelTypes.Length];
-        for (int i = 0; i < voxelTypes.Length; i++)
+        editableVoxelTypeUINodes = new VoxelTypeDragUI[editableVoxelTypes.Length];
+        for (int i = 0; i < editableVoxelTypes.Length; i++)
         {
-            VoxelType voxelType = voxelTypes[i];
-            VoxelTypeItem item = _voxelTypeItemScene.Instantiate<VoxelTypeItem>();
+            VoxelTypeUI voxelTypeUI = editableVoxelTypes[i];
+            VoxelTypeDragUI item = _voxelTypeDragUIScene.Instantiate<VoxelTypeDragUI>();
             voxelEditTypeItemsContainer.AddChild(item);
-            item.SetVoxelType(voxelType);
-            item.WireUpOnClicked(OnVoxelEditTypeItemSelected, i);
-            voxelEditTypeItems[i] = item;
+            item.Initialize(voxelTypeUI);
+            editableVoxelTypeUINodes[i] = item;
+        }
+    }
+    
+    /**
+     * Initializes voxel type selection items based on available voxel types.
+     */
+    private void InitializeSelectedEditTypeItems()
+    {
+        if (selectedVoxelTypeUINodes != null) // cleanup previous
+        {
+            for (int i = 0; i < selectedVoxelTypeUINodes.Length; i++)
+            {
+                VoxelTypeDropUI voxelTypeItem = selectedVoxelTypeUINodes[i];
+                if (voxelTypeItem != null)
+                {
+                    voxelTypeItem.QueueFree();
+                    selectedVoxelTypeUINodes[i] = null;
+                }
+            }
+        }
+        
+        selectedVoxelTypeUINodes = new VoxelTypeDropUI[selectedVoxelTypes.Length];
+        for (int i = 0; i < selectedVoxelTypes.Length; i++)
+        {
+            VoxelTypeUI voxelTypeUI = selectedVoxelTypes[i];
+            VoxelTypeDropUI item = _voxelTypeDropUIScene.Instantiate<VoxelTypeDropUI>();
+            selectedEditTypeItemsContainer.AddChild(item);
+            item.Initialize(voxelTypeUI, i);
+            item.SubscribeOnDraggableDropped(OnVoxelTypeDraggableDropped);
+            selectedVoxelTypeUINodes[i] = item;
         }
     }
     
@@ -774,6 +871,11 @@ public partial class Menu : Control
         Input.MouseMode = Input.MouseModeEnum.Captured;
         framesToReenableEditing = 1;
         player.EnableControls();
+        InitializeSelectedVoxelTypes(); // clear selected voxels to default selection
+        InitializeSelectedEditTypeItems(); // init them in ui
+        editingVoxelSizeSpinBox.SetValue(currentWorldSaveConfig.editingVoxelSize);
+        root.OnVoxelEditTypeChanged(selectedVoxelTypes[currentWorldSaveConfig.indexSelectedVoxelType].type);
+        inGameMenu.Setup(player, selectedVoxelTypes, currentWorldSaveConfig.indexSelectedVoxelType, currentWorldSaveConfig.editingVoxelSize);
     }
 
     /**
@@ -794,28 +896,39 @@ public partial class Menu : Control
      */
     private void _on_voxel_size_edit_value_changed(float value)
     {
-        root.OnVoxelEditSizeChanged(value);
+        inGameMenu.UpdateVoxelEditingSize((int)value);
+        root.OnVoxelEditSizeChanged((int)value);
     }
     
     /**
-     * Signals selection of editing voxel type to root.
-     * Changes highlighted voxel type in menu.
+     * Signals that voxel item draggable dropped into hotbar menu slot.
+     * Needs to update selected voxel types.
      */
-    private void OnVoxelEditTypeItemSelected(int index, bool triggerSignal)
+    private void OnVoxelTypeDraggableDropped(int index, VoxelTypeUI voxelTypeUI)
     {
-        // set all disabled
-        foreach (VoxelTypeItem item in voxelEditTypeItems)
-        {
-            item.SetSelected(false);
-        }
-        
-        // set selected
-        voxelEditTypeItems[index].SetSelected(true);
-        
-        if (triggerSignal)
-        {
-            root.OnVoxelEditTypeChanged(index);
-        }
+        selectedVoxelTypes[index] = voxelTypeUI;
+        inGameMenu.UpdateSelectedVoxelTypeSlot(index, voxelTypeUI);
+        int indexEditable = Array.IndexOf(editableVoxelTypes, voxelTypeUI);
+        currentWorldSaveConfig.selectedVoxelTypeIndexes[index] = indexEditable;
+    }
+
+    /**
+     * Signals that voxel editing size changed.
+     */
+    private void OnVoxelEditingSizeChanged(int editingSize)
+    {
+        currentWorldSaveConfig.editingVoxelSize = editingSize;
+        editingVoxelSizeSpinBox.SetValueNoSignal(editingSize);
+        root.OnVoxelEditSizeChanged(editingSize);
+    }
+    
+    /**
+     * Signals that one of the selected voxel types (those visible in hotbar) were selected and should be used.
+     */
+    private void OnVoxelEditTypeItemSelected(int index)
+    {
+        currentWorldSaveConfig.indexSelectedVoxelType = index;
+        root.OnVoxelEditTypeChanged(selectedVoxelTypes[index].type);
     }
 
     private void _on_worlds_button_button_up()

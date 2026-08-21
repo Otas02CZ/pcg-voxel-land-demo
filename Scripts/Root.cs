@@ -255,14 +255,14 @@ public partial class Root : Node3D
 			GetTree().Quit();
 		}
 		// setup menu
-		menu.Setup(this, player, worldEnvironment, sun, storageService, worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax, editingVoxelType, editingVoxelSize);
+		menu.Setup(this, player, worldEnvironment, sun, storageService, worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax);
 		
 		// setup player
 		player.SetLimits(worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax, worldLimitMetersYMin, worldLimitMetersYMax);
 		player.SubscribeOnPlayerPositionChanged(OnCameraPositionChanged);
 
 		// generate texture "block" atlas and prepare/load all the materials
-		textureAtlas = VoxelAtlas.GenerateTextureAtlas();
+		textureAtlas = VoxelAtlas.GetTextureAtlas();
 		VoxelAtlas.PrecomputeUVs();
 		
 		blockMaterialBasic = new StandardMaterial3D
@@ -1245,17 +1245,17 @@ public partial class Root : Node3D
 	/**
 	 * Changing voxel type for editing.
 	 */
-	public void OnVoxelEditTypeChanged(int index)
+	public void OnVoxelEditTypeChanged(VoxelType voxelType)
 	{
-		editingVoxelType = (VoxelType)index;
+		editingVoxelType = voxelType;
 	}
 	
 	/**
 	 * Changing editing voxel size.
 	 */
-	public void OnVoxelEditSizeChanged(float value)
+	public void OnVoxelEditSizeChanged(int value)
 	{
-		editingVoxelSize = (byte)Math.Pow(2, (int)(value - 1));
+		editingVoxelSize = (byte)Math.Pow(2, value - 1);
 	}
 	
 	//NOTE: In both world exit cases it is the menu code that triggers world config save with last player position.

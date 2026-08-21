@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://biyle7o5n6lsv"]
+
+[ext_resource type="Script" uid="uid://dqjd6d8ovne74" path="res://Scripts/VoxelTypeInnerUI.cs" id="2_8juoc"]
+
+[sub_resource type="Gradient" id="Gradient_u2pnf"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hfbw4"]
+gradient = SubResource("Gradient_u2pnf")
+
+[node name="VoxelTypeInnerUI" type="TextureRect" unique_id=95840985]
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(32, 32)
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("GradientTexture1D_hfbw4")
+script = ExtResource("2_8juoc")

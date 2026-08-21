@@ -452,4 +452,7 @@ public class WorldSaveConfig
     public string worldDirectoryName { get; set; } = "default";
     public WorldSettings worldSettings { get; set; } = new();
     public Vector3Double lastPlayerPosition { get; set; } = new(0, 0, 0);
+    public int indexSelectedVoxelType { get; set; } = 0;
+    public int editingVoxelSize { get; set; } = 1;
+    public int[] selectedVoxelTypeIndexes { get; set; } = [12, 6, 7, 11, 0, 19, 18]; // must have length 7, indexes from available voxel type ui items
 }

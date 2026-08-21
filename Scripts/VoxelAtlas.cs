@@ -61,21 +61,21 @@ public static class VoxelAtlas
             Color.Color8(255, 255, 255), // WHITE - for foliage
         ];
     
-    private static Vector2[] uvCache = new Vector2[maxVoxelTypes];
+    private static Vector2[] uvCache;
+    
+    private static Texture2D voxelAtlas;
     
     /**
-     * Returns color of given voxel type.
+     * Returns texture atlas based on color palette.
+     * First call generates it and stores it into static voxel atlas variable.
      */
-    public static Color GetVoxelTypeColor(VoxelType type)
+    public static Texture2D GetTextureAtlas()
     {
-        return typeColors[(int)type];
-    }
-
-    /**
-     * Generates texture atlas from color palette.
-     */
-    public static Texture2D GenerateTextureAtlas()
-    {
+        if (voxelAtlas != null)
+        {
+            return voxelAtlas;
+        }
+        
         var image = Image.CreateEmpty(atlasWidth, atlasHeight, false, Image.Format.Rgb8);
 
         for (int typeIndex = 0; typeIndex < maxVoxelTypes; typeIndex++)
@@ -96,6 +96,7 @@ public static class VoxelAtlas
         
         ImageTexture texture = new();
         texture.SetImage(image);
+        voxelAtlas = texture;
         return texture;
     }
     
@@ -104,6 +105,13 @@ public static class VoxelAtlas
      */
     public static void PrecomputeUVs()
     {
+        if (uvCache != null)
+        {
+            return;
+        }
+        
+        uvCache = new Vector2[maxVoxelTypes];
+        
         for (int typeIndex = 0; typeIndex < maxVoxelTypes; typeIndex++)
         {
             int typeX = typeIndex % typesPerRow;
@@ -119,6 +127,11 @@ public static class VoxelAtlas
      */
     public static Vector2 GetAtlasUV(VoxelType type)
     {
+        if (uvCache == null)
+        {
+            PrecomputeUVs();
+        }
+        
         return uvCache[(int)type];
     }
 }

@@ -1524,16 +1524,27 @@ value = 1.0
 [node name="VoxelType" type="VBoxContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options" unique_id=1641080584]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=895030854]
+[node name="AllTypesLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=895030854]
 layout_mode = 2
-text = "Voxel Type"
+text = "Available Voxel Types (Drag&Drop below)"
 
 [node name="VoxelTypeContainer" type="GridContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=116537683]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-columns = 5
+columns = 7
+
+[node name="SelectedTypesLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=1596018661]
+layout_mode = 2
+text = "Selected Voxel Types"
+
+[node name="SelectedTypesContainer" type="GridContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=2023253740]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 7
 
 [node name="HSeparator" type="HSeparator" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox" unique_id=1131142582]
 layout_mode = 2

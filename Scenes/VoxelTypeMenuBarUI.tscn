@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bmrbvb1qthnfr"]
+
+[ext_resource type="Script" uid="uid://cyyida8sjeexs" path="res://Scripts/VoxelTypeMenuBarUI.cs" id="1_g88i4"]
+[ext_resource type="PackedScene" uid="uid://biyle7o5n6lsv" path="res://Scenes/VoxelTypeInnerUI.tscn" id="1_vx7if"]
+
+[sub_resource type="Gradient" id="Gradient_pw41v"]
+offsets = PackedFloat32Array(0.7114286)
+colors = PackedColorArray(0.15294118, 0.15294118, 0.15294118, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vg33x"]
+gradient = SubResource("Gradient_pw41v")
+
+[sub_resource type="Gradient" id="Gradient_u2pnf"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_g88i4"]
+gradient = SubResource("Gradient_u2pnf")
+
+[node name="VoxelTypeMenuBarUI" type="TextureRect" unique_id=1857441326]
+custom_minimum_size = Vector2(64, 64)
+custom_maximum_size = Vector2(64, 64)
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("GradientTexture1D_vg33x")
+script = ExtResource("1_g88i4")
+
+[node name="VoxelTypeInnerUI" parent="." unique_id=95840985 instance=ExtResource("1_vx7if")]
+custom_minimum_size = Vector2(48, 48)
+custom_maximum_size = Vector2(48, 48)
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 56.0
+offset_bottom = 56.0
+texture = SubResource("GradientTexture1D_g88i4")

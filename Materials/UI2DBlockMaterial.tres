@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://wjinebavnib8"]
+
+[ext_resource type="Shader" uid="uid://cvk7kc3oxdo77" path="res://Materials/UI2DBlockMaterialShader.gdshader" id="1_i87e7"]
+
+[resource]
+shader = ExtResource("1_i87e7")
+shader_parameter/atlas_uv = Vector2(0, 0)
+shader_parameter/resolution = 8.0
+shader_parameter/variation_strength = 0.3
