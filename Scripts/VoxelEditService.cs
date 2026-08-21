@@ -155,7 +155,7 @@ public class VoxelEditService
                     
                     // set voxel to given type and save voxel operation to drive
                     placeColumn.SetVoxel(lastVoxelX, (uint)lastVoxelY, lastVoxelZ, voxelType, voxelSize);
-                    if (!storageService.SaveVoxelOperation(colX, colZ, lastVoxelX, lastVoxelY, lastVoxelZ, voxelSize, voxelType))
+                    if (!storageService.SaveVoxelOperation(lastColX, lastColZ, lastVoxelX, lastVoxelY, lastVoxelZ, voxelSize, voxelType))
                     {
                         GD.PrintErr($"Failed to save voxel operation in column {colX}, {colZ}.");
                     }
