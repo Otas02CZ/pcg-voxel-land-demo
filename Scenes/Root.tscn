@@ -295,6 +295,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_8fnbn")
 text = "Back"
 
 [node name="NewWorld" type="PanelContainer" parent="Menu/Menu" unique_id=1278450289]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_qtxxq")
 
@@ -1240,7 +1241,6 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8" unique_id=536192222]
 layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8/HBoxContainer" unique_id=77753799]
 layout_mode = 2
@@ -1248,7 +1248,6 @@ text = "Q"
 
 [node name="Button2" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer8/HBoxContainer" unique_id=500215441]
 layout_mode = 2
-size_flags_horizontal = 3
 text = "E"
 
 [node name="HBoxContainer9" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1293826261]
@@ -1340,6 +1339,66 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
 [node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer5" unique_id=1372351802]
 layout_mode = 2
 text = "Mouse Right"
+
+[node name="HBoxContainer13" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1850924550]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13" unique_id=1789870984]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hotbar Change Block"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13" unique_id=1079064959]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13" unique_id=1636136503]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13/HBoxContainer" unique_id=951522375]
+layout_mode = 2
+text = "Mouse Mid Shift"
+
+[node name="Button2" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13/HBoxContainer" unique_id=717038225]
+layout_mode = 2
+text = "1"
+
+[node name="Button3" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer13/HBoxContainer" unique_id=2091887385]
+layout_mode = 2
+text = "2"
+
+[node name="HBoxContainer14" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=996136116]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14" unique_id=1770653976]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Change Block Size"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14" unique_id=938802950]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14" unique_id=1230701593]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14/HBoxContainer" unique_id=133491898]
+layout_mode = 2
+text = "Mouse Mid Click"
+
+[node name="Button2" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14/HBoxContainer" unique_id=2088327033]
+layout_mode = 2
+text = "3"
+
+[node name="Button3" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer14/HBoxContainer" unique_id=1111888472]
+layout_mode = 2
+text = "4"
 
 [node name="HBoxContainer6" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=547671543]
 layout_mode = 2
@@ -1511,7 +1570,7 @@ layout_mode = 2
 [node name="VoxelSizeLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize" unique_id=208055263]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Voxel Size"
+text = "Block Size"
 
 [node name="VoxelSizeEdit" type="SpinBox" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelSize" unique_id=913314586]
 layout_mode = 2
@@ -1526,7 +1585,7 @@ layout_mode = 2
 
 [node name="AllTypesLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=895030854]
 layout_mode = 2
-text = "Available Voxel Types (Drag&Drop below)"
+text = "Available Blocks (Drag&Drop below)"
 
 [node name="VoxelTypeContainer" type="GridContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=116537683]
 layout_mode = 2
@@ -1537,7 +1596,7 @@ columns = 7
 
 [node name="SelectedTypesLabel" type="Label" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=1596018661]
 layout_mode = 2
-text = "Selected Voxel Types"
+text = "Selected Blocks (hotbar)"
 
 [node name="SelectedTypesContainer" type="GridContainer" parent="Menu/Menu/PauseMenu/EditTeleportMenu/EditTeleportVBox/VoxelEditMenu/Options/VoxelType" unique_id=2023253740]
 layout_mode = 2
@@ -1616,6 +1675,7 @@ size_flags_horizontal = 4
 text = "OK"
 
 [node name="InGame" parent="Menu" unique_id=565659013 instance=ExtResource("6_pl8e4")]
+visible = false
 layout_mode = 1
 
 [connection signal="tree_exiting" from="Menu" to="Menu" method="_on_tree_exiting"]
