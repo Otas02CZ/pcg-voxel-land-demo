@@ -163,6 +163,24 @@ public partial class Player : CharacterBody3D
     }
 
     /**
+     * Returns current camera rotation.
+     */
+    public (float horizontal, float vertical) GetCameraRotation()
+    {
+        return (rotationHorizontal, rotationVertical);
+    }
+
+    /**
+     * Sets new camera rotation.
+     */
+    public void SetCameraRotation(float horizontal, float vertical)
+    {
+        rotationHorizontal = horizontal;
+        rotationVertical = vertical;
+        Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
+    }
+
+    /**
      * Handles player movement in walking mode. Player moves on collision surfaces with MoveAndSlide.
      */
     private void HandleWalking(double delta)

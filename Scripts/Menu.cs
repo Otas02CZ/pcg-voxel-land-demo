@@ -871,6 +871,7 @@ public partial class Menu : Control
         Input.MouseMode = Input.MouseModeEnum.Captured;
         framesToReenableEditing = 1;
         player.EnableControls();
+        player.SetCameraRotation(currentWorldSaveConfig.rotationHorizontal, currentWorldSaveConfig.rotationVertical);
         InitializeSelectedVoxelTypes(); // clear selected voxels to default selection
         InitializeSelectedEditTypeItems(); // init them in ui
         editingVoxelSizeSpinBox.SetValue(currentWorldSaveConfig.editingVoxelSize);
@@ -1194,6 +1195,9 @@ public partial class Menu : Control
     {
         Vector3Double playerPosition = player.GetRealPosition();
         currentWorldSaveConfig.lastPlayerPosition = playerPosition;
+        (float horizontal, float vertical) = player.GetCameraRotation();
+        currentWorldSaveConfig.rotationHorizontal = horizontal;
+        currentWorldSaveConfig.rotationVertical = vertical;
         storageService.SaveCurrentWorldConfig(currentWorldSaveConfig);
         alreadySavedOnExit = true;
     }
