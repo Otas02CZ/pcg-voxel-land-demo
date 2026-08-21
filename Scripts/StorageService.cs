@@ -36,6 +36,11 @@ public class StorageService
     // index of edited columns in this world
     private readonly ConcurrentDictionary<(int chunkX, int chunkZ), string> chunkColumnDataIndex;
     
+    private JsonSerializerOptions jsonOptions = new()
+    {
+        WriteIndented = true
+    };
+    
     /**
      * Initialize storage, create main directory if it does not exist.
      */
@@ -391,7 +396,7 @@ public class StorageService
             
             using (StreamWriter writer = new StreamWriter(worldConfigFilePath, false))
             {
-                string configText = JsonSerializer.Serialize(worldSaveConfig);
+                string configText = JsonSerializer.Serialize(worldSaveConfig, jsonOptions);
                 writer.Write(configText);
             }
             
@@ -425,7 +430,7 @@ public class StorageService
             // save the config file
             using (StreamWriter writer = new StreamWriter(worldConfigFilePath, false))
             {
-                string configText = JsonSerializer.Serialize(worldSaveConfig);
+                string configText = JsonSerializer.Serialize(worldSaveConfig, jsonOptions);
                 writer.Write(configText);
             }
         }
