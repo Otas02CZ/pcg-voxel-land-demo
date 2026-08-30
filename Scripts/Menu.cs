@@ -188,7 +188,7 @@ public partial class Menu : Control
             {
                 if (menuOpen)
                 {
-                    SwitchToInGame();
+                    SwitchToInGame(false);
                 }
                 else
                 {
@@ -855,7 +855,7 @@ public partial class Menu : Control
      * Switches to game menu free view.
      * Re-enables player controls and schedules re-enable of voxel editing in next frame.
      */
-    private void SwitchToInGame()
+    private void SwitchToInGame(bool first)
     {
         background.Visible = false;
         titleMenu.Visible = false;
@@ -871,12 +871,15 @@ public partial class Menu : Control
         Input.MouseMode = Input.MouseModeEnum.Captured;
         framesToReenableEditing = 1;
         player.EnableControls();
-        player.SetCameraRotation(currentWorldSaveConfig.rotationHorizontal, currentWorldSaveConfig.rotationVertical);
-        InitializeSelectedVoxelTypes(); // clear selected voxels to default selection
-        InitializeSelectedEditTypeItems(); // init them in ui
-        editingVoxelSizeSpinBox.SetValue(currentWorldSaveConfig.editingVoxelSize);
-        root.OnVoxelEditTypeChanged(selectedVoxelTypes[currentWorldSaveConfig.indexSelectedVoxelType].type);
-        inGameMenu.Setup(player, selectedVoxelTypes, currentWorldSaveConfig.indexSelectedVoxelType, currentWorldSaveConfig.editingVoxelSize);
+        if (first)
+        {
+            player.SetCameraRotation(currentWorldSaveConfig.rotationHorizontal, currentWorldSaveConfig.rotationVertical);
+            InitializeSelectedVoxelTypes(); // clear selected voxels to default selection
+            InitializeSelectedEditTypeItems(); // init them in ui
+            editingVoxelSizeSpinBox.SetValue(currentWorldSaveConfig.editingVoxelSize);
+            root.OnVoxelEditTypeChanged(selectedVoxelTypes[currentWorldSaveConfig.indexSelectedVoxelType].type);
+            inGameMenu.Setup(player, selectedVoxelTypes, currentWorldSaveConfig.indexSelectedVoxelType, currentWorldSaveConfig.editingVoxelSize);
+        }
     }
 
     /**
@@ -966,7 +969,6 @@ public partial class Menu : Control
         }
         
         currentWorldSaveConfig = actualWorldData;
-        SwitchToInGame();
         player.ResetPlayerSettings();
         root.ResetWorldPlayerSettings();
         root.StartWorldGeneration(currentWorldSaveConfig, false);
@@ -1164,6 +1166,7 @@ public partial class Menu : Control
     private void _on_create_new_world_button_button_up()
     {
         // load values from ui
+        currentWorldSaveConfig = new WorldSaveConfig();
         currentWorldSaveConfig.worldName = worldNameEdit.Text;
         WorldSettings worldSettings = ParseWorldSettingsFromUI();
         if (worldSettings == null)
@@ -1180,7 +1183,6 @@ public partial class Menu : Control
         // create world
         if (storageService.CreateWorld(currentWorldSaveConfig))
         {
-            SwitchToInGame();
             player.ResetPlayerSettings();
             root.ResetWorldPlayerSettings();
             root.StartWorldGeneration(currentWorldSaveConfig, true);
@@ -1204,7 +1206,7 @@ public partial class Menu : Control
 
     private void _on_pause_back_button_button_up()
     {
-        SwitchToInGame();
+        SwitchToInGame(false);
     }
 
     private void _on_pause_settings_button_button_up()

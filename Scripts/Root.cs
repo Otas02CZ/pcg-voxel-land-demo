@@ -326,7 +326,7 @@ public partial class Root : Node3D
 		{
 			waitingForFirstMeshedChunk = false;
 			menu.CallDeferred(Menu.MethodName.HideCenteredMessage);
-			menu.CallDeferred(Menu.MethodName.SwitchToInGame);
+			menu.CallDeferred(Menu.MethodName.SwitchToInGame, true);
 		}
 		GD.Print($"Chunk column meshed at {chunkColumnGeometry.chunkX}, {chunkColumnGeometry.chunkZ}");
 	}
