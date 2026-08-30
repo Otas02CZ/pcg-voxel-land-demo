@@ -1,21 +1,93 @@
 [gd_scene format=3 uid="uid://dggtw4akyvyud"]
 
 [ext_resource type="Script" uid="uid://b0icaget7dwwp" path="res://Scripts/Player.cs" id="1_rpqav"]
+[ext_resource type="Script" uid="uid://bmmvv8esujjlx" path="res://Scripts/WeatherParticleSystem.cs" id="2_kyqiw"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qbkls"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kyqiw"]
 radius = 0.2
 height = 1.0
 
-[node name="Player" type="CharacterBody3D" unique_id=3164163]
+[sub_resource type="Curve" id="Curve_kyqiw"]
+_data = [Vector2(0, 0.15573764), 0.0, 0.0, 0, 0, Vector2(0.5031447, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.15573764), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_rpqav"]
+width = 128
+curve = SubResource("Curve_kyqiw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kyqiw"]
+lifetime_randomness = 0.5
+emission_shape_offset = Vector3(0, 3.5, 0)
+emission_shape = 3
+emission_box_extents = Vector3(10, 7, 10)
+gravity = Vector3(0, -7.84, 0)
+attractor_interaction_enabled = false
+scale_curve = SubResource("CurveTexture_rpqav")
+turbulence_enabled = true
+turbulence_noise_strength = 0.1
+turbulence_noise_scale = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_igbsa"]
+albedo_color = Color(1, 0.98039216, 0.98039216, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gntrk"]
+material = SubResource("StandardMaterial3D_igbsa")
+size = Vector3(0.016, 0.016, 0.016)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dewec"]
+lifetime_randomness = 0.5
+emission_shape_offset = Vector3(0, 6, 0)
+emission_shape = 3
+emission_box_extents = Vector3(10, 2, 10)
+attractor_interaction_enabled = false
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5ixxa"]
+albedo_color = Color(0.5126953, 0.54117835, 0.68359375, 0.78431374)
+
+[sub_resource type="BoxMesh" id="BoxMesh_nn08x"]
+material = SubResource("StandardMaterial3D_5ixxa")
+size = Vector3(0.016, 0.024, 0.016)
+
+[sub_resource type="Curve" id="Curve_rpqav"]
+_data = [Vector2(0, 0.14728677), 0.0, 0.0, 0, 0, Vector2(0.5031447, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.14728677), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_gntrk"]
+width = 128
+curve = SubResource("Curve_rpqav")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_rpqav"]
+lifetime_randomness = 0.5
+emission_shape_offset = Vector3(0, 3, 0)
+emission_shape = 3
+emission_box_extents = Vector3(10, 5, 10)
+gravity = Vector3(0, -4.9, 0)
+attractor_interaction_enabled = false
+scale_curve = SubResource("CurveTexture_gntrk")
+turbulence_enabled = true
+turbulence_noise_strength = 0.1
+turbulence_noise_scale = 4.0
+turbulence_influence_max = 0.15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_52ee3"]
+albedo_color = Color(0.5647059, 0.46666667, 0.39215687, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bhhdu"]
+material = SubResource("StandardMaterial3D_52ee3")
+size = Vector3(0.016, 0.016, 0.016)
+
+[node name="Player" type="Node3D" unique_id=1278830815]
 script = ExtResource("1_rpqav")
 
-[node name="Collision" type="CollisionShape3D" parent="." unique_id=500246932]
-shape = SubResource("CapsuleShape3D_qbkls")
+[node name="ActualPlayer" type="CharacterBody3D" parent="." unique_id=1103594535]
 
-[node name="Camera" type="Camera3D" parent="." unique_id=1777038947]
+[node name="Collision" type="CollisionShape3D" parent="ActualPlayer" unique_id=274034054]
+shape = SubResource("CapsuleShape3D_kyqiw")
+
+[node name="Camera" type="Camera3D" parent="ActualPlayer" unique_id=1534806628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
-[node name="Torch" type="OmniLight3D" parent="." unique_id=1640697374]
+[node name="Torch" type="OmniLight3D" parent="ActualPlayer" unique_id=73188673]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4302957, 0.6888671, -0.24657339)
 visible = false
 light_color = Color(0.8709775, 0.7342224, 0.44358617, 1)
@@ -23,3 +95,41 @@ light_size = 0.01
 shadow_enabled = true
 distance_fade_enabled = true
 omni_range = 10.058
+
+[node name="WeatherParticleSystem" type="Node3D" parent="." unique_id=1531681875]
+script = ExtResource("2_kyqiw")
+
+[node name="Snow" type="GPUParticles3D" parent="WeatherParticleSystem" unique_id=985698282]
+cast_shadow = 0
+emitting = false
+amount = 35000
+lifetime = 0.5
+preprocess = 1.0
+speed_scale = 0.25
+randomness = 0.24
+fixed_fps = 45
+process_material = SubResource("ParticleProcessMaterial_kyqiw")
+draw_pass_1 = SubResource("BoxMesh_gntrk")
+
+[node name="Rain" type="GPUParticles3D" parent="WeatherParticleSystem" unique_id=1144441144]
+cast_shadow = 0
+emitting = false
+amount = 30000
+lifetime = 2.5
+preprocess = 1.0
+speed_scale = 0.85
+randomness = 0.24
+process_material = SubResource("ParticleProcessMaterial_dewec")
+draw_pass_1 = SubResource("BoxMesh_nn08x")
+
+[node name="Dust" type="GPUParticles3D" parent="WeatherParticleSystem" unique_id=358158677]
+cast_shadow = 0
+emitting = false
+amount = 15000
+lifetime = 0.4
+preprocess = 1.0
+speed_scale = 0.15
+randomness = 0.3
+fixed_fps = 45
+process_material = SubResource("ParticleProcessMaterial_rpqav")
+draw_pass_1 = SubResource("BoxMesh_bhhdu")

@@ -21,7 +21,7 @@ public enum MovementMode : byte
 /**
  * Player management and control script.
  */
-public partial class Player : CharacterBody3D
+public partial class Player : Node3D
 {
 	[Export] private float movementSpeed { get; set; } = 2.5f;
 	[Export] private float mouseSensitivity { get; set; } = 0.003f;
@@ -35,8 +35,10 @@ public partial class Player : CharacterBody3D
     private Action OnPlayerPositionChanged;
     private Action<MovementMode> OnMovementModeChanged;
 
+    private CharacterBody3D player;
 	private Camera3D camera;
     private OmniLight3D torch;
+    private WeatherParticleSystem particleSystem;
     private Vector3 velocity = Vector3.Zero;
     private float rotationHorizontal;
     private float rotationVertical;
@@ -67,8 +69,10 @@ public partial class Player : CharacterBody3D
     {
         base._Ready();
         movementMode = MovementMode.FLY;
-        camera = GetNode<Camera3D>("Camera");
-        torch = GetNode<OmniLight3D>("Torch");
+        player = GetNode<CharacterBody3D>("ActualPlayer");
+        camera = GetNode<Camera3D>("ActualPlayer/Camera");
+        torch = GetNode<OmniLight3D>("ActualPlayer/Torch");
+        particleSystem = GetNode<WeatherParticleSystem>("WeatherParticleSystem");
         Input.MouseMode = Input.MouseModeEnum.Captured;
     }
 
@@ -87,7 +91,7 @@ public partial class Player : CharacterBody3D
             // avoid full upside-down flip
             rotationVertical = Mathf.Clamp(rotationVertical, minVerticalRotation, maxVerticalRotation);
             // apply to player
-            Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
+            player.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
         }
     }
 
@@ -99,7 +103,7 @@ public partial class Player : CharacterBody3D
         if (!controlsEnabled)
             return;
         
-        var lastPosition = Position;
+        var lastPosition = player.Position;
 
         if (Input.IsActionJustPressed("toggle_torch"))
         {
@@ -121,7 +125,7 @@ public partial class Player : CharacterBody3D
         }
         
         // emit signal when position changes
-        if (!Position.IsEqualApprox(lastPosition))
+        if (!player.Position.IsEqualApprox(lastPosition))
         {
             OnPlayerPositionChanged?.Invoke();
         }
@@ -136,17 +140,17 @@ public partial class Player : CharacterBody3D
         
         // assemble direction vector from user input
         if (Input.IsActionPressed("move_forward"))
-            inputDir -= Transform.Basis.Z;
+            inputDir -= player.Transform.Basis.Z;
         if (Input.IsActionPressed("move_back"))
-            inputDir += Transform.Basis.Z;
+            inputDir += player.Transform.Basis.Z;
         if (Input.IsActionPressed("move_left"))
-            inputDir -= Transform.Basis.X;
+            inputDir -= player.Transform.Basis.X;
         if (Input.IsActionPressed("move_right"))
-            inputDir += Transform.Basis.X;
+            inputDir += player.Transform.Basis.X;
         if (Input.IsActionPressed("move_up"))
-            inputDir += Transform.Basis.Y;
+            inputDir += player.Transform.Basis.Y;
         if (Input.IsActionPressed("move_down"))
-            inputDir -= Transform.Basis.Y;
+            inputDir -= player.Transform.Basis.Y;
 
         inputDir = inputDir.Normalized();
 
@@ -156,10 +160,12 @@ public partial class Player : CharacterBody3D
             speed *= sprintMultiplier;
 
         // change position based on movement direction and speed
-        Position += inputDir * speed * (float)delta;
+        player.Position += inputDir * speed * (float)delta;
         
         // clamp position within world limits
         ClampPositionWithinWorldLimits();
+
+        particleSystem.Position = player.Position;
     }
 
     /**
@@ -177,7 +183,7 @@ public partial class Player : CharacterBody3D
     {
         rotationHorizontal = horizontal;
         rotationVertical = vertical;
-        Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
+        player.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
     }
 
     /**
@@ -186,23 +192,23 @@ public partial class Player : CharacterBody3D
     private void HandleWalking(double delta)
     {
         // gravity
-        if (!IsOnFloor())
+        if (!player.IsOnFloor())
             velocity.Y -= gravity * (float)delta;
 
         // jumping only when on the floor
-        if (Input.IsActionJustPressed("jump") && IsOnFloor())
+        if (Input.IsActionJustPressed("jump") && player.IsOnFloor())
             velocity.Y = jumpVelocity;
 
         // input direction
         Vector3 inputDir = Vector3.Zero;
         if (Input.IsActionPressed("move_forward"))
-            inputDir -= Transform.Basis.Z;
+            inputDir -= player.Transform.Basis.Z;
         if (Input.IsActionPressed("move_back"))
-            inputDir += Transform.Basis.Z;
+            inputDir += player.Transform.Basis.Z;
         if (Input.IsActionPressed("move_left"))
-            inputDir -= Transform.Basis.X;
+            inputDir -= player.Transform.Basis.X;
         if (Input.IsActionPressed("move_right"))
-            inputDir += Transform.Basis.X;
+            inputDir += player.Transform.Basis.X;
         
         Vector3 direction = inputDir.Normalized();
 
@@ -219,16 +225,18 @@ public partial class Player : CharacterBody3D
         }
         else
         {
-            velocity.X = Mathf.MoveToward(Velocity.X, 0, speed);
-            velocity.Z = Mathf.MoveToward(Velocity.Z, 0, speed);
+            velocity.X = Mathf.MoveToward(player.Velocity.X, 0, speed);
+            velocity.Z = Mathf.MoveToward(player.Velocity.Z, 0, speed);
         }
 
         // move on the surface
-        Velocity = velocity;
-        MoveAndSlide();
+        player.Velocity = velocity;
+        player.MoveAndSlide();
         
         // clamp position within world limits
         ClampPositionWithinWorldLimits();
+        
+        particleSystem.Position = player.Position;
     }
     
     /**
@@ -240,7 +248,7 @@ public partial class Player : CharacterBody3D
         realPosition.x = Math.Clamp(realPosition.x, worldLimitMetersXMin, worldLimitMetersXMax);
         realPosition.y = Math.Clamp(realPosition.y, worldLimitMetersYMin, worldLimitMetersYMax);
         realPosition.z = Math.Clamp(realPosition.z, worldLimitMetersZMin, worldLimitMetersZMax);
-        Position = new Vector3((float)(realPosition.x + originShiftOffsetXZ.x), (float)realPosition.y, (float)(realPosition.z + originShiftOffsetXZ.z));
+        player.Position = new Vector3((float)(realPosition.x + originShiftOffsetXZ.x), (float)realPosition.y, (float)(realPosition.z + originShiftOffsetXZ.z));
     }
     
     /**
@@ -268,7 +276,7 @@ public partial class Player : CharacterBody3D
      */
     public Vector3 GetLookAtDirection()
     {
-        Vector3 forward = -Transform.Basis.Z;
+        Vector3 forward = -player.Transform.Basis.Z;
         return forward.Normalized();
     }
 
@@ -296,7 +304,7 @@ public partial class Player : CharacterBody3D
      */
     public Vector3Double GetRealPosition()
     {
-        return new Vector3Double((double)Position.X - originShiftOffsetXZ.x, Position.Y, (double)Position.Z - originShiftOffsetXZ.z);
+        return new Vector3Double((double)player.Position.X - originShiftOffsetXZ.x, player.Position.Y, (double)player.Position.Z - originShiftOffsetXZ.z);
     }
     
     /**
@@ -309,7 +317,7 @@ public partial class Player : CharacterBody3D
             controlsEnabled = false;
             previousMovementMode = movementMode;
             movementMode = MovementMode.FLY;
-            Velocity = Vector3.Zero;
+            player.Velocity = Vector3.Zero;
         }
     }
     
@@ -336,7 +344,8 @@ public partial class Player : CharacterBody3D
         // apply new origin shift
         originShiftOffsetXZ = newOriginShiftOffsetXZ;
         // set new position
-        Position = new Vector3((float)(realPosition.x + originShiftOffsetXZ.x), (float)realPosition.y, (float)(realPosition.z + originShiftOffsetXZ.z));
+        player.Position = new Vector3((float)(realPosition.x + originShiftOffsetXZ.x), (float)realPosition.y, (float)(realPosition.z + originShiftOffsetXZ.z));
+        particleSystem.Position = player.Position;
     }
 
     /**
@@ -385,15 +394,16 @@ public partial class Player : CharacterBody3D
     public void TeleportPlayer(Vector3Double realPosition)
     {
         originShiftOffsetXZ = new Vector3Int(0, 0, 0);
-        Position = new Vector3((float)realPosition.x, (float)realPosition.y, (float)realPosition.z);
-        Velocity = Vector3.Zero;
+        player.Position = new Vector3((float)realPosition.x, (float)realPosition.y, (float)realPosition.z);
+        player.Velocity = Vector3.Zero;
         
         // clamp position within world limits
-        Position = new Vector3(
-            Mathf.Clamp(Position.X, worldLimitMetersXMin, worldLimitMetersXMax),
-            Mathf.Clamp(Position.Y, worldLimitMetersYMin, worldLimitMetersYMax),
-            Mathf.Clamp(Position.Z, worldLimitMetersZMin, worldLimitMetersZMax)
+        player.Position = new Vector3(
+            Mathf.Clamp(player.Position.X, worldLimitMetersXMin, worldLimitMetersXMax),
+            Mathf.Clamp(player.Position.Y, worldLimitMetersYMin, worldLimitMetersYMax),
+            Mathf.Clamp(player.Position.Z, worldLimitMetersZMin, worldLimitMetersZMax)
         );
+        particleSystem.Position = player.Position;
     }
     
     /**
