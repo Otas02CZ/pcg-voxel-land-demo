@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cbksmqfphnij5"]
 
 [ext_resource type="Script" uid="uid://df8mnhg88m20e" path="res://Scripts/Root.cs" id="1_oss8w"]
-[ext_resource type="PackedScene" uid="uid://n0ulc1bly1eh" path="res://Scenes/Player.tscn" id="2_pl8e4"]
+[ext_resource type="PackedScene" uid="uid://dggtw4akyvyud" path="res://Scenes/Player.tscn" id="2_pl8e4"]
 [ext_resource type="Script" uid="uid://x5d1ldo8tqyh" path="res://Scripts/Menu.cs" id="3_is6ib"]
 [ext_resource type="Texture2D" uid="uid://cluo582413klw" path="res://background.jpg" id="4_b3i5h"]
 [ext_resource type="PackedScene" uid="uid://c64opv1sh4wjr" path="res://Scenes/Settings.tscn" id="5_tkdr5"]
@@ -31,7 +31,8 @@ fog_mode = 1
 fog_density = 1.0
 fog_depth_begin = 30.0
 fog_depth_end = 400.0
-volumetric_fog_density = 0.0183
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r3lo5"]
 bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)

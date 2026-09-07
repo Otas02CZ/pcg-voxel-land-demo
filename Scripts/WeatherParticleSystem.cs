@@ -9,17 +9,6 @@ using Godot;
 namespace PCGVoxelLandscapes.Scripts;
 
 /**
- * Describes one of available weather particle systems, or none.
- */
-public enum PART_SYS : byte
-{
-    NONE,
-    SNOW,
-    RAIN,
-    DUST
-}
-
-/**
  * Manages weather particle systems, their emission and amount ratios (intensity of given particle system).
  */
 public partial class WeatherParticleSystem : Node3D
@@ -30,7 +19,6 @@ public partial class WeatherParticleSystem : Node3D
     private GpuParticles3D dustPartSys;
     // current one
     private GpuParticles3D currentPartSysNode;
-    private PART_SYS currentPartSys = PART_SYS.NONE;
     
     public override void _Ready()
     {
@@ -46,25 +34,23 @@ public partial class WeatherParticleSystem : Node3D
     /**
      * Switches to specified particle system or stops particles if none.
      */
-    public void SwitchParticleSystem(PART_SYS newSystem)
+    public void SwitchParticleSystem(WEATHER_TYPE newWeatherType)
     {
         if (currentPartSysNode != null)
         {
             currentPartSysNode.SetEmitting(false);
             currentPartSysNode = null;
         }
-        
-        currentPartSys = newSystem;
 
-        switch (newSystem)
+        switch (newWeatherType)
         {
-            case PART_SYS.SNOW:
+            case WEATHER_TYPE.SNOW:
                 currentPartSysNode = snowPartSys;
                 break;
-            case PART_SYS.RAIN:
+            case WEATHER_TYPE.RAIN:
                 currentPartSysNode = rainPartSys;
                 break;
-            case PART_SYS.DUST:
+            case WEATHER_TYPE.DUST:
                 currentPartSysNode = dustPartSys;
                 break;
         }

@@ -8,7 +8,7 @@ radius = 0.2
 height = 1.0
 
 [sub_resource type="Curve" id="Curve_kyqiw"]
-_data = [Vector2(0, 0.15573764), 0.0, 0.0, 0, 0, Vector2(0.5031447, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.15573764), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.49999994), 0.0, 0.0, 0, 0, Vector2(0.5031447, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.49999994), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_rpqav"]
@@ -19,7 +19,7 @@ curve = SubResource("Curve_kyqiw")
 lifetime_randomness = 0.5
 emission_shape_offset = Vector3(0, 3.5, 0)
 emission_shape = 3
-emission_box_extents = Vector3(10, 7, 10)
+emission_box_extents = Vector3(8, 7, 8)
 gravity = Vector3(0, -7.84, 0)
 attractor_interaction_enabled = false
 scale_curve = SubResource("CurveTexture_rpqav")
@@ -32,13 +32,13 @@ albedo_color = Color(1, 0.98039216, 0.98039216, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_gntrk"]
 material = SubResource("StandardMaterial3D_igbsa")
-size = Vector3(0.016, 0.016, 0.016)
+size = Vector3(0.008, 0.012, 0.008)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dewec"]
 lifetime_randomness = 0.5
 emission_shape_offset = Vector3(0, 6, 0)
 emission_shape = 3
-emission_box_extents = Vector3(10, 2, 10)
+emission_box_extents = Vector3(9, 2, 9)
 attractor_interaction_enabled = false
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5ixxa"]
@@ -102,8 +102,7 @@ script = ExtResource("2_kyqiw")
 [node name="Snow" type="GPUParticles3D" parent="WeatherParticleSystem" unique_id=985698282]
 cast_shadow = 0
 emitting = false
-amount = 35000
-lifetime = 0.5
+amount = 50000
 preprocess = 1.0
 speed_scale = 0.25
 randomness = 0.24
@@ -114,10 +113,10 @@ draw_pass_1 = SubResource("BoxMesh_gntrk")
 [node name="Rain" type="GPUParticles3D" parent="WeatherParticleSystem" unique_id=1144441144]
 cast_shadow = 0
 emitting = false
-amount = 30000
+amount = 35000
 lifetime = 2.5
 preprocess = 1.0
-speed_scale = 0.85
+speed_scale = 0.9
 randomness = 0.24
 process_material = SubResource("ParticleProcessMaterial_dewec")
 draw_pass_1 = SubResource("BoxMesh_nn08x")

@@ -424,6 +424,11 @@ public partial class Player : Node3D
         return torch;
     }
 
+    public WeatherParticleSystem GetParticleSystem()
+    {
+        return particleSystem;
+    }
+
     /**
      * Subscribes supplied function to player position changed signal.
      */

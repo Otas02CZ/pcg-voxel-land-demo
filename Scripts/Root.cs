@@ -180,6 +180,9 @@ public partial class Root : Node3D
 	private WorldDisplayService worldDisplayService;
 	private StorageService storageService;
 	private VoxelEditService voxelEditService;
+    
+    // weather, day-night cycle
+    private WeatherEnvironmentManager weatherEnvManager;
 	
 	// sun movement simulation
 	private bool sunMovementEnabled;
@@ -242,6 +245,8 @@ public partial class Root : Node3D
 		WorldEnvironment worldEnvironment = GetNode<WorldEnvironment>("WorldEnvironment");
 		
 		chunkVoxelSize = voxelsPerMeter * metersPerChunk;
+
+        weatherEnvManager = new WeatherEnvironmentManager(player, sun, worldEnvironment, metersPerRegion, terrainUnitsPerMeter);
 		
 		// initialize storage service at predefined directory
 		string storagePath = ProjectSettings.GlobalizePath("user://");
@@ -304,9 +309,20 @@ public partial class Root : Node3D
 			playerNotPlaced = false;
 			// reposition sun based on initial player position
 			CallDeferred(MethodName.MoveSun);
-		}
+            // reset player pos in weather manager
+            CallDeferred(MethodName.PassPlayerPosChangeToWeatherManager);
+        }
 		GD.Print($"World region generated at {region.posX}, {region.posZ}");
 	}
+
+    /**
+     * Dirty way to use call deferred on non-godot class objects.
+     * Called from OnRegionGenerated.
+     */
+    private void PassPlayerPosChangeToWeatherManager()
+    {
+        weatherEnvManager.OnPlayerPositionChanged();
+    }
 	
 	/**
 	 * Logs successful voxelization of chunk column.
@@ -410,6 +426,7 @@ public partial class Root : Node3D
 		{
 			// or last position in loaded worlds
 			player.TeleportPlayer(worldSaveConfig.lastPlayerPosition);
+            weatherEnvManager.OnPlayerPositionChanged();
 			CheckPlanOriginShift();
 			MoveSun();
 		}
@@ -490,6 +507,7 @@ public partial class Root : Node3D
 		menu.ShowCenteredMessageLoading($"Generating models ... (0/{modelService.GetTotalModelsCount()})");
 		generatingModels = true;
 		modelService.GenerateModels();
+        weatherEnvManager.Start(worldGeneratorService, worldSaveConfig.worldSettings.seed);
 	}
 
 	/**
@@ -500,6 +518,8 @@ public partial class Root : Node3D
 		// need to stop all generation tasks, disable threads, clear storage and services / generators
 		iterativeRuns = false;
 
+        weatherEnvManager.Stop();
+        
 		voxelEditService = null;
 		
 		if (worldDisplayService != null)
@@ -1029,6 +1049,8 @@ public partial class Root : Node3D
                 PerformOriginShift();
                 originShiftPlanned = false;
             }
+            // weather simulation
+            weatherEnvManager.SimulationStep();
             
 			// update debug menu with stats
 			var worldGenActiveRegions = worldGeneratorService.GetActiveRegionsCount();

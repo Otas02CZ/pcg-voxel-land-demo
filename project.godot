@@ -162,6 +162,7 @@ voxel_size_increase_overflow={
 
 3d/run_on_separate_thread=true
 3d/physics_engine="Jolt Physics"
+common/physics_interpolation=true
 
 [rendering]
 
