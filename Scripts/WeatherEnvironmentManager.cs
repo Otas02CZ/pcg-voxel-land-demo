@@ -45,6 +45,7 @@ public class WeatherEnvironmentManager
     private WeatherParticleSystem particleSystem;
     private DirectionalLight3D sun;
     private Environment environment;
+    private ShaderMaterial skyMaterial;
     private WorldGeneratorService worldGeneratorService;
 
     private readonly int metersPerRegion;
@@ -87,6 +88,7 @@ public class WeatherEnvironmentManager
         this.environment = worldEnvironment.GetEnvironment();
         this.metersPerRegion = metersPerRegion;
         this.terrainUnitsPerMeter = terrainUnitsPerMeter;
+        this.skyMaterial = (ShaderMaterial)environment.GetSky().GetMaterial();
         
         particleSystem = player.GetParticleSystem();
         player.SubscribeOnPlayerPositionChanged(OnPlayerPositionChanged);
@@ -273,6 +275,8 @@ public class WeatherEnvironmentManager
         }
         // apply fog transition
         LinearTransitionFog();
+        // apply weather in sky shader
+        skyMaterial.SetShaderParameter("weather_intensity", noiseValue);
     }
 
     /**

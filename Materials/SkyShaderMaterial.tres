@@ -1,0 +1,64 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://vrnyr441ti1c"]
+
+[ext_resource type="Shader" uid="uid://btfjlkhq5724a" path="res://Materials/SkyShader.gdshader" id="1_g6iio"]
+
+[sub_resource type="Gradient" id="Gradient_cpek4"]
+offsets = PackedFloat32Array(0, 0.5235457, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.3218332, 0.27189636, 0.40234375, 1, 0.17546093, 0.14134216, 0.23046875, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gx6r4"]
+gradient = SubResource("Gradient_cpek4")
+
+[sub_resource type="Gradient" id="Gradient_gx6r4"]
+offsets = PackedFloat32Array(0, 0.54847646, 1)
+colors = PackedColorArray(0.19921875, 0.19921875, 0.19921875, 1, 0.22265625, 0.1295929, 0.20157158, 1, 0.10937501, 0.060241695, 0.093637, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_cpek4"]
+gradient = SubResource("Gradient_gx6r4")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b3i5h"]
+frequency = 0.009
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_is6ib"]
+width = 384
+height = 192
+depth = 384
+noise = SubResource("FastNoiseLite_b3i5h")
+seamless = true
+
+[sub_resource type="Gradient" id="Gradient_g6iio"]
+offsets = PackedFloat32Array(0, 0.6454294, 1)
+colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.41674486, 0.2938385, 0.57421875, 1, 0.46498144, 0.34147644, 0.62890625, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0tf6y"]
+gradient = SubResource("Gradient_g6iio")
+
+[resource]
+shader = ExtResource("1_g6iio")
+shader_parameter/sky_background_gradient = SubResource("GradientTexture1D_0tf6y")
+shader_parameter/weather_intensity = 0.28
+shader_parameter/time_of_day = 1.0
+shader_parameter/cloud_noise = SubResource("NoiseTexture3D_is6ib")
+shader_parameter/cloud_speed = Vector2(0.01, 0.005)
+shader_parameter/cloud_change_speed = 0.03
+shader_parameter/cloud_scale = 0.001
+shader_parameter/cloud_render_dist_max = 3000.0
+shader_parameter/cloud_color_empty = Color(0, 0, 0, 0)
+shader_parameter/cloud_gradient_base = SubResource("GradientTexture1D_cpek4")
+shader_parameter/cloud_gradient_alt = SubResource("GradientTexture1D_gx6r4")
+shader_parameter/gradient_size = 256.0
+shader_parameter/cloud_height_1 = 200.0
+shader_parameter/cloud_noise_threshold_1_min = 0.6
+shader_parameter/cloud_noise_threshold_1_max = 1.0
+shader_parameter/cloud_softness_1_low = 0.21
+shader_parameter/cloud_softness_1_high = 0.14
+shader_parameter/cloud_height_2 = 250.0
+shader_parameter/cloud_noise_threshold_2_min = 0.3
+shader_parameter/cloud_noise_threshold_2_max = 0.9
+shader_parameter/cloud_softness_2_low = 0.35
+shader_parameter/cloud_softness_2_high = 0.3
+shader_parameter/cloud_height_3 = 350.0
+shader_parameter/cloud_noise_threshold_3_min = 0.2
+shader_parameter/cloud_noise_threshold_3_max = 0.7
+shader_parameter/cloud_softness_3_low = 0.35
+shader_parameter/cloud_softness_3_high = 0.35
