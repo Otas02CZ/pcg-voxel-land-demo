@@ -26,7 +26,9 @@ sdfgi_cascades = 8
 fog_mode = 1
 fog_density = 1.0
 fog_depth_curve = 0.93303335
+volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
+volumetric_fog_sky_affect = 0.1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r3lo5"]
 bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)

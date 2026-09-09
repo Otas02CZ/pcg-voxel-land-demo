@@ -63,7 +63,7 @@ public class WeatherEnvironmentManager
     private const float snowThreshold = 0.35f;
     private const float rainThreshold = 0.55f;
     private const float minFogDensity = 0.0f;
-    private const float maxFogDensity = 0.2f;
+    private const float maxFogDensity = 0.03f;
 
     // fog linear transition
     private float currentFog;
