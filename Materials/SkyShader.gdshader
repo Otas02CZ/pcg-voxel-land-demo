@@ -14,6 +14,7 @@ uniform float time_of_day = 1.0;
 uniform sampler2D lighting_gradient;
 uniform sampler2D star_mask_gradient;
 uniform vec4 clear_color : source_color = vec4(0,0,0,0);
+uniform float cloud_sphere_radius = 50000;
 
 // cloud related parameters
 group_uniforms clouds_base;
@@ -53,10 +54,28 @@ uniform vec2 star_speed = vec2(0.001, 0.01);
 uniform float star_scale = 0.001;
 
 /*
-* Calculates intersection with a plane at given height from given point.
+* Calculates ray intersection with a sphere.
+* Used for mapping the feature layers on a spherical dome.
+* Assembled with help from: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection.html
 */
-float plane_intersection(vec3 origin, vec3 direction, float height) {
-	return (height - origin.y) / direction.y;
+float ray_sphere_intersection(vec3 origin, vec3 direction, float cloud_height) {
+	vec3 center = vec3(0.0, cloud_height - cloud_sphere_radius, 0.0);
+	vec3 origin_center = origin - center;
+	// analytic solution
+	// a = 1
+	float b = 2.0 * dot(direction, origin_center);
+	float c = dot(origin_center, origin_center) - cloud_sphere_radius * cloud_sphere_radius;
+	float discriminant = b * b - 4.0 * c; // d = bb - 4ac
+	if (discriminant <= 0.0) {
+		return 0.0;
+	}
+	
+	float discriminant_sqrt = sqrt(discriminant);
+	
+	float t0 = -b + discriminant_sqrt;
+	float t1 = -b - discriminant_sqrt;
+	// positive intersection
+	return t0 > 0.0 ? t0 : t1;
 }
 
 /*
@@ -115,11 +134,11 @@ void sky() {
 	// Called for every visible pixel in the sky background, as well as all pixels
 	// in the radiance cubemap.
 	
-	// calculate intersections for all cloud heights and the star layer
-	float t1 = plane_intersection(POSITION, EYEDIR, cloud_height_1);
-	float t2 = plane_intersection(POSITION, EYEDIR, cloud_height_2);
-	float t3 = plane_intersection(POSITION, EYEDIR, cloud_height_3);
-	float sky_t = plane_intersection(POSITION, EYEDIR, star_height);
+	// calculate dome intersections for all cloud heights and the star layer
+	float t1 = ray_sphere_intersection(POSITION, EYEDIR, cloud_height_1);
+	float t2 = ray_sphere_intersection(POSITION, EYEDIR, cloud_height_2);
+	float t3 = ray_sphere_intersection(POSITION, EYEDIR, cloud_height_3);
+	float sky_t = ray_sphere_intersection(POSITION, EYEDIR, star_height);
 	// sample day-night light adjusting gradient
 	vec4 lighting_adj = texture(lighting_gradient, vec2(time_of_day, 0));
 	if (t1 <= 0.0 || t1 >= cloud_render_dist_max) { // limits

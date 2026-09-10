@@ -3,39 +3,38 @@
 [ext_resource type="Shader" uid="uid://btfjlkhq5724a" path="res://Materials/SkyShader.gdshader" id="1_g6iio"]
 
 [sub_resource type="Gradient" id="Gradient_cpek4"]
-offsets = PackedFloat32Array(0, 0.71859294, 1)
+offsets = PackedFloat32Array(0, 0.83919597, 1)
 colors = PackedColorArray(1, 1, 1, 1, 0.15174866, 0.20538141, 0.25390625, 1, 0.10533142, 0.12479746, 0.15234375, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_gx6r4"]
 gradient = SubResource("Gradient_cpek4")
 
 [sub_resource type="Gradient" id="Gradient_gx6r4"]
-offsets = PackedFloat32Array(0, 0.6080402, 1)
-colors = PackedColorArray(0.46484375, 0.46484375, 0.46484375, 1, 0.18234253, 0.18436907, 0.1953125, 1, 0.11112404, 0.10797119, 0.11328125, 1)
+offsets = PackedFloat32Array(0, 0.75376886, 1)
+colors = PackedColorArray(0.6796875, 0.6796875, 0.6796875, 1, 0.21331787, 0.21660802, 0.234375, 1, 0.136385, 0.13018799, 0.140625, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_cpek4"]
 gradient = SubResource("Gradient_gx6r4")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_b3i5h"]
-frequency = 0.009
 
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_is6ib"]
-width = 384
+width = 320
 height = 192
-depth = 384
+depth = 320
 noise = SubResource("FastNoiseLite_b3i5h")
 seamless = true
 
 [sub_resource type="Gradient" id="Gradient_i8eoa"]
 offsets = PackedFloat32Array(0, 0.28140703, 0.45728642, 1)
-colors = PackedColorArray(0.078431375, 0.09803922, 0.1764706, 1, 0.4509804, 0.4, 0.48235294, 1, 0.84705883, 0.8784314, 0.9490196, 1, 1, 1, 1, 1)
+colors = PackedColorArray(0.045776367, 0.0553711, 0.09375, 1, 0.37981308, 0.3114624, 0.421875, 1, 0.84705883, 0.8784314, 0.9490196, 1, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_y1djv"]
 gradient = SubResource("Gradient_i8eoa")
 
 [sub_resource type="Gradient" id="Gradient_g6iio"]
 offsets = PackedFloat32Array(0, 0.53768843, 1)
-colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.15716553, 0.24836063, 0.390625, 1, 0.07434082, 0.32705563, 0.65625, 1)
+colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.15716553, 0.24836063, 0.390625, 1, 0.09516907, 0.37446347, 0.73828125, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_0tf6y"]
 gradient = SubResource("Gradient_g6iio")
@@ -59,17 +58,17 @@ noise = SubResource("FastNoiseLite_g6iio")
 [resource]
 shader = ExtResource("1_g6iio")
 shader_parameter/sky_background_gradient = SubResource("GradientTexture1D_0tf6y")
-shader_parameter/weather_intensity = 0.98
-shader_parameter/time_of_day = 0.75
+shader_parameter/weather_intensity = 0.31
+shader_parameter/time_of_day = 0.95
 shader_parameter/lighting_gradient = SubResource("GradientTexture1D_y1djv")
 shader_parameter/star_mask_gradient = SubResource("GradientTexture1D_p04n7")
 shader_parameter/clear_color = Color(0, 0, 0, 0)
-shader_parameter/cloud_dome_radius = 2000.0
+shader_parameter/cloud_sphere_radius = 2000.0
 shader_parameter/cloud_noise = SubResource("NoiseTexture3D_is6ib")
 shader_parameter/cloud_speed = Vector2(0.01, 0.005)
 shader_parameter/cloud_change_speed = 0.03
 shader_parameter/cloud_scale = 0.001
-shader_parameter/cloud_render_dist_max = 3000.0
+shader_parameter/cloud_render_dist_max = 4000.0
 shader_parameter/cloud_gradient_base = SubResource("GradientTexture1D_cpek4")
 shader_parameter/cloud_gradient_alt = SubResource("GradientTexture1D_gx6r4")
 shader_parameter/cloud_height_1 = 200.0
@@ -83,9 +82,9 @@ shader_parameter/cloud_noise_threshold_2_max = 0.9
 shader_parameter/cloud_softness_2_low = 0.35
 shader_parameter/cloud_softness_2_high = 0.32
 shader_parameter/cloud_height_3 = 350.0
-shader_parameter/cloud_noise_threshold_3_min = 0.2
+shader_parameter/cloud_noise_threshold_3_min = 0.25
 shader_parameter/cloud_noise_threshold_3_max = 0.7
-shader_parameter/cloud_softness_3_low = 0.28
+shader_parameter/cloud_softness_3_low = 0.25
 shader_parameter/cloud_softness_3_high = 0.25
 shader_parameter/star_color = Color(1, 1, 1, 1)
 shader_parameter/star_noise = SubResource("NoiseTexture2D_is6ib")
