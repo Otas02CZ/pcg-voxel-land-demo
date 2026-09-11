@@ -17,6 +17,7 @@ colors = PackedColorArray(0.6796875, 0.6796875, 0.6796875, 1, 0.21331787, 0.2166
 gradient = SubResource("Gradient_gx6r4")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_b3i5h"]
+frequency = 0.011
 
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_is6ib"]
 width = 320
@@ -58,8 +59,8 @@ noise = SubResource("FastNoiseLite_g6iio")
 [resource]
 shader = ExtResource("1_g6iio")
 shader_parameter/sky_background_gradient = SubResource("GradientTexture1D_0tf6y")
-shader_parameter/weather_intensity = 0.31
-shader_parameter/time_of_day = 0.95
+shader_parameter/weather_intensity = 0.11
+shader_parameter/time_of_day = 0.98
 shader_parameter/lighting_gradient = SubResource("GradientTexture1D_y1djv")
 shader_parameter/star_mask_gradient = SubResource("GradientTexture1D_p04n7")
 shader_parameter/clear_color = Color(0, 0, 0, 0)
@@ -83,12 +84,12 @@ shader_parameter/cloud_softness_2_low = 0.35
 shader_parameter/cloud_softness_2_high = 0.32
 shader_parameter/cloud_height_3 = 350.0
 shader_parameter/cloud_noise_threshold_3_min = 0.25
-shader_parameter/cloud_noise_threshold_3_max = 0.7
+shader_parameter/cloud_noise_threshold_3_max = 0.775
 shader_parameter/cloud_softness_3_low = 0.25
 shader_parameter/cloud_softness_3_high = 0.25
 shader_parameter/star_color = Color(1, 1, 1, 1)
 shader_parameter/star_noise = SubResource("NoiseTexture2D_is6ib")
-shader_parameter/star_noise_threshold_max = 0.045
+shader_parameter/star_noise_threshold_max = 0.05
 shader_parameter/star_height = 600.0
 shader_parameter/star_speed = Vector2(0.001, 0.001)
 shader_parameter/star_scale = 0.001
