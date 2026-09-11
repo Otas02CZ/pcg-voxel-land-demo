@@ -27,15 +27,15 @@ noise = SubResource("FastNoiseLite_b3i5h")
 seamless = true
 
 [sub_resource type="Gradient" id="Gradient_i8eoa"]
-offsets = PackedFloat32Array(0, 0.28140703, 0.45728642, 1)
+offsets = PackedFloat32Array(0, 0.32663316, 0.56281406, 1)
 colors = PackedColorArray(0.045776367, 0.0553711, 0.09375, 1, 0.37981308, 0.3114624, 0.421875, 1, 0.84705883, 0.8784314, 0.9490196, 1, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_y1djv"]
 gradient = SubResource("Gradient_i8eoa")
 
 [sub_resource type="Gradient" id="Gradient_g6iio"]
-offsets = PackedFloat32Array(0, 0.53768843, 1)
-colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.15716553, 0.24836063, 0.390625, 1, 0.09516907, 0.37446347, 0.73828125, 1)
+offsets = PackedFloat32Array(0, 0.5527638, 1)
+colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.14144897, 0.22352457, 0.3515625, 1, 0.09516907, 0.37446347, 0.73828125, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_0tf6y"]
 gradient = SubResource("Gradient_g6iio")
@@ -49,7 +49,7 @@ gradient = SubResource("Gradient_wmsih")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_g6iio"]
 noise_type = 2
-frequency = 0.1097
+frequency = 0.1096
 fractal_type = 0
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_is6ib"]
@@ -89,7 +89,7 @@ shader_parameter/cloud_softness_3_low = 0.25
 shader_parameter/cloud_softness_3_high = 0.25
 shader_parameter/star_color = Color(1, 1, 1, 1)
 shader_parameter/star_noise = SubResource("NoiseTexture2D_is6ib")
-shader_parameter/star_noise_threshold_max = 0.05
+shader_parameter/star_noise_threshold_max = 0.045
 shader_parameter/star_height = 600.0
 shader_parameter/star_speed = Vector2(0.001, 0.001)
 shader_parameter/star_scale = 0.001

@@ -52,7 +52,7 @@ public class WeatherEnvironmentManager
     private readonly int terrainUnitsPerMeter;
 
     // main parameters and states
-    private bool running;
+    private bool weatherCycleRunning;
     private const float simulationDelta = 0.1f;
     private double lastSimulationUpdateTime;
     private double simulationTime;
@@ -69,6 +69,16 @@ public class WeatherEnvironmentManager
     private float currentFog;
     private float targetFog;
     private const float transitionDelta = 0.05f;
+    
+    // time of day / sun movement simulation
+    private bool dayCycleEnabled;
+    private float sunAngle; // current angle 0 - 2 PI
+    private readonly float sunAngleDefault = Mathf.DegToRad(60);
+    private readonly float fadeRad = Mathf.DegToRad(15); // angle range for sunrise / sunset fading
+    private const float sunCycleSpeed = 0.05f; // sun rotation speed
+    private const float nightCycleSpeedMultiplier = 2; // multiplier of sun speed during night
+    private const float sunOrbitRadius = 200.0f; // distance from player in XZ plane
+    private const float sunHeight = 400.0f; // height offset for the sun position
 
     // player positioning
     private const double debouncePlayerPos = 0.1D; // milliseconds
@@ -113,9 +123,12 @@ public class WeatherEnvironmentManager
         particleSystem.SwitchParticleSystem(WEATHER_TYPE.CLEAR);
         currentEnvironment = ENV_TYPE.NORMAL;
         lastWeatherType = WEATHER_TYPE.CLEAR;
-        running = true;
+        weatherCycleRunning = true;
+        dayCycleEnabled = false;
         regionUnknown = true;
         simulationTime = 0;
+        sunAngle = sunAngleDefault;
+        UpdateSunPosition(simulationDelta); // initialize sun position and day-night cycle in shader
     }
 
     /**
@@ -124,7 +137,8 @@ public class WeatherEnvironmentManager
     public void Stop()
     {
         worldGeneratorService = null;
-        running = false;
+        weatherCycleRunning = false;
+        dayCycleEnabled = false;
         particleSystem.SwitchParticleSystem(WEATHER_TYPE.CLEAR);
     }
 
@@ -134,10 +148,12 @@ public class WeatherEnvironmentManager
      */
     public void OnPlayerPositionChanged()
     {
-        if (!running)
+        // reposition sun based on player position, if automatic sun cycle is disabled
+        if (!dayCycleEnabled)
         {
-            return;
+            MoveSun();
         }
+        
         // debounce
         double currentTime = Time.GetUnixTimeFromSystem();
         if (currentTime - lastPlayerPosUpdateTime < debouncePlayerPos)
@@ -189,7 +205,7 @@ public class WeatherEnvironmentManager
      */
     public void OnRegionGenerated(WorldRegion worldRegion)
     {
-        if (!running && !regionUnknown)
+        if (!regionUnknown)
         {
             return;
         }
@@ -204,7 +220,7 @@ public class WeatherEnvironmentManager
      * Processes simulation step in defined intervals (simulation delta).
      * Determines current weather type.
      * Updates particle systems and fog intensity.
-     * TODO: sky cloud intensity and color, day-night cycle - sky and sun/moon (movement and intesity)
+     * TODO: day-night cycle - sky and sun/moon (movement and intesity)
      */
     public void SimulationStep()
     {
@@ -215,6 +231,18 @@ public class WeatherEnvironmentManager
             return;
         }
         lastSimulationUpdateTime = currentTime;
+        
+        // sun movement simulation
+        if (dayCycleEnabled)
+        {
+            UpdateSunPosition(simulationDelta);
+        }
+        
+        if (!weatherCycleRunning)
+        {
+            return;
+        }
+        
         simulationTime += simulationDelta;
         float noiseValue = weatherNoise.GetNoise1D((float)simulationTime) * 0.5f + 0.5f; // 0 - 1
         
@@ -276,7 +304,109 @@ public class WeatherEnvironmentManager
         // apply fog transition
         LinearTransitionFog();
         // apply weather in sky shader
+        GD.Print($"Weather Intensity: {noiseValue}");
         skyMaterial.SetShaderParameter("weather_intensity", noiseValue);
+    }
+
+    /**
+     * Updates sky shader day time based on current sun angle.
+     */
+    private void UpdateSkyDayTime()
+    {
+        float dayTime = Mathf.Sin(sunAngle) * 0.5f + 0.5f;
+        dayTime = Mathf.Min(dayTime, 0.99f);
+        dayTime = Mathf.Max(dayTime, 0.01f);
+        GD.Print($"Day Time: {dayTime}"); 
+        skyMaterial.SetShaderParameter("time_of_day", dayTime);
+    }
+    
+    /**
+     * Moves sun to a new position based on current player position and sun angle
+     * of rotation around the world.
+     * If automatic sun cycle is not enabled, this only repositions the sun to correctly move
+     * with the player through the world.
+     */
+    public void MoveSun()
+    {
+        // get player position
+        Vector3 playerPos = player.GlobalPosition;
+
+        // calculate sun position in circle around player
+        // sun moves in a vertical circle perpendicular to the ground
+        float sunX = playerPos.X + Mathf.Cos(sunAngle) * sunOrbitRadius;
+        float sunY = playerPos.Y + Mathf.Sin(sunAngle) * sunOrbitRadius + sunHeight;
+        float sunZ = playerPos.Z;
+
+        Vector3 sunPosition = new Vector3(sunX, sunY, sunZ);
+        sun.GlobalPosition = sunPosition;
+
+        // sun looks toward player position
+        sun.LookAt(playerPos, Vector3.Up);
+    }
+    
+    /**
+     * Advances the sun angle around the world (player)
+     * Updates its energy based on the angle:
+     * Sun increases energy as it goes up 0 - fadeRad,
+     * then stays at full energy until it reaches pi - fadeRad,
+     * when it starts to reduce its energy as it goes down.
+     * Its energy is zero when it is below the horizon.
+     * The angle is then applied in MoveSun method.
+     */
+    private void UpdateSunPosition(double delta)
+    {
+        // increment the angle based on time and speed
+        if (sunAngle <= Mathf.Pi)
+        {
+            sunAngle += sunCycleSpeed * (float)delta;
+        }
+        else // night is a bit faster and shorter
+        {
+            sunAngle += sunCycleSpeed * nightCycleSpeedMultiplier * (float)delta;
+        }
+
+        // keep angle in 0 to 2 PI range
+        if (sunAngle >= Mathf.Tau)
+        {
+            sunAngle -= Mathf.Tau;
+        }
+
+        // move sun to new position based on player position and updated angle
+        MoveSun();
+
+        UpdateSkyDayTime();
+
+        // update sun energy
+        float sunEnergy;
+
+        // upper half, sun is above the horizon
+        if (sunAngle <= Mathf.Pi)
+        {
+            // 0 - fadeRad, sun rising
+            if (sunAngle < fadeRad)
+            {
+                // fade energy in
+                sunEnergy = sunAngle / fadeRad;
+            }
+            // (PI - fadeRad) - PI, sun going down
+            else if (sunAngle > Mathf.Pi - fadeRad)
+            {
+                // fade energy out
+                sunEnergy = (Mathf.Pi - sunAngle) / fadeRad;
+            }
+            // middle, full brightness
+            else
+            {
+                sunEnergy = 1.0f;
+            }
+        }
+        // lower half, sun below the horizon, dimmed
+        else
+        {
+            sunEnergy = 0.0f;
+        }
+
+        sun.LightEnergy = sunEnergy;
     }
 
     /**
@@ -294,5 +424,21 @@ public class WeatherEnvironmentManager
     {
         currentFog += (targetFog - currentFog) * transitionDelta;
         environment.SetVolumetricFogDensity(currentFog);
+    }
+
+    /**
+     * Toggles day cycle simulation.
+     */
+    public void ToggleDayCycle()
+    {
+        dayCycleEnabled = !dayCycleEnabled;
+    }
+
+    /**
+     * Toggles weather cycle simulation.
+     */
+    public void ToggleWeatherSimulation()
+    {
+        weatherCycleRunning = !weatherCycleRunning;
     }
 }

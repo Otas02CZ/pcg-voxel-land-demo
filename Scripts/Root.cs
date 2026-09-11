@@ -183,14 +183,6 @@ public partial class Root : Node3D
     
     // weather, day-night cycle
     private WeatherEnvironmentManager weatherEnvManager;
-	
-	// sun movement simulation
-	private bool sunMovementEnabled;
-	private float sunAngle = Mathf.DegToRad(45); // current angle 0 - 2 PI
-	private float fadeRad = Mathf.DegToRad(30); // angle range for sunrise / sunset fading
-	private const float sunCycleSpeed = 0.1f; // sun rotation speed
-	private const float sunOrbitRadius = 200.0f; // distance from player in XZ plane
-	private const float sunHeight = 150.0f; // height offset for the sun position
 
 	// state variables
 	private bool generatingModels;
@@ -308,7 +300,7 @@ public partial class Root : Node3D
 			player.CallDeferred(Player.MethodName.TeleportPlayer, playerPosition.x, playerPosition.y, playerPosition.z);
 			playerNotPlaced = false;
 			// reposition sun based on initial player position
-			CallDeferred(MethodName.MoveSun);
+			CallDeferred(MethodName.MoveSunInWeatherManager);
             // reset player pos in weather manager
             CallDeferred(MethodName.PassPlayerPosChangeToWeatherManager);
         }
@@ -322,6 +314,15 @@ public partial class Root : Node3D
     private void PassPlayerPosChangeToWeatherManager()
     {
         weatherEnvManager.OnPlayerPositionChanged();
+    }
+
+    /**
+     * Dirty way to use call deferred on non-godot class objects.
+     * Called from OnRegionGenerated.
+     */
+    private void MoveSunInWeatherManager()
+    {
+        weatherEnvManager.MoveSun();
     }
 	
 	/**
@@ -416,21 +417,6 @@ public partial class Root : Node3D
 		};
 		caveGenerationHelper = new CaveGenerationHelper(caveGenHelperParams);
 		
-		if (newGame)
-		{
-			// player will be placed at 0,0,0 position in new world
-			player.TeleportPlayer(new Vector3Double(0, 0, 0));
-			playerNotPlaced = true;
-		}
-		else
-		{
-			// or last position in loaded worlds
-			player.TeleportPlayer(worldSaveConfig.lastPlayerPosition);
-            weatherEnvManager.OnPlayerPositionChanged();
-			CheckPlanOriginShift();
-			MoveSun();
-		}
-		
 		waitingForFirstMeshedChunk = true; // ui switches to game only after first column geometry is generated
 		// initialize tracking collections for iterative region - chunk system
 		loadedRegions = [];
@@ -508,6 +494,22 @@ public partial class Root : Node3D
 		generatingModels = true;
 		modelService.GenerateModels();
         weatherEnvManager.Start(worldGeneratorService, worldSaveConfig.worldSettings.seed);
+        
+        // player placing and positioning
+        if (newGame)
+        {
+            // player will be placed at 0,0,0 position in new world
+            player.TeleportPlayer(new Vector3Double(0, 0, 0));
+            playerNotPlaced = true;
+        }
+        else
+        {
+            // or last position in loaded worlds
+            player.TeleportPlayer(worldSaveConfig.lastPlayerPosition);
+            weatherEnvManager.OnPlayerPositionChanged();
+            CheckPlanOriginShift();
+            weatherEnvManager.MoveSun();
+        }
 	}
 
 	/**
@@ -932,12 +934,6 @@ public partial class Root : Node3D
 		if (!iterativeRuns)
 			return;
 		
-		// reposition sun based on player position, when automatic sun movement is disabled
-		if (!sunMovementEnabled)
-		{
-			MoveSun();
-		}
-		
 		// this debounce is not as necessary now, when only a single async thread can run the calculation at once
 		double currentTime = Time.GetUnixTimeFromSystem();
 		if (currentTime - lastLodUpdateTime < lodUpdateInterval)
@@ -1088,6 +1084,16 @@ public partial class Root : Node3D
 							$"ORIGIN SHIFT OFFSET: {currentOriginShiftOffsetXZ.x}, {currentOriginShiftOffsetXZ.z}\n" +
 							$"SHIFTED CAMERA POSITION: {Math.Round(shiftedPlayerPosition.X, 2)}, {Math.Round(shiftedPlayerPosition.Y, 2)}, {Math.Round(shiftedPlayerPosition.Z, 2)}";
 
+            // toggle sun automatic cycle
+            if (Input.IsActionJustPressed("toggle_sun"))
+            {
+                weatherEnvManager.ToggleDayCycle();
+            }
+            // toggle weather simulation
+            if (Input.IsActionJustPressed("toggle_weather"))
+            {
+                weatherEnvManager.ToggleWeatherSimulation();
+            }
 		}
 		// toggle debug menu
 		if (Input.IsActionJustPressed("debug_menu"))
@@ -1132,17 +1138,6 @@ public partial class Root : Node3D
 				voxelEditService.RaycastVoxelEditAsync(playerPosition, lookAtDirection, maxEditingDistance, editingVoxelType, editingVoxelSize, true);
 			}
 		}
-		// toggle sun automatic cycle
-		if (Input.IsActionJustPressed("toggle_sun"))
-		{
-			sunMovementEnabled = !sunMovementEnabled;
-		}
-		
-		// update sun position if automatic sun cycle is enabled
-		if (sunMovementEnabled)
-		{
-			UpdateSunPosition(delta);
-		}
 	}
 
 	/**
@@ -1150,7 +1145,6 @@ public partial class Root : Node3D
 	 */
 	public void ResetWorldPlayerSettings()
 	{
-		sunMovementEnabled = false;
 		GetViewport().DebugDraw = Viewport.DebugDrawEnum.Disabled;
 		displayMode = DisplayMode.DEFAULT;
 	}
@@ -1182,86 +1176,6 @@ public partial class Root : Node3D
 		{
 			editingEnabled = true;
 		}
-	}
-
-	/**
-	 * Moves sun to a new position based on current player position and sun angle
-	 * of rotation around the world.
-	 * If automatic sun cycle is not enabled, this only repositions the sun to correctly move
-	 * with the player through the world.
-	 */
-	private void MoveSun()
-	{
-		// get player position
-		Vector3 playerPos = player.GlobalPosition;
-		
-		// calculate sun position in circle around player
-		// sun moves in a vertical circle perpendicular to the ground
-		float sunX = playerPos.X + Mathf.Cos(sunAngle) * sunOrbitRadius;
-		float sunY = playerPos.Y + Mathf.Sin(sunAngle) * sunOrbitRadius + sunHeight;
-		float sunZ = playerPos.Z;
-		
-		Vector3 sunPosition = new Vector3(sunX, sunY, sunZ);
-		sun.GlobalPosition = sunPosition;
-		
-		// sun looks toward player position
-		sun.LookAt(playerPos, Vector3.Up);
-	}
-	
-	/**
-	 * Advances the sun angle around the world (player)
-	 * Updates its energy based on the angle:
-	 * Sun increases energy as it goes up 0 - fadeRad,
-	 * then stays at full energy until it reaches pi - fadeRad,
-	 * when it starts to reduce its energy as it goes down.
-	 * Its energy is zero when it is below the horizon.
-	 * The angle is then applied in MoveSun method.
-	 */
-	private void UpdateSunPosition(double delta)
-	{
-		// increment the angle based on time and speed
-		sunAngle += sunCycleSpeed * (float)delta;
-		
-		// keep angle in 0 to 2 PI range
-		if (sunAngle >= Mathf.Tau)
-		{
-			sunAngle -= Mathf.Tau;
-		}
-		
-		// move sun to new position based on player position and updated angle
-		MoveSun();
-		
-		// update sun energy
-		float sunEnergy;
-		
-		// upper half, sun is above the horizon
-		if (sunAngle <= Mathf.Pi)
-		{
-			// 0 - fadeRad, sun rising
-			if (sunAngle < fadeRad)
-			{
-				// fade energy in
-				sunEnergy = sunAngle / fadeRad;
-			}
-			// (PI - fadeRad) - PI, sun going down
-			else if (sunAngle > Mathf.Pi - fadeRad)
-			{
-				// fade energy out
-				sunEnergy = (Mathf.Pi - sunAngle) / fadeRad;
-			}
-			// middle, full brightness
-			else
-			{
-				sunEnergy = 1.0f;
-			}
-		}
-		// lower half, sun below the horizon, dimmed
-		else
-		{
-			sunEnergy = 0.0f;
-		}
-		
-		sun.LightEnergy = sunEnergy;
 	}
 
 	/**
