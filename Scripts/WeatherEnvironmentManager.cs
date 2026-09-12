@@ -56,10 +56,10 @@ public class WeatherEnvironmentManager
     private WEATHER_TYPE lastWeatherType;
 
     // weather simulation parameters
-    private bool weatherCycleEnabled;
+    public bool weatherCycleEnabled { get; private set; }
     private const float weatherSimDelta = 0.1f;
     private double lastWeatherSimUpdateTime;
-    private double weatherSimTime;
+    public double weatherSimTime { get; private set; }
 
     // thresholds
     private const float snowThreshold = 0.35f;
@@ -73,12 +73,11 @@ public class WeatherEnvironmentManager
     private const float transitionDelta = 0.05f;
     
     // time of day / sun movement simulation
-    private bool dayCycleEnabled;
-    private float sunAngle; // current angle 0 - 2 PI
+    public bool dayCycleEnabled { get; private set; }
+    public float sunAngle { get; private set; } // current angle 0 - 2 PI
     private float moonAngle; // offset by PI
     private const float dayCycleSimDelta = 0.05f;
     private double lastDayCycleSimUpdateTime;
-    private readonly float sunAngleDefault = Mathf.DegToRad(60);
     private readonly float fadeRad = Mathf.DegToRad(15); // angle range for sunrise / sunset fading
     private const float sunCycleSpeed = 0.04f; // sun rotation speed
     private const float nightCycleSpeedMultiplier = 1.6f; // multiplier of day cycle speed during night
@@ -124,7 +123,7 @@ public class WeatherEnvironmentManager
     /**
      * Starts and initializes the weather system.
      */
-    public void Start(WorldGeneratorService worldGeneratorService, int seed)
+    public void Start(WorldGeneratorService worldGeneratorService, int seed, float sunAngle, double weatherSimTime)
     {
         this.worldGeneratorService = worldGeneratorService;
         worldGeneratorService.SubscribeOnRegionGenerated(OnRegionGenerated);
@@ -135,9 +134,9 @@ public class WeatherEnvironmentManager
         weatherCycleEnabled = false;
         dayCycleEnabled = false;
         regionUnknown = true;
-        weatherSimTime = 0;
-        sunAngle = sunAngleDefault;
-        moonAngle = sunAngleDefault + Mathf.Pi;
+        this.weatherSimTime = weatherSimTime;
+        this.sunAngle = sunAngle;
+        moonAngle = sunAngle + Mathf.Pi;
         UpdateSunMoonPositions(weatherSimDelta); // initialize sun position and day-night cycle in shader
     }
 
@@ -479,16 +478,16 @@ public class WeatherEnvironmentManager
     /**
      * Toggles day cycle simulation.
      */
-    public bool ToggleDayCycle()
+    public void SetDayCycleStatus(bool status)
     {
-        return dayCycleEnabled = !dayCycleEnabled;
+        dayCycleEnabled = status;
     }
 
     /**
      * Toggles weather cycle simulation.
      */
-    public bool ToggleWeatherSimulation()
+    public void SetWeatherSimulationStatus(bool status)
     {
-        return weatherCycleEnabled = !weatherCycleEnabled;
+        weatherCycleEnabled = status;
     }
 }

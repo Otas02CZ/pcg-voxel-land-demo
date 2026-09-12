@@ -5,6 +5,7 @@
 // DESC: Contains structures for storing and handling world configuration and its presets.
 
 using System;
+using Godot;
 
 namespace PCGVoxelLandscapes.Scripts;
 
@@ -457,4 +458,8 @@ public class WorldSaveConfig
     public int indexSelectedVoxelType { get; set; } = 0;
     public int editingVoxelSize { get; set; } = 1;
     public int[] selectedVoxelTypeIndexes { get; set; } = [12, 6, 7, 11, 0, 19, 18]; // must have length 7, indexes from available voxel type ui items
+    public bool dayCycleEnabled { get; set; } = true;
+    public float sunAngle { get; set; } = Mathf.DegToRad(60);
+    public bool weatherSimulationEnabled { get; set; } = true;
+    public double weatherSimulationTime { get; set; } = 0.0f;
 }

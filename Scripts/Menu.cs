@@ -30,6 +30,7 @@ public partial class Menu : Control
     private Root root;
     private Player player;
     private StorageService storageService;
+    private WeatherEnvironmentManager weatherEnvManager;
 
     // ui elements
     private TextureRect background;
@@ -98,7 +99,7 @@ public partial class Menu : Control
     private VoxelTypeDropUI[] selectedVoxelTypeUINodes;
     
     // current world configuration
-    private WorldSaveConfig currentWorldSaveConfig;
+    public WorldSaveConfig currentWorldSaveConfig { get; private set; }
     // preloaded scenes of dynamic GUI components
     private static readonly PackedScene _voxelTypeDragUIScene = GD.Load<PackedScene>("res://Scenes/VoxelTypeDragUI.tscn");
     private static readonly PackedScene _voxelTypeDropUIScene = GD.Load<PackedScene>("res://Scenes/VoxelTypeDropUI.tscn");
@@ -139,11 +140,12 @@ public partial class Menu : Control
     /**
      * Sets up the menu with dependencies and loads application settings from config file.
      */
-    public void Setup(Root root, Player player, WorldEnvironment worldEnvironment, DirectionalLight3D sun, StorageService storageService, int worldLimitMetersXMin, int worldLimitMetersXMax, int worldLimitMetersZMin, int worldLimitMetersZMax)
+    public void Setup(Root root, Player player, WeatherEnvironmentManager weatherEnvManager, WorldEnvironment worldEnvironment, DirectionalLight3D sun, StorageService storageService, int worldLimitMetersXMin, int worldLimitMetersXMax, int worldLimitMetersZMin, int worldLimitMetersZMax)
     {
         this.root = root;
         this.player = player;
         this.storageService = storageService;
+        this.weatherEnvManager = weatherEnvManager;
         this.worldLimitMetersXMin = worldLimitMetersXMin;
         this.worldLimitMetersXMax = worldLimitMetersXMax;
         this.worldLimitMetersZMin = worldLimitMetersZMin;
@@ -1200,6 +1202,10 @@ public partial class Menu : Control
         (float horizontal, float vertical) = player.GetCameraRotation();
         currentWorldSaveConfig.rotationHorizontal = horizontal;
         currentWorldSaveConfig.rotationVertical = vertical;
+        currentWorldSaveConfig.dayCycleEnabled = weatherEnvManager.dayCycleEnabled;
+        currentWorldSaveConfig.sunAngle = weatherEnvManager.sunAngle;
+        currentWorldSaveConfig.weatherSimulationEnabled = weatherEnvManager.weatherCycleEnabled;
+        currentWorldSaveConfig.weatherSimulationTime = weatherEnvManager.weatherSimTime;
         storageService.SaveCurrentWorldConfig(currentWorldSaveConfig);
         alreadySavedOnExit = true;
     }

@@ -254,7 +254,7 @@ public partial class Root : Node3D
 			GetTree().Quit();
 		}
 		// setup menu
-		menu.Setup(this, player, worldEnvironment, sun, storageService, worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax);
+		menu.Setup(this, player, weatherEnvManager, worldEnvironment, sun, storageService, worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax);
 		
 		// setup player
 		player.SetLimits(worldLimitMetersXMin, worldLimitMetersXMax, worldLimitMetersZMin, worldLimitMetersZMax, worldLimitMetersYMin, worldLimitMetersYMax);
@@ -346,10 +346,10 @@ public partial class Root : Node3D
 			waitingForFirstMeshedChunk = false;
 			menu.CallDeferred(Menu.MethodName.HideCenteredMessage);
 			menu.CallDeferred(Menu.MethodName.SwitchToInGame, true);
-            weatherEnvManager.ToggleDayCycle();
-            weatherEnvManager.ToggleWeatherSimulation();
-            menu.CallDeferred(Menu.MethodName.UpdateInGameDayCycleState, true);
-            menu.CallDeferred(Menu.MethodName.UpdateInGameWeatherSimulationState, true);
+            weatherEnvManager.SetDayCycleStatus(menu.currentWorldSaveConfig.dayCycleEnabled);
+            weatherEnvManager.SetWeatherSimulationStatus(menu.currentWorldSaveConfig.weatherSimulationEnabled);
+            menu.CallDeferred(Menu.MethodName.UpdateInGameDayCycleState, menu.currentWorldSaveConfig.dayCycleEnabled);
+            menu.CallDeferred(Menu.MethodName.UpdateInGameWeatherSimulationState, menu.currentWorldSaveConfig.weatherSimulationEnabled);
         }
 		GD.Print($"Chunk column meshed at {chunkColumnGeometry.chunkX}, {chunkColumnGeometry.chunkZ}");
 	}
@@ -499,7 +499,7 @@ public partial class Root : Node3D
 		menu.ShowCenteredMessageLoading($"Generating models ... (0/{modelService.GetTotalModelsCount()})");
 		generatingModels = true;
 		modelService.GenerateModels();
-        weatherEnvManager.Start(worldGeneratorService, worldSaveConfig.worldSettings.seed);
+        weatherEnvManager.Start(worldGeneratorService, worldSaveConfig.worldSettings.seed, worldSaveConfig.sunAngle, worldSaveConfig.weatherSimulationTime);
         
         // player placing and positioning
         if (newGame)
@@ -1093,14 +1093,14 @@ public partial class Root : Node3D
             // toggle sun automatic cycle
             if (Input.IsActionJustPressed("toggle_sun"))
             {
-                bool dayCycleState = weatherEnvManager.ToggleDayCycle();
-                menu.UpdateInGameDayCycleState(dayCycleState);
+                weatherEnvManager.SetDayCycleStatus(!weatherEnvManager.dayCycleEnabled);
+                menu.UpdateInGameDayCycleState(weatherEnvManager.dayCycleEnabled);
             }
             // toggle weather simulation
             if (Input.IsActionJustPressed("toggle_weather"))
             {
-                bool weatherSimState = weatherEnvManager.ToggleWeatherSimulation();
-                menu.UpdateInGameWeatherSimulationState(weatherSimState);
+                weatherEnvManager.SetWeatherSimulationStatus(!weatherEnvManager.weatherCycleEnabled);
+                menu.UpdateInGameWeatherSimulationState(weatherEnvManager.weatherCycleEnabled);
             }
 		}
 		// toggle debug menu
