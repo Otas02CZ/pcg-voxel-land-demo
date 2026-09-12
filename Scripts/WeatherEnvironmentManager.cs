@@ -41,12 +41,12 @@ public enum WEATHER_TYPE : byte
 public class WeatherEnvironmentManager
 {
     // dependencies
-    private Player player;
-    private WeatherParticleSystem particleSystem;
-    private DirectionalLight3D sun;
-    private DirectionalLight3D moon;
-    private Environment environment;
-    private ShaderMaterial skyMaterial;
+    private readonly Player player;
+    private readonly WeatherParticleSystem particleSystem;
+    private readonly DirectionalLight3D sun;
+    private readonly DirectionalLight3D moon;
+    private readonly Environment environment;
+    private readonly ShaderMaterial skyMaterial;
     private WorldGeneratorService worldGeneratorService;
     private readonly int metersPerRegion;
     private readonly int terrainUnitsPerMeter;
@@ -213,7 +213,7 @@ public class WeatherEnvironmentManager
      * Signalizes that a region was generated.
      * Used to re-sync the system if waiting on region where the player is positioned
      */
-    public void OnRegionGenerated(WorldRegion worldRegion)
+    private void OnRegionGenerated(WorldRegion worldRegion)
     {
         if (!regionUnknown)
         {
@@ -323,7 +323,6 @@ public class WeatherEnvironmentManager
         // apply fog transition
         LinearTransitionFog();
         // apply weather in sky shader
-        GD.Print($"Weather Intensity: {noiseValue}");
         skyMaterial.SetShaderParameter("weather_intensity", noiseValue);
     }
 
@@ -336,7 +335,6 @@ public class WeatherEnvironmentManager
         float dayTime = Mathf.Sin(sunAngle) * 0.5f + 0.5f;
         dayTime = Mathf.Min(dayTime, dayTimeMax);
         dayTime = Mathf.Max(dayTime, dayTimeMin);
-        GD.Print($"Day Time: {dayTime}"); 
         skyMaterial.SetShaderParameter("time_of_day", dayTime);
     }
 

@@ -26,7 +26,6 @@ group_uniforms clouds_base;
 uniform sampler3D cloud_noise;
 uniform vec2 cloud_speed = vec2(0.001, 0.01);
 uniform float cloud_change_speed = 0.05;
-uniform float cloud_scale = 100;
 uniform float cloud_render_dist_max = 10000;
 uniform sampler2D cloud_gradient_base;
 uniform sampler2D cloud_gradient_alt;
@@ -88,7 +87,7 @@ float ray_sphere_intersection(vec3 origin, vec3 direction, float cloud_height) {
 */
 vec3 cloud_layer_position(vec3 origin, vec3 direction, float t) {
 	vec3 cloud_position = origin + direction * t;
-	vec2 cloud_uv = cloud_position.xz * cloud_scale + TIME * cloud_speed;
+	vec2 cloud_uv = cloud_position.xz * 0.00035 + TIME * cloud_speed;
 	float cloud_y = TIME * cloud_change_speed;
 	return vec3(cloud_uv.x, cloud_y, cloud_uv.y);
 }

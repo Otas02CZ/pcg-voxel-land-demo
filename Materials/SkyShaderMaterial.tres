@@ -17,17 +17,17 @@ colors = PackedColorArray(0.6796875, 0.6796875, 0.6796875, 1, 0.21331787, 0.2166
 gradient = SubResource("Gradient_gx6r4")
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_b3i5h"]
-frequency = 0.011
+frequency = 0.013
 
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_is6ib"]
-width = 320
-height = 192
-depth = 320
+width = 256
+height = 128
+depth = 256
 noise = SubResource("FastNoiseLite_b3i5h")
 seamless = true
 
 [sub_resource type="Gradient" id="Gradient_i8eoa"]
-offsets = PackedFloat32Array(0, 0.36934674, 0.64572865, 1)
+offsets = PackedFloat32Array(0, 0.38190955, 0.65829146, 1)
 colors = PackedColorArray(0.045776367, 0.0553711, 0.09375, 1, 0.37981308, 0.3114624, 0.421875, 1, 0.84705883, 0.8784314, 0.9490196, 1, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_y1djv"]
@@ -41,7 +41,7 @@ colors = PackedColorArray(0.022756934, 0.017715454, 0.03515625, 1, 0.15716553, 0
 gradient = SubResource("Gradient_g6iio")
 
 [sub_resource type="Gradient" id="Gradient_wmsih"]
-offsets = PackedFloat32Array(0, 0.6658291)
+offsets = PackedFloat32Array(0, 0.6834171)
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_p04n7"]
@@ -53,14 +53,16 @@ frequency = 0.1096
 fractal_type = 0
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_is6ib"]
+width = 256
+height = 256
 generate_mipmaps = false
 noise = SubResource("FastNoiseLite_g6iio")
 
 [resource]
 shader = ExtResource("1_g6iio")
 shader_parameter/sky_background_gradient = SubResource("GradientTexture1D_0tf6y")
-shader_parameter/weather_intensity = 0.01
-shader_parameter/time_of_day = 0.98
+shader_parameter/weather_intensity = 0.05
+shader_parameter/time_of_day = 0.91
 shader_parameter/lighting_gradient = SubResource("GradientTexture1D_y1djv")
 shader_parameter/star_mask_gradient = SubResource("GradientTexture1D_p04n7")
 shader_parameter/clear_color = Color(0, 0, 0, 0)
@@ -69,9 +71,8 @@ shader_parameter/sun_size_threshold = 0.997
 shader_parameter/moon_size_threshold = 0.999
 shader_parameter/cloud_noise = SubResource("NoiseTexture3D_is6ib")
 shader_parameter/cloud_speed = Vector2(0.01, 0.005)
-shader_parameter/cloud_change_speed = 0.03
-shader_parameter/cloud_scale = 0.001
-shader_parameter/cloud_render_dist_max = 4000.0
+shader_parameter/cloud_change_speed = 0.015
+shader_parameter/cloud_render_dist_max = 3500.0
 shader_parameter/cloud_gradient_base = SubResource("GradientTexture1D_cpek4")
 shader_parameter/cloud_gradient_alt = SubResource("GradientTexture1D_gx6r4")
 shader_parameter/cloud_height_1 = 200.0
