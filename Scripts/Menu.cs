@@ -1250,4 +1250,20 @@ public partial class Menu : Control
     {
         alertDialog.Visible = false;
     }
+
+    /**
+     * Passes time simulation state to in game menu.
+     */
+    public void UpdateInGameDayCycleState(bool state)
+    {
+        inGameMenu.UpdateDayCycleInfoLabel(state);
+    }
+
+    /**
+     * Passes weather simulation state to in game menu.
+     */
+    public void UpdateInGameWeatherSimulationState(bool state)
+    {
+        inGameMenu.UpdateWeatherSimulationInfoLabel(state);
+    }
 }

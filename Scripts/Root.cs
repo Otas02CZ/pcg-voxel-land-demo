@@ -346,7 +346,11 @@ public partial class Root : Node3D
 			waitingForFirstMeshedChunk = false;
 			menu.CallDeferred(Menu.MethodName.HideCenteredMessage);
 			menu.CallDeferred(Menu.MethodName.SwitchToInGame, true);
-		}
+            weatherEnvManager.ToggleDayCycle();
+            weatherEnvManager.ToggleWeatherSimulation();
+            menu.CallDeferred(Menu.MethodName.UpdateInGameDayCycleState, true);
+            menu.CallDeferred(Menu.MethodName.UpdateInGameWeatherSimulationState, true);
+        }
 		GD.Print($"Chunk column meshed at {chunkColumnGeometry.chunkX}, {chunkColumnGeometry.chunkZ}");
 	}
 
@@ -1089,12 +1093,14 @@ public partial class Root : Node3D
             // toggle sun automatic cycle
             if (Input.IsActionJustPressed("toggle_sun"))
             {
-                weatherEnvManager.ToggleDayCycle();
+                bool dayCycleState = weatherEnvManager.ToggleDayCycle();
+                menu.UpdateInGameDayCycleState(dayCycleState);
             }
             // toggle weather simulation
             if (Input.IsActionJustPressed("toggle_weather"))
             {
-                weatherEnvManager.ToggleWeatherSimulation();
+                bool weatherSimState = weatherEnvManager.ToggleWeatherSimulation();
+                menu.UpdateInGameWeatherSimulationState(weatherSimState);
             }
 		}
 		// toggle debug menu

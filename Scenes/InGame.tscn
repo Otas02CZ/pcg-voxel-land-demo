@@ -36,23 +36,52 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_hfbw4")
 
-[node name="MoveMode" type="PanelContainer" parent="." unique_id=1454556221]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2128102213]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = -59.0
-offset_right = 82.0
-offset_bottom = -28.0
+offset_top = -66.0
+offset_right = 54.0
 grow_vertical = 0
+offset_transform_enabled = true
+offset_transform_position = Vector2(30, -30)
+metadata/_edit_use_anchors_ = true
+
+[node name="MoveMode" type="PanelContainer" parent="VBoxContainer" unique_id=1454556221]
+layout_mode = 2
+size_flags_horizontal = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_0y7kv")
 
-[node name="MoveModeLabel" type="Label" parent="MoveMode" unique_id=603636421]
+[node name="MoveModeLabel" type="Label" parent="VBoxContainer/MoveMode" unique_id=603636421]
 propagate_maximum_size = true
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
+text = "test"
+
+[node name="DayCycle" type="PanelContainer" parent="VBoxContainer" unique_id=1046288585]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0y7kv")
+
+[node name="DayCycleLabel" type="Label" parent="VBoxContainer/DayCycle" unique_id=769236336]
+propagate_maximum_size = true
+layout_mode = 2
+size_flags_horizontal = 0
+text = "test"
+
+[node name="WeatherSimulation" type="PanelContainer" parent="VBoxContainer" unique_id=797052056]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0y7kv")
+
+[node name="WeatherSimulationLabel" type="Label" parent="VBoxContainer/WeatherSimulation" unique_id=1627876975]
+propagate_maximum_size = true
+layout_mode = 2
+size_flags_horizontal = 0
 text = "test"
 
 [node name="VoxelEditDisplay" type="VBoxContainer" parent="." unique_id=532840570]

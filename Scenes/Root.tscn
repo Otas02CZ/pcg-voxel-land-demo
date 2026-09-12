@@ -1293,7 +1293,7 @@ size_flags_vertical = 3
 [node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=1758509965]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Toggle Sun Movement"
+text = "Toggle Time Simulation"
 
 [node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=88699402]
 layout_mode = 2
@@ -1303,6 +1303,24 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
 [node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer3" unique_id=1393890217]
 layout_mode = 2
 text = "R"
+
+[node name="HBoxContainer15" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=1188573660]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer15" unique_id=1845674683]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Toggle Weather Simulation"
+
+[node name="VSeparator" type="VSeparator" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer15" unique_id=1823956864]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/separator = SubResource("StyleBoxEmpty_qtxxq")
+
+[node name="Button" type="Button" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls/HBoxContainer15" unique_id=393651527]
+layout_mode = 2
+text = "Z"
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Menu/Menu/PauseMenu/ControlsMenu/VBoxContainer/Controls" unique_id=542383226]
 layout_mode = 2

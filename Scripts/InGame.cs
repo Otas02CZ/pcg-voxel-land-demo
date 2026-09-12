@@ -17,6 +17,8 @@ public partial class InGame : Control
 {
     // regular ui components
     private Label moveModeLabel;
+    private Label dayCycleLabel;
+    private Label weatherSimulationLabel;
     private Node2D crosshair;
     private HBoxContainer voxelTypesContainer;
     private Label editingInfoLabel;
@@ -36,7 +38,9 @@ public partial class InGame : Control
     
     public override void _Ready()
     {
-        moveModeLabel = GetNode<Label>("MoveMode/MoveModeLabel");
+        moveModeLabel = GetNode<Label>("VBoxContainer/MoveMode/MoveModeLabel");
+        dayCycleLabel = GetNode<Label>("VBoxContainer/DayCycle/DayCycleLabel");
+        weatherSimulationLabel = GetNode<Label>("VBoxContainer/WeatherSimulation/WeatherSimulationLabel");
         crosshair = GetNode<Node2D>("Center/Crosshair");
         voxelTypesContainer = GetNode<HBoxContainer>("VoxelEditDisplay/VoxelEditMenuBarPanel/VoxelEditMenuBar");
         editingInfoLabel = GetNode<Label>("VoxelEditDisplay/PanelContainer/EditingInfoLabel");
@@ -216,7 +220,23 @@ public partial class InGame : Control
      */
     private void SetMovementMode(MovementMode mode)
     {
-        moveModeLabel.Text = mode == MovementMode.FLY ? "Flying" : "Walking";
+        moveModeLabel.Text = "Movement: " + (mode == MovementMode.FLY ? "Flying" : "Walking");
+    }
+
+    /**
+     * Updates info label showing time simulation state.
+     */
+    public void UpdateDayCycleInfoLabel(bool running)
+    {
+        dayCycleLabel.Text = "Time Simulation: " + (running ? "Running" : "Stopped");
+    }
+
+    /**
+     * Updates info label showing weather simulation state.
+     */
+    public void UpdateWeatherSimulationInfoLabel(bool running)
+    {
+        weatherSimulationLabel.Text = "Weather Simulation: " + (running ? "Running" : "Stopped");
     }
 
     /**

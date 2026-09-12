@@ -132,7 +132,7 @@ public class WeatherEnvironmentManager
         particleSystem.SwitchParticleSystem(WEATHER_TYPE.CLEAR);
         currentEnvironment = ENV_TYPE.NORMAL;
         lastWeatherType = WEATHER_TYPE.CLEAR;
-        weatherCycleEnabled = true;
+        weatherCycleEnabled = false;
         dayCycleEnabled = false;
         regionUnknown = true;
         weatherSimTime = 0;
@@ -479,16 +479,16 @@ public class WeatherEnvironmentManager
     /**
      * Toggles day cycle simulation.
      */
-    public void ToggleDayCycle()
+    public bool ToggleDayCycle()
     {
-        dayCycleEnabled = !dayCycleEnabled;
+        return dayCycleEnabled = !dayCycleEnabled;
     }
 
     /**
      * Toggles weather cycle simulation.
      */
-    public void ToggleWeatherSimulation()
+    public bool ToggleWeatherSimulation()
     {
-        weatherCycleEnabled = !weatherCycleEnabled;
+        return weatherCycleEnabled = !weatherCycleEnabled;
     }
 }
