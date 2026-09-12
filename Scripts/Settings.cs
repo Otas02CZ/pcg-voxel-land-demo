@@ -47,7 +47,6 @@ public class ApplicationSettings
 {
     public bool shadowsEnabled { get; set; } = true;
     public bool globalIlluminationEnabled { get; set; } = true;
-    public bool fogEnabled { get; set; } = true;
     public bool ssaoEnabled { get; set; } = true;
     public bool ssilEnabled { get; set; } = true;
     public MSAA_SETTINGS msaaSettings { get; set; } = MSAA_SETTINGS.OFF;
@@ -68,7 +67,6 @@ public class ApplicationSettings
         ApplicationSettings copy = new ApplicationSettings();
         copy.shadowsEnabled = this.shadowsEnabled;
         copy.globalIlluminationEnabled = this.globalIlluminationEnabled;
-        copy.fogEnabled = this.fogEnabled;
         copy.ssaoEnabled = this.ssaoEnabled;
         copy.ssilEnabled = this.ssilEnabled;
         copy.msaaSettings = this.msaaSettings;
@@ -129,9 +127,6 @@ public partial class Settings : CenterContainer
 
     private Button giOffButton;
     private Button giOnButton;
-    
-    private Button fogOffButton;
-    private Button fogOnButton;
     
     private Button ssaoOffButton;
     private Button ssaoOnButton;
@@ -203,9 +198,6 @@ public partial class Settings : CenterContainer
         
         giOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOffButton");
         giOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOnButton");
-        
-        fogOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOffButton");
-        fogOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOnButton");
         
         ssaoOffButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOffButton");
         ssaoOnButton = GetNode<Button>("PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOnButton");
@@ -355,7 +347,6 @@ public partial class Settings : CenterContainer
         DistributeViewDistanceLods(newSettings.viewDistanceLod);
         DistributeShadows(newSettings.shadowsEnabled);
         DistributeGI(newSettings.globalIlluminationEnabled);
-        DistributeFog(newSettings.fogEnabled);
         DistributeSSAO(newSettings.ssaoEnabled);
         DistributeSSIL(newSettings.ssilEnabled);
         DistributeMSAA(newSettings.msaaSettings);
@@ -408,7 +399,6 @@ public partial class Settings : CenterContainer
     {
         ApplyShadowSettings();
         ApplyGISettings();
-        ApplyFogSettings();
         ApplySSAOSettings();
         ApplySSILSettings();
         ApplyMSAASettings();
@@ -436,14 +426,6 @@ public partial class Settings : CenterContainer
     private void ApplyGISettings()
     {
         worldEnvironment.GetEnvironment().SdfgiEnabled = currentSettings.globalIlluminationEnabled;
-    }
-    
-    /**
-     * Applies fog settings to world environment.
-     */
-    private void ApplyFogSettings()
-    {
-        worldEnvironment.GetEnvironment().FogEnabled = currentSettings.fogEnabled;
     }
 
     /**
@@ -696,26 +678,6 @@ public partial class Settings : CenterContainer
     {
         giOffButton.SetPressed(!enabled);
         giOnButton.SetPressed(enabled);
-    }
-
-    private void _on_fog_off_button_button_up()
-    {
-        changedSettings.fogEnabled = false;
-        settingsChanged = true;
-        DistributeFog(changedSettings.fogEnabled);
-    }
-
-    private void _on_fog_on_button_button_up()
-    {
-        changedSettings.fogEnabled = true;
-        settingsChanged = true;
-        DistributeFog(changedSettings.fogEnabled);
-    }
-    
-    private void DistributeFog(bool enabled)
-    {
-        fogOffButton.SetPressed(!enabled);
-        fogOnButton.SetPressed(enabled);
     }
 
     private void _on_ssao_off_button_button_up()

@@ -273,27 +273,6 @@ toggle_mode = true
 text = "ON
 "
 
-[node name="Fog" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=1064781379]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog" unique_id=1812382499]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Fog"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog" unique_id=909264736]
-layout_mode = 2
-
-[node name="FogOffButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer" unique_id=568969826]
-layout_mode = 2
-toggle_mode = true
-text = "OFF"
-
-[node name="FogOnButton" type="Button" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer" unique_id=1009172063]
-layout_mode = 2
-toggle_mode = true
-text = "ON"
-
 [node name="SSAO" type="HBoxContainer" parent="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings" unique_id=98724555]
 layout_mode = 2
 
@@ -546,8 +525,6 @@ text = "Apply
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/GlobalIllumination/HBoxContainer/GIOnButton" to="." method="_on_gi_on_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOffButton" to="." method="_on_shadows_off_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Shadows/HBoxContainer/ShadowsOnButton" to="." method="_on_shadows_on_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOffButton" to="." method="_on_fog_off_button_button_up"]
-[connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/Fog/HBoxContainer/FogOnButton" to="." method="_on_fog_on_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOffButton" to="." method="_on_ssao_off_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSAO/HBoxContainer/SSAOOnButton" to="." method="_on_ssao_on_button_button_up"]
 [connection signal="button_up" from="PanelContainer/Main/Scroll/Panel/VBox/GraphicsSettings/SSIL/HBoxContainer/SSILOffButton" to="." method="_on_ssil_off_button_button_up"]
