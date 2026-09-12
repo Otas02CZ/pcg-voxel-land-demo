@@ -1202,6 +1202,8 @@ public partial class Menu : Control
         (float horizontal, float vertical) = player.GetCameraRotation();
         currentWorldSaveConfig.rotationHorizontal = horizontal;
         currentWorldSaveConfig.rotationVertical = vertical;
+        bool torchEnabled = player.GetTorch().IsVisible();
+        currentWorldSaveConfig.torchEnabled = torchEnabled;
         currentWorldSaveConfig.dayCycleEnabled = weatherEnvManager.dayCycleEnabled;
         currentWorldSaveConfig.sunAngle = weatherEnvManager.sunAngle;
         currentWorldSaveConfig.weatherSimulationEnabled = weatherEnvManager.weatherCycleEnabled;

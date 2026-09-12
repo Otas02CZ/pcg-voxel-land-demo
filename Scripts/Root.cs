@@ -500,6 +500,7 @@ public partial class Root : Node3D
 		generatingModels = true;
 		modelService.GenerateModels();
         weatherEnvManager.Start(worldGeneratorService, worldSaveConfig.worldSettings.seed, worldSaveConfig.sunAngle, worldSaveConfig.weatherSimulationTime);
+        player.SetTorchVisibility(worldSaveConfig.torchEnabled);
         
         // player placing and positioning
         if (newGame)

@@ -462,4 +462,5 @@ public class WorldSaveConfig
     public float sunAngle { get; set; } = Mathf.DegToRad(60);
     public bool weatherSimulationEnabled { get; set; } = true;
     public double weatherSimulationTime { get; set; } = 0.0f;
+    public bool torchEnabled { get; set; } = false;
 }

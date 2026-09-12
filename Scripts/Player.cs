@@ -107,7 +107,7 @@ public partial class Player : Node3D
 
         if (Input.IsActionJustPressed("toggle_torch"))
         {
-            torch.SetVisible(!torch.Visible);
+            torch.SetVisible(!torch.IsVisible());
         }
         
         if (Input.IsActionJustPressed("toggle_movement"))
@@ -443,5 +443,13 @@ public partial class Player : Node3D
     public void SubscribeOnMovementModeChanged(Action<MovementMode> handler)
     {
         OnMovementModeChanged += handler;
+    }
+    
+    /**
+     * Sets torch visibility in scene.
+     */
+    public void SetTorchVisibility(bool visible)
+    {
+        torch.SetVisible(visible);
     }
 }
