@@ -171,6 +171,7 @@ public partial class Root : Node3D
 	private Label fpsLabel;
 	private Texture2D textureAtlas;
 	private DirectionalLight3D sun;
+    private DirectionalLight3D moon;
 	
 	// service instances
 	private ModelService modelService;
@@ -231,6 +232,7 @@ public partial class Root : Node3D
 		voxelWorld = GetNode<Node3D>("World");
 		fpsLabel = GetNode<Label>("FPSLabel");
 		sun = GetNode<DirectionalLight3D>("Sun");
+        moon = GetNode<DirectionalLight3D>("Moon");
 		player = GetNode<Player>("Player");
 		menu = GetNode<Menu>("Menu");
 		// needed to pass to other components
@@ -238,7 +240,7 @@ public partial class Root : Node3D
 		
 		chunkVoxelSize = voxelsPerMeter * metersPerChunk;
 
-        weatherEnvManager = new WeatherEnvironmentManager(player, sun, worldEnvironment, metersPerRegion, terrainUnitsPerMeter);
+        weatherEnvManager = new WeatherEnvironmentManager(player, sun, moon, worldEnvironment, metersPerRegion, terrainUnitsPerMeter);
 		
 		// initialize storage service at predefined directory
 		string storagePath = ProjectSettings.GlobalizePath("user://");
@@ -300,7 +302,7 @@ public partial class Root : Node3D
 			player.CallDeferred(Player.MethodName.TeleportPlayer, playerPosition.x, playerPosition.y, playerPosition.z);
 			playerNotPlaced = false;
 			// reposition sun based on initial player position
-			CallDeferred(MethodName.MoveSunInWeatherManager);
+			CallDeferred(MethodName.MoveLightsInWeatherManager);
             // reset player pos in weather manager
             CallDeferred(MethodName.PassPlayerPosChangeToWeatherManager);
         }
@@ -320,9 +322,9 @@ public partial class Root : Node3D
      * Dirty way to use call deferred on non-godot class objects.
      * Called from OnRegionGenerated.
      */
-    private void MoveSunInWeatherManager()
+    private void MoveLightsInWeatherManager()
     {
-        weatherEnvManager.MoveSun();
+        weatherEnvManager.MoveLights();
     }
 	
 	/**
@@ -508,7 +510,7 @@ public partial class Root : Node3D
             player.TeleportPlayer(worldSaveConfig.lastPlayerPosition);
             weatherEnvManager.OnPlayerPositionChanged();
             CheckPlanOriginShift();
-            weatherEnvManager.MoveSun();
+            weatherEnvManager.MoveLights();
         }
 	}
 

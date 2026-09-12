@@ -16,6 +16,11 @@ uniform sampler2D star_mask_gradient;
 uniform vec4 clear_color : source_color = vec4(0,0,0,0);
 uniform float cloud_sphere_radius = 50000;
 
+// sun and moon
+group_uniforms sun_and_moon;
+uniform float sun_size_threshold = 0.995;
+uniform float moon_size_threshold = 0.9975;
+
 // cloud related parameters
 group_uniforms clouds_base;
 uniform sampler3D cloud_noise;
@@ -130,6 +135,26 @@ vec4 star_layer_color(vec2 star_uv) {
 	return vec4(color.rgb, star_visibility);
 }
 
+/*
+* Assembles sun and moon layer color depending on current light and camera directions.
+*/
+vec4 sun_moon_layer_color(vec3 direction) {
+	vec4 color = vec4(0.0);
+	if (LIGHT0_ENABLED) { // sun
+		float sun_dot = dot(direction, LIGHT0_DIRECTION);
+		float sun_disc = smoothstep(sun_size_threshold, 1, sun_dot);
+		color += vec4(LIGHT0_COLOR * LIGHT0_ENERGY, sun_disc * LIGHT0_ENERGY);
+	}
+	
+	if (LIGHT1_ENABLED) { // moon
+		float moon_dot = dot(direction, LIGHT1_DIRECTION);
+		float moon_disc = smoothstep(moon_size_threshold, 1, moon_dot);
+		color += vec4(LIGHT1_COLOR * LIGHT1_ENERGY, moon_disc * LIGHT1_ENERGY);
+	}
+	
+	return color;
+}
+
 void sky() {
 	// Called for every visible pixel in the sky background, as well as all pixels
 	// in the radiance cubemap.
@@ -154,12 +179,15 @@ void sky() {
 		vec4 cloud_color_final_2 = cloud_layer_color(cloud_xyz_2, cloud_noise_threshold_2_min, cloud_noise_threshold_2_max, cloud_softness_2_low, cloud_softness_2_high, lighting_adj);
 		vec4 cloud_color_final_3 = cloud_layer_color(cloud_xyz_3, cloud_noise_threshold_3_min, cloud_noise_threshold_3_max, cloud_softness_3_low, cloud_softness_3_high, lighting_adj);
 		vec4 star_color_final = star_layer_color(star_uv);
-		// color combination (from back to front -> sky background -> distant cloud layers, ... -> closest cloud layers)
+		vec4 sun_color_final = sun_moon_layer_color(EYEDIR);
+		// color combination from back to front:
+		// from sky background - stars - sun and moon - distant cloud layers, ... to closest cloud layers
 		vec3 final_cloud_color = texture(sky_background_gradient, vec2(time_of_day, 0)).rgb;
 		final_cloud_color = mix(final_cloud_color, star_color_final.rgb, star_color_final.a);
-		final_cloud_color = mix(final_cloud_color, cloud_color_final_3.rgb, cloud_color_final_3.a);
+		final_cloud_color = mix(final_cloud_color, sun_color_final.rgb, sun_color_final.a);
+		final_cloud_color = mix(final_cloud_color, cloud_color_final_3.rgb, cloud_color_final_3.a); // distant
 		final_cloud_color = mix(final_cloud_color, cloud_color_final_2.rgb, cloud_color_final_2.a);
-		final_cloud_color = mix(final_cloud_color, cloud_color_final_1.rgb, cloud_color_final_1.a);
+		final_cloud_color = mix(final_cloud_color, cloud_color_final_1.rgb, cloud_color_final_1.a); // close
 		
 		COLOR = vec3(final_cloud_color);
 	}
