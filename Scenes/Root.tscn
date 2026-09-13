@@ -227,7 +227,7 @@ layout_mode = 2
 [node name="Label2" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer3" unique_id=898578387]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Bachelor's thesis"
+text = "Extended Bachelor's thesis project"
 
 [node name="Label" type="Label" parent="Menu/Menu/TitleMenu/VBoxContainer/VBoxContainer3" unique_id=1820161380]
 layout_mode = 2
