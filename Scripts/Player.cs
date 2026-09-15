@@ -306,6 +306,14 @@ public partial class Player : Node3D
     {
         return new Vector3Double((double)player.Position.X - originShiftOffsetXZ.x, player.Position.Y, (double)player.Position.Z - originShiftOffsetXZ.z);
     }
+
+    /**
+     * Returns in-scene (shifted) position of the player.
+     */
+    public Vector3 GetShiftedPosition()
+    {
+        return player.Position;
+    }
     
     /**
      * Stops player controls and movement before origin shift is performed.

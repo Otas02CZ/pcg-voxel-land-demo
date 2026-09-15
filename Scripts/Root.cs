@@ -1078,7 +1078,7 @@ public partial class Root : Node3D
 				(int)Math.Floor(realPlayerPosition.y / metersPerChunk),
 				(int)Math.Floor(realPlayerPosition.z / metersPerChunk)
 			);
-			Vector3 shiftedPlayerPosition = player.Position;
+			Vector3 shiftedPlayerPosition = player.GetShiftedPosition();
 
 			fpsLabel.Text = $"WORLD GEN (A/W/R/L): {worldGenActiveRegions}/{worldGenWorkingTasks}/{worldGenRemainingTasks}/{worldGenLockedTasks}\n" +
 							$"VOXEL GEN (A/R/L): {voxelGenActiveColumns}/{voxelGenRemainingTasks}/{voxelGenLockedTasks}/{voxelGenWaitingNeighborsCount}\n" +
