@@ -183,7 +183,7 @@ public partial class Player : Node3D
     {
         rotationHorizontal = horizontal;
         rotationVertical = vertical;
-        player.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
+        camera.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
     }
 
     /**
