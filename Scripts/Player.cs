@@ -71,7 +71,7 @@ public partial class Player : Node3D
         movementMode = MovementMode.FLY;
         player = GetNode<CharacterBody3D>("ActualPlayer");
         camera = GetNode<Camera3D>("ActualPlayer/Camera");
-        torch = GetNode<OmniLight3D>("ActualPlayer/Torch");
+        torch = GetNode<OmniLight3D>("ActualPlayer/Camera/Torch");
         particleSystem = GetNode<WeatherParticleSystem>("WeatherParticleSystem");
         Input.MouseMode = Input.MouseModeEnum.Captured;
     }
@@ -90,8 +90,8 @@ public partial class Player : Node3D
             rotationVertical -= mouseMotion.Relative.Y * mouseSensitivity;
             // avoid full upside-down flip
             rotationVertical = Mathf.Clamp(rotationVertical, minVerticalRotation, maxVerticalRotation);
-            // apply to player
-            player.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
+            // apply to camera
+            camera.Rotation = new Vector3(rotationVertical, rotationHorizontal, 0);
         }
     }
 
@@ -140,17 +140,17 @@ public partial class Player : Node3D
         
         // assemble direction vector from user input
         if (Input.IsActionPressed("move_forward"))
-            inputDir -= player.Transform.Basis.Z;
+            inputDir -= camera.Transform.Basis.Z;
         if (Input.IsActionPressed("move_back"))
-            inputDir += player.Transform.Basis.Z;
+            inputDir += camera.Transform.Basis.Z;
         if (Input.IsActionPressed("move_left"))
-            inputDir -= player.Transform.Basis.X;
+            inputDir -= camera.Transform.Basis.X;
         if (Input.IsActionPressed("move_right"))
-            inputDir += player.Transform.Basis.X;
+            inputDir += camera.Transform.Basis.X;
         if (Input.IsActionPressed("move_up"))
-            inputDir += player.Transform.Basis.Y;
+            inputDir += camera.Transform.Basis.Y;
         if (Input.IsActionPressed("move_down"))
-            inputDir -= player.Transform.Basis.Y;
+            inputDir -= camera.Transform.Basis.Y;
 
         inputDir = inputDir.Normalized();
 
@@ -202,13 +202,13 @@ public partial class Player : Node3D
         // input direction
         Vector3 inputDir = Vector3.Zero;
         if (Input.IsActionPressed("move_forward"))
-            inputDir -= player.Transform.Basis.Z;
+            inputDir -= camera.Transform.Basis.Z;
         if (Input.IsActionPressed("move_back"))
-            inputDir += player.Transform.Basis.Z;
+            inputDir += camera.Transform.Basis.Z;
         if (Input.IsActionPressed("move_left"))
-            inputDir -= player.Transform.Basis.X;
+            inputDir -= camera.Transform.Basis.X;
         if (Input.IsActionPressed("move_right"))
-            inputDir += player.Transform.Basis.X;
+            inputDir += camera.Transform.Basis.X;
         
         Vector3 direction = inputDir.Normalized();
 
@@ -276,7 +276,7 @@ public partial class Player : Node3D
      */
     public Vector3 GetLookAtDirection()
     {
-        Vector3 forward = -player.Transform.Basis.Z;
+        Vector3 forward = -camera.Transform.Basis.Z;
         return forward.Normalized();
     }
 

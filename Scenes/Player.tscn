@@ -87,8 +87,8 @@ shape = SubResource("CapsuleShape3D_kyqiw")
 [node name="Camera" type="Camera3D" parent="ActualPlayer" unique_id=1534806628]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
-[node name="Torch" type="OmniLight3D" parent="ActualPlayer" unique_id=73188673]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4302957, 0.6888671, -0.24657339)
+[node name="Torch" type="OmniLight3D" parent="ActualPlayer/Camera" unique_id=73188673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4302957, -0.21113288, -0.24657339)
 visible = false
 light_color = Color(0.8709775, 0.7342224, 0.44358617, 1)
 light_size = 0.01
